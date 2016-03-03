@@ -1,0 +1,86 @@
+package in.annexion.notapp;
+
+/**
+ * Created by fanatic on 16/2/16.
+ */
+
+import android.app.IntentService;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+public class GcmIntentService extends IntentService {
+
+    private static final String TAG = GcmIntentService.class.getSimpleName();
+
+    public GcmIntentService() {
+        super(TAG);
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent)
+    {
+        registerGCM();
+    }
+
+    /**
+     * Registering with GCM and obtaining the gcm registration id
+     */
+    private void registerGCM() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String token = null;
+
+        try {
+            InstanceID instanceID = InstanceID.getInstance(this);
+            token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
+                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+
+            Log.e(TAG, "GCM Registration Token: " + token);
+
+            // sending the registration id to our server
+            sendRegistrationToServer(token);
+
+            Toast.makeText(this, "GCM Registration Token: " + token, Toast.LENGTH_LONG).show();
+
+            sharedPreferences.edit().putBoolean(Config.SENT_TOKEN_TO_SERVER, true).apply();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to complete token refresh", e);
+
+            sharedPreferences.edit().putBoolean(Config.SENT_TOKEN_TO_SERVER, false).apply();
+        }
+        // Notify UI that registration has completed, so the progress indicator can be hidden.
+        Intent registrationComplete = new Intent(Config.REGISTRATION_COMPLETE);
+        registrationComplete.putExtra("token", token);
+       // LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+    }
+
+    private void sendRegistrationToServer(final String token) {
+
+        SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
+        String PRN=sharedPreferences.getString("PRN","");
+
+        try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            String url="http://notapp.in/json/gcmRegister.php"+"?PRN="+PRN+"&regId="+token;
+            HttpGet httpGet = new HttpGet(url);
+            Log.e("url register: ",url);
+            HttpResponse httpResponse = null;
+            httpResponse = httpClient.execute(httpGet);
+        }
+        catch (Exception e){
+            Log.e("GCMIntentService->","HttpGet: "+e);
+        }
+
+    }
+
+}

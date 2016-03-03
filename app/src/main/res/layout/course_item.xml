@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
+
+<!--<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardUseCompatPadding="false"
+    card_view:cardCornerRadius="0dp"
+    android:background="@color/colorPrimaryLight"
+    > -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="4dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="2dp"
+        >
+
+        <TextView
+            android:id="@+id/textView_CourseCode"
+            android:text="2CS264"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:textColor="@color/textSecondary"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView_CourseTitle"
+            android:text="DataBase Engineering Lab"
+            android:textColor="@color/textPrimary"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:fontFamily="sans-serif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorDivider"/>
+
+<!--</android.support.v7.widget.CardView>  -->
+
+</LinearLayout>

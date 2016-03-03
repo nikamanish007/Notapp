@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="depts">
+        <item>IT</item>
+        <item>CSE</item>
+        <item>ELN</item>
+        <item>ELE</item>
+        <item>CIV</item>
+        <item>MECH</item>
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Math</item>
+        <item>Biology</item>
+        <item>ACSES</item>
+        <item>SAIT</item>
+        <item>ELESA</item>
+        <item>EESA</item>
+        <item>CESA</item>
+        <item>MESA</item>
+        <item>WLUG</item>
+        <item>PACE</item>
+        <item>Rotaract</item>
+        <item>SOFTA</item>
+        <item>Art Circle</item>
+        <item>Admin</item>
+        <item>Exam</item>
+        <item>TPO</item>
+        <item>Sports</item>
+        <item>Scholarship</item>
+        <item>Rector</item>
+        <item>Lost and Found</item>
+        <item>Vision</item>
+        <item>Library</item>
+    </string-array>
+
+    <string-array name="deptValues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+    </string-array>
+
+    <string-array name="classes">
+        <item>B.Tech Ist Year</item>
+        <item>B.Tech IInd Year</item>
+        <item>B.Tech IIIrd Year</item>
+        <item>B.Tech IVth Year</item>
+        <item>M.Tech Ist Year</item>
+        <item>M.Tech IInd Year</item>
+    </string-array>
+
+    <string-array name="classesValues">
+        <item>b1</item>
+        <item>b2</item>
+        <item>b3</item>
+        <item>b4</item>
+        <item>m1</item>
+        <item>m2</item>
+    </string-array>
+
+    <string-array name="branches">
+        <item>Information Technology</item>
+        <item>Computer Science</item>
+        <item>Electronics</item>
+        <item>Electrical</item>
+        <item>Civil</item>
+        <item>Mechanical</item>
+    </string-array>
+    <string-array name="branchesValues">
+
+        <item>it</item>
+        <item>cse</item>
+        <item>eln</item>
+        <item>ele</item>
+        <item>civ</item>
+        <item>mech</item>
+    </string-array>
+
+    <string-array name="empty_array"/>
+
+</resources>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <PreferenceCategory
+        android:title="Name"
+        >
+
+        <EditTextPreference
+            android:key="fname"
+            android:title="First Name"
+            android:inputType="textCapWords"
+            android:defaultValue="Your"
+            android:summary="Edit your First Name"
+            android:dialogTitle="Edit your Name"
+            />
+        <EditTextPreference
+            android:key="lname"
+            android:title="Last Name"
+            android:inputType="textCapWords"
+            android:defaultValue="Name"
+            android:summary="Edit your Last Name"
+            android:dialogTitle="Edit your Name"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory>
+
+        <EditTextPreference
+            android:key="email"
+            android:title="Email"
+            android:inputType="textEmailAddress"
+            android:summary="Edit e-mail"
+            android:dialogTitle="Enter email"
+            />
+
+        <EditTextPreference
+            android:key="password"
+            android:title="Password"
+            android:inputType="textPassword"
+            android:summary="Change Password"
+            android:dialogTitle="Enter New Password"
+            />
+
+        <EditTextPreference
+            android:key="number"
+            android:title="Number"
+            android:inputType="phone"
+            android:maxLength="10"
+            android:summary="Change Password"
+            android:dialogTitle="Enter Phone Number" />
+
+    </PreferenceCategory>
+
+    <!-- https://github.com/bostonandroid/DatePreference  -->
+    <!-- http://stackoverflow.com/questions/12127408/android-pick-an-image-from-gallery-in-preferencescreen -->
+    <PreferenceCategory>
+        <Preference
+            android:key="DOB"
+            android:title="DOB"
+            android:summary="Change DOB"
+            />
+    </PreferenceCategory>
+
+
+
+
+</PreferenceScreen>

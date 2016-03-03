@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <!--<android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="4dp"
+            android:background="@color/colorPrimaryLight"
+            >  -->
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:weightSum="20"
+                android:layout_gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                >
+
+                <TextView
+                    android:id="@+id/textView_NoticeTitle"
+                    android:text="DBE Externals Time Table"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"
+                    android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="19"
+                />
+
+                <TextView
+                    android:id="@+id/textView_nID"
+                    android:text="40"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView_UploadedBy"
+                android:text="Dr. S.H. Bhandari"
+                android:textStyle="normal"
+                android:textColor="@color/textSecondary"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="9dp"
+            />
+            <TextView
+                android:id="@+id/textView_Date"
+                android:text="28th April"
+                android:textStyle="normal"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/textSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingRight="4dp"
+            />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"/>
+        </LinearLayout>
+
+<!--</android.support.v7.widget.CardView>  -->
