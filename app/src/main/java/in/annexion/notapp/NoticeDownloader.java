@@ -57,13 +57,33 @@ public class NoticeDownloader {
         SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
         db.enableWriteAheadLogging();
 
-        db.execSQL("create table if not exists notices(n_id int(11), title varchar(50), uploadedBy varchar(30) , uploadDate varchar(15) , exp varchar(15) , noticeBoard varchar(15) , link varchar(15)) , md5 varchar(50)");
+        db.execSQL("create table if not exists notices" +
+                    "(n_id int(11), " +
+                    "title varchar(50), " +
+                    "uploadedBy varchar(30) , " +
+                    "uploadDate varchar(15) , " +
+                    "exp varchar(15) , " +
+                    "noticeBoard varchar(15) , " +
+                    "link varchar(15) , " +
+                    "isFav integer default 0 , " +
+                    "md5 varchar(50) , " +
+                    "isRead integer default 0)");
 
         Log.e("n_downloader", "" + n_id + "  " + title + "  " + uploadDate + "  " + exp + "  " + link + "  ");
         //noticeList.add(noticeInfo);
         String nb = context.getResources().getStringArray(R.array.intent)[Integer.parseInt(noticeBoard)];
         int id = Integer.parseInt(n_id);
-        String sql = "insert into notices values(" + id + ",'" + title + "','"+uploadedBy+"','" + uploadDate + "','" + exp + "','" + nb + "','" + link + "'" + md5 + "')";
+        String sql = "insert into notices values("
+                    + id + ",'"
+                    + title + "','"
+                    + uploadedBy+"','"
+                    + uploadDate + "','"
+                    + exp + "','"
+                    + nb + "','"
+                    + link + "','"
+                    + "0"   + "','"
+                    + md5 + "','"
+                    + "0" +"')";
         Log.e("sql", sql);
         db.execSQL(sql);
     }

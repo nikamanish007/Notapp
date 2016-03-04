@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class FavouritesActivity extends AppCompatActivity implements FavoritesAdapter.ClickListener
@@ -246,6 +247,11 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
         setContentView(R.layout.activity_favourites);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
 
         db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
 

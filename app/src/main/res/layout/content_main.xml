@@ -186,7 +186,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
-                    android:paddingTop="15dp"
                     android:gravity="start"
                     >
 
@@ -270,7 +269,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
-                    android:paddingTop="15dp"
                     android:gravity="start"
                     >
 
@@ -345,7 +343,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
-                    android:paddingTop="15dp"
                     >
 
                     <ImageButton
@@ -401,7 +398,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:padding="10dp"
-                    android:paddingTop="15dp"
                     android:gravity="start"
                     >
                     <ImageButton
