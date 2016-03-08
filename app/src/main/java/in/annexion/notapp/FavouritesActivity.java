@@ -102,7 +102,6 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
         public int getColumnIndexOrThrow(String columnName) throws IllegalArgumentException {
             return 0;
         }
-
         @Override
         public String getColumnName(int columnIndex) {
             return null;
