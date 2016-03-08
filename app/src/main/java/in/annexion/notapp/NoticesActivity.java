@@ -392,11 +392,24 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     @Override
     public void addToFav(int pos)
     {
-        //View viewToBeRemoved=recyclerView_Notices.getChildAt(pos);
         NoticeInfo item=noticeList.get(pos);
-        //int nID=Integer.parseInt(((TextView) viewToBeRemoved.findViewById(R.id.textView_nID)).getText().toString());
         int nID=item.n_id;
         db.execSQL("update notices set isFav=1 where n_id="+nID);
+
+        Intent intent2;
+        intent2= new Intent(getBaseContext(),NoticesActivity.class);
+        intent2.putExtra("nb", nbClicked);
+        intent2.putExtra("title", title);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void removeFromFav(int pos)
+    {
+        NoticeInfo item=noticeList.get(pos);
+        int nID=item.n_id;
+        db.execSQL("update notices set isFav=0 where n_id="+nID);
 
         Intent intent2;
         intent2= new Intent(getBaseContext(),NoticesActivity.class);

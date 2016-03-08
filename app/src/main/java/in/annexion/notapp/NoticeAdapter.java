@@ -34,7 +34,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
     private ArrayList<NoticeInfo> noticeList;
     private Context context;
     public ClickListener clickListener;
-    public ContextMenu contextMenu;
     private int position;
     Cursor cursor = new Cursor() {
         @Override
@@ -340,20 +339,29 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
                 menuItemFavorite = menu.add(0, 1, 0, "Add to Favorites");
                 menuItemFavorite.setOnMenuItemClickListener(this);
             }
+            else {
+                menuItemFavorite = menu.add(0, 2, 0, "Remove from Favorites");
+                menuItemFavorite.setOnMenuItemClickListener(this);
+            }
+
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
 
-            if (item.getItemId()==0)
+            switch (item.getItemId())
             {
-                Toast.makeText(context,""+getPos()+ "Deleted!!",Toast.LENGTH_LONG).show();
-                clickListener.delete(getPos());
-            }
-            else
-            {
-                Toast.makeText(context,""+getPos()+ "Added to Favorites",Toast.LENGTH_LONG).show();
-                clickListener.addToFav(getPos());
+                case 0:
+                    Toast.makeText(context, "" + getPos() + " Deleted!!", Toast.LENGTH_LONG).show();
+                    clickListener.delete(getPos());
+                    break;
+                case 1:
+                    Toast.makeText(context, "" + getPos() + " Added to Favorites", Toast.LENGTH_LONG).show();
+                    clickListener.addToFav(getPos());
+                    break;
+                case 2:
+                    Toast.makeText(context, "" + getPos() + " Removed from Favorites", Toast.LENGTH_LONG).show();
+                    clickListener.removeFromFav(getPos());
             }
 
             return false;
@@ -386,5 +394,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
         void itemTouched(View view,MotionEvent motionEvent);
         void delete(int pos);
         void addToFav(int pos);
+        void removeFromFav(int pos);
     }
 }
