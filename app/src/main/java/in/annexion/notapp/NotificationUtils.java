@@ -30,7 +30,6 @@ public class NotificationUtils {
         if (TextUtils.isEmpty(name))
             return;
 
-
         // notification icon
         final int icon = R.mipmap.ic_launcher;
 

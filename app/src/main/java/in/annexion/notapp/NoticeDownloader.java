@@ -22,7 +22,7 @@ import java.net.URLEncoder;
  * Created by fanatic on 7/2/16.
  */
 public class NoticeDownloader {
-    String title, uploadDate, uploadedBy, exp , noticeBoard , link, n_id, md5;
+    String title, uploadDate, uploadedBy, exp , noticeBoard , link, n_id, md5, message;
 
     Context context;
 
@@ -37,7 +37,7 @@ public class NoticeDownloader {
         new DownloadFile().execute();
     }
 
-    public void insertIntoDB(Context context, String title, String uploadDate, String uploadedBy, String n_id, String exp, String noticeBoard, String link, String md5)
+    public void insertIntoDB(Context context, String title, String uploadDate, String uploadedBy, String n_id, String exp, String noticeBoard, String link, String md5 ,String message)
     {
         this.title=title;
         this.uploadDate=uploadDate;
@@ -47,6 +47,7 @@ public class NoticeDownloader {
         this.noticeBoard=noticeBoard;
         this.link = link;
         this.md5=md5;
+        this.message=message;
         this.context=context;
 
         File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
@@ -58,16 +59,17 @@ public class NoticeDownloader {
         db.enableWriteAheadLogging();
 
         db.execSQL("create table if not exists notices" +
-                    "(n_id int(11), " +
-                    "title varchar(50), " +
-                    "uploadedBy varchar(30) , " +
-                    "uploadDate varchar(15) , " +
-                    "exp varchar(15) , " +
-                    "noticeBoard varchar(15) , " +
-                    "link varchar(15) , " +
-                    "isFav integer default 0 , " +
-                    "md5 varchar(50) , " +
-                    "isRead integer default 0)");
+                    "(n_id int(11), " +                 //0
+                    "title varchar(50), " +             //1
+                    "uploadedBy varchar(30) , " +       //2
+                    "uploadDate varchar(15) , " +       //3
+                    "exp varchar(15) , " +              //4
+                    "noticeBoard varchar(15) , " +      //5
+                    "link varchar(15) , " +             //6
+                    "md5 varchar(50) , " +              //7
+                    "message varchar(1000) , " +        //8
+                    "isFav integer default 0 , " +      //9
+                    "isRead integer default 0)");       //10
 
         Log.e("n_downloader", "" + n_id + "  " + title + "  " + uploadDate + "  " + exp + "  " + link + "  ");
         //noticeList.add(noticeInfo);
@@ -81,11 +83,13 @@ public class NoticeDownloader {
                     + exp + "','"
                     + nb + "','"
                     + link + "','"
-                    + "0"   + "','"
                     + md5 + "','"
+                    + message + "','"
+                    + "0"   + "','"
                     + "0" +"')";
         Log.e("sql", sql);
         db.execSQL(sql);
+        db.close();
     }
 
     class DownloadFile extends AsyncTask<Void,Void,Void>

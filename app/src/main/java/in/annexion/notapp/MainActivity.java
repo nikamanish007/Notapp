@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else {
 
-            if((new ConnectionDetector(getBaseContext())).isConnectingToInternet())
+            //if((new ConnectionDetector(getBaseContext())).isConnectingToInternet())
                // sync();
 
           /*  mRegistrationBroadcastReceiver = new BroadcastReceiver() {
@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
             drawer.setDrawerListener(toggle);
             toggle.syncState();
 
@@ -817,9 +818,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public void updatePassword()
     {
-        String _password= sharedPreferences.getString("DOB", "b1");
-        upload("password","");
-
+        String _password= sharedPreferences.getString("password", "");
+        upload("password",_password);
     }
     public void updateDOB()
     {
@@ -835,7 +835,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     class Sync extends AsyncTask<String,Void,Void>
     {
-
         @Override
         protected Void doInBackground(String... params) {
             DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -844,6 +843,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             try {
                 httpResponse = httpClient.execute(httpGet);
             } catch (IOException e) {
+                Log.e("Sync:",""+e);
                 e.printStackTrace();
             }
             return null;

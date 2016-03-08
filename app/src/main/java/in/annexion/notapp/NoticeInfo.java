@@ -13,6 +13,8 @@ public class NoticeInfo
     public String noticeBoard;
     public String link;
     public String md5;
+    public String message="";
+    public int isFav;
 
     public NoticeInfo()
     {
@@ -24,5 +26,7 @@ public class NoticeInfo
         this.uploadedBy = "";
         this.noticeBoard="";
         this.md5="";
+        this.message="";
+        this.isFav=0;
     }
 }

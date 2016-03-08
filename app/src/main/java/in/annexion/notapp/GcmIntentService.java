@@ -22,21 +22,25 @@ public class GcmIntentService extends IntentService {
 
     private static final String TAG = GcmIntentService.class.getSimpleName();
 
-    public GcmIntentService() {
+    SharedPreferences sharedPreferences;
+
+    public GcmIntentService()
+    {
         super(TAG);
     }
 
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        registerGCM();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sharedPreferences.getBoolean("isLoggedIn",false))
+            registerGCM();
     }
 
     /**
      * Registering with GCM and obtaining the gcm registration id
      */
     private void registerGCM() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String token = null;
 
         try {
@@ -48,8 +52,6 @@ public class GcmIntentService extends IntentService {
             // sending the registration id to our server
             sendRegistrationToServer(token);
 
-            Toast.makeText(this, "GCM Registration Token: " + token, Toast.LENGTH_LONG).show();
-
             sharedPreferences.edit().putBoolean(Config.SENT_TOKEN_TO_SERVER, true).apply();
 
         } catch (Exception e) {
@@ -58,8 +60,8 @@ public class GcmIntentService extends IntentService {
             sharedPreferences.edit().putBoolean(Config.SENT_TOKEN_TO_SERVER, false).apply();
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
-        Intent registrationComplete = new Intent(Config.REGISTRATION_COMPLETE);
-        registrationComplete.putExtra("token", token);
+        //Intent registrationComplete = new Intent(Config.REGISTRATION_COMPLETE);
+       // registrationComplete.putExtra("token", token);
        // LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
     }
 

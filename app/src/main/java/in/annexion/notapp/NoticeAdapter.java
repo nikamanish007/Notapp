@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
     private ArrayList<NoticeInfo> noticeList;
     private Context context;
     public ClickListener clickListener;
+    public ContextMenu contextMenu;
     private int position;
     Cursor cursor = new Cursor() {
         @Override
@@ -258,18 +260,24 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
     @Override
     public void onBindViewHolder(NoticeViewHolder noticeViewHolder, int i)
     {
+        int isRead=1;
         NoticeInfo noticeInfo = noticeList.get(i);
         noticeViewHolder.textView_NoticeTitle.setText(noticeInfo.title);
         noticeViewHolder.textView_UploadedBy.setText(noticeInfo.uploadedBy);
         noticeViewHolder.textView_Date.setText(noticeInfo.uploadDate);
         noticeViewHolder.textView_nID.setText(""+noticeInfo.n_id);
+        noticeViewHolder.textView_isFav.setText(""+noticeInfo.isFav);
+        if(noticeInfo.isFav==1)
+            noticeViewHolder.imageView_fav.setImageResource(R.drawable.ic_heart_pink);
 
-        db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+        db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
 
         cursor=db.rawQuery("select isRead from notices where n_id="+noticeInfo.n_id,null);
         cursor.moveToFirst();
 
-        int isRead=cursor.getInt(0);
+        if(cursor.getCount()>0)
+            isRead=cursor.getInt(0);
+
         if(isRead==0)   
             noticeViewHolder.textView_NoticeTitle.setTextColor(context.getResources().getColor(R.color.colorAccent));
     }
@@ -286,6 +294,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
         TextView textView_UploadedBy;
         TextView textView_Date;
         TextView textView_nID;
+        TextView textView_isFav;
+        ImageView imageView_fav;
 
         public NoticeViewHolder(View itemView)
         {
@@ -295,13 +305,14 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
             textView_UploadedBy = (TextView) itemView.findViewById(R.id.textView_UploadedBy);
             textView_Date = (TextView) itemView.findViewById(R.id.textView_Date);
             textView_nID=(TextView)itemView.findViewById(R.id.textView_nID);
+            textView_isFav=(TextView)itemView.findViewById(R.id.textView_isFav);
+            imageView_fav=(ImageView)itemView.findViewById(R.id.imageView_fav);
 
             Typeface roboto_light = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
 
             textView_NoticeTitle.setTypeface(roboto_light);
             textView_UploadedBy.setTypeface(roboto_light);
             textView_Date.setTypeface(roboto_light);
-            textView_nID.setTypeface(roboto_light);
 
             itemView.setOnCreateContextMenuListener(this);
             itemView.setOnClickListener(this);
@@ -319,12 +330,16 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
         {
             menu.setHeaderTitle(R.string.blank);
+            MenuItem menuItemDelete;
+            MenuItem menuItemFavorite;
 
-            MenuItem menuItemDelete=menu.add(0,0,0,"Delete");
-            MenuItem menuItemFavorite=menu.add(0,1,0,"Add to Favorites");
-
+            menuItemDelete=menu.add(0,0,0,"Delete");
             menuItemDelete.setOnMenuItemClickListener(this);
-            menuItemFavorite.setOnMenuItemClickListener(this);
+
+            if(Integer.parseInt(((TextView)v.findViewById(R.id.textView_isFav)).getText().toString())==0) {
+                menuItemFavorite = menu.add(0, 1, 0, "Add to Favorites");
+                menuItemFavorite.setOnMenuItemClickListener(this);
+            }
         }
 
         @Override

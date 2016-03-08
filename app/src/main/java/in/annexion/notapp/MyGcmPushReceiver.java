@@ -15,6 +15,8 @@ public class MyGcmPushReceiver extends GcmListenerService {
     private static final String TAG = MyGcmPushReceiver.class.getSimpleName();
 
     private NotificationUtils notificationUtils;
+    String [] titleArray;
+    String [] intentArray;
 
     /**
      * Called when message is received.
@@ -27,6 +29,9 @@ public class MyGcmPushReceiver extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle bundle) {
 
+        titleArray=getResources().getStringArray(R.array.title);
+        intentArray=getResources().getStringArray(R.array.intent);
+
         Log.e("onMessageReceived", "registration id =====  "+from);
         String title = bundle.getString("title");
         String uploadDate = bundle.getString("uploadDate");
@@ -37,21 +42,22 @@ public class MyGcmPushReceiver extends GcmListenerService {
         String noticeBoard =""+ (Integer.parseInt(bundle.getString("dept")) - 1);
         String link = bundle.getString("link");
         String md5= bundle.getString("md5");
-
+        String message="";
 
         Log.e(TAG, "From: " + from);
         Log.e(TAG, "Title: " + title);
         Log.e(TAG, "uploadDate: " + uploadDate);
 
-        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-        resultIntent.putExtra("Title", title);
+        Intent resultIntent = new Intent(getApplicationContext(), NoticesActivity.class);
+        resultIntent.putExtra("title", titleArray[Integer.parseInt(noticeBoard)]);
+        resultIntent.putExtra("nb",intentArray[Integer.parseInt(noticeBoard)]);
 
         showNotificationMessage(getApplicationContext(), title, uploadDate, name, resultIntent);
 
         NoticeDownloader noticeDownloader = new NoticeDownloader();
-        noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, exp, noticeBoard,link,md5);
-        noticeDownloader.downloadFile(link);
-
+        noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, exp, noticeBoard, link, md5, message);
+        if(!link.equals(""))
+            noticeDownloader.downloadFile(link);
     }
 
     /**

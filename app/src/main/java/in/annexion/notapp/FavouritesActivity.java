@@ -349,7 +349,7 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
     public void itemClicked(View view, int position)
     {
         NoticeInfo item=favoriteList.get(position);
-        String title,link;
+        String title,link,md5,noticeBoard;
         title=item.title;
         link=item.link;
 
@@ -378,7 +378,7 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
     {
         View viewToBeRemoved=recyclerView_Favorites.getChildAt(pos);
         int nID=Integer.parseInt(((TextView) viewToBeRemoved.findViewById(R.id.textView_nID)).getText().toString());
-        db.execSQL("update noticeBoard set isFav=0 where n_id="+nID);
+        db.execSQL("update notices set isFav=0 where n_id="+nID);
 
         recyclerView_Favorites.removeViewAt(pos);
         adapter.notifyDataSetChanged();

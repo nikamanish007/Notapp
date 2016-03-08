@@ -310,6 +310,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
 
@@ -318,22 +319,27 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     public void itemClicked(View view, int position)
     {
         //String noticeTitle=((TextView) recyclerView_Notices.getChildAt(position).findViewById(R.id.textView_NoticeTitle)).getText().toString();
-        View viewCliked=recyclerView_Notices.getChildAt(position);
+        //View viewCliked=recyclerView_Notices.getChildAt(position);
         NoticeInfo item=noticeList.get(position);
-        String title,link;
+        String title,link,message,md5;
         title=item.title;
         link=item.link;
+        message=item.message;
+        md5=item.md5;
+        int nID=item.n_id;
 
-        int nID=Integer.parseInt(((TextView) viewCliked.findViewById(R.id.textView_nID)).getText().toString());
+        //nID=Integer.parseInt(((TextView) viewCliked.findViewById(R.id.textView_nID)).getText().toString());
 
         Log.e("intent na", title + "  " + link);
 
-        db.execSQL("update notices set isRead=1 where n_id="+nID);
+        db.execSQL("update notices set isRead=1 where n_id=" + nID);
 
         Intent intent=new Intent(getBaseContext(), MainNoticeActivity.class);
         intent.putExtra("title",title);
         intent.putExtra("nb", nbClicked);
         intent.putExtra("link", link);
+        intent.putExtra("message", message);
+        intent.putExtra("md5",md5);
         startActivity(intent);
         finish();
     }
@@ -351,8 +357,10 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     public void delete(int pos)
     {
 
-        View viewToBeRemoved=recyclerView_Notices.getChildAt(pos);
-        int nID=Integer.parseInt(((TextView) viewToBeRemoved.findViewById(R.id.textView_nID)).getText().toString());
+        //View viewToBeRemoved=recyclerView_Notices.getChildAt(pos);
+        NoticeInfo item=noticeList.get(pos);
+        //int nID=Integer.parseInt(((TextView) viewToBeRemoved.findViewById(R.id.textView_nID)).getText().toString());
+        int nID=item.n_id;
         Cursor cursor2;
 
         cursor2= db.rawQuery("select * from notices where n_id=" + nID, null);
@@ -384,9 +392,18 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     @Override
     public void addToFav(int pos)
     {
-        View viewToBeRemoved=recyclerView_Notices.getChildAt(pos);
-        int nID=Integer.parseInt(((TextView) viewToBeRemoved.findViewById(R.id.textView_nID)).getText().toString());
+        //View viewToBeRemoved=recyclerView_Notices.getChildAt(pos);
+        NoticeInfo item=noticeList.get(pos);
+        //int nID=Integer.parseInt(((TextView) viewToBeRemoved.findViewById(R.id.textView_nID)).getText().toString());
+        int nID=item.n_id;
         db.execSQL("update notices set isFav=1 where n_id="+nID);
+
+        Intent intent2;
+        intent2= new Intent(getBaseContext(),NoticesActivity.class);
+        intent2.putExtra("nb", nbClicked);
+        intent2.putExtra("title", title);
+        startActivity(intent);
+        finish();
     }
 
 
@@ -450,6 +467,8 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     noticeInfo.noticeBoard = cursor.getString(5);
                     noticeInfo.link = cursor.getString(6);
                     noticeInfo.md5=cursor.getString(7);
+                    noticeInfo.message=cursor.getString(8);
+                    noticeInfo.isFav=Integer.parseInt(cursor.getString(9));
 
                     Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.exp + "  " + noticeInfo.link + "  ");
 
