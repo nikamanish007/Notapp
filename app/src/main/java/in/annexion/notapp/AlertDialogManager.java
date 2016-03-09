@@ -28,7 +28,6 @@ public class AlertDialogManager {
         if(title.equals("Offline or Weak Connection!"))
             isForLogin=true;
 
-        android.support.v7.app.AlertDialog alertDialog = new android.support.v7.app.AlertDialog.Builder(context).create();
 
         new android.support.v7.app.AlertDialog.Builder(context)
                 .setTitle(title)
@@ -37,6 +36,10 @@ public class AlertDialogManager {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (isForLogin) {
+                        }
+                        else
+                        {
+
                         }
                     }
                 }).show();

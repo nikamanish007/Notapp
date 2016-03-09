@@ -26,7 +26,6 @@ public class NoticeInfo
         this.uploadedBy = "";
         this.noticeBoard="";
         this.md5="";
-        this.message="";
         this.isFav=0;
     }
 }

@@ -23,7 +23,7 @@ import java.net.URLEncoder;
  */
 public class NoticeDownloader {
     String title, uploadDate, uploadedBy, exp , noticeBoard , link, n_id, md5, message;
-
+    SQLiteDatabase db;
     Context context;
 
     public NoticeDownloader()
@@ -37,7 +37,7 @@ public class NoticeDownloader {
         new DownloadFile().execute();
     }
 
-    public void insertIntoDB(Context context, String title, String uploadDate, String uploadedBy, String n_id, String exp, String noticeBoard, String link, String md5 ,String message)
+    public void insertIntoDB(Context context, String title, String uploadDate, String uploadedBy, String n_id, String exp, String noticeBoard, String link, String md5)
     {
         this.title=title;
         this.uploadDate=uploadDate;
@@ -47,7 +47,6 @@ public class NoticeDownloader {
         this.noticeBoard=noticeBoard;
         this.link = link;
         this.md5=md5;
-        this.message=message;
         this.context=context;
 
         File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
@@ -55,7 +54,7 @@ public class NoticeDownloader {
             file.mkdirs();
         }
 
-        SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+        db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
         db.enableWriteAheadLogging();
 
         db.execSQL("create table if not exists notices" +
@@ -65,11 +64,11 @@ public class NoticeDownloader {
                     "uploadDate varchar(15) , " +       //3
                     "exp varchar(15) , " +              //4
                     "noticeBoard varchar(15) , " +      //5
-                    "link varchar(15) , " +             //6
+                    "link varchar(500) , " +            //6
                     "md5 varchar(50) , " +              //7
-                    "message varchar(1000) , " +        //8
-                    "isFav integer default 0 , " +      //9
-                    "isRead integer default 0)");       //10
+                    "isFav integer default 0 , " +      //8
+                    "isRead integer default 0 ," +      //9
+                    "isDone integer default 0)");       //10
 
         Log.e("n_downloader", "" + n_id + "  " + title + "  " + uploadDate + "  " + exp + "  " + link + "  ");
         //noticeList.add(noticeInfo);
@@ -84,9 +83,10 @@ public class NoticeDownloader {
                     + nb + "','"
                     + link + "','"
                     + md5 + "','"
-                    + message + "','"
-                    + "0"   + "','"
+                    + "0" + "','"
+                    + "0" + "','"
                     + "0" +"')";
+
         Log.e("sql", sql);
         db.execSQL(sql);
         db.close();
@@ -140,6 +140,13 @@ public class NoticeDownloader {
 
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+            db.execSQL("update notices set isDone=1 where n_id="+n_id);
         }
     }
 

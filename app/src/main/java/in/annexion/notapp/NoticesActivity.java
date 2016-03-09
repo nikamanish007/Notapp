@@ -340,6 +340,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         intent.putExtra("link", link);
         intent.putExtra("message", message);
         intent.putExtra("md5",md5);
+        intent.putExtra("n_id",nID);
         startActivity(intent);
         finish();
     }
@@ -480,8 +481,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     noticeInfo.noticeBoard = cursor.getString(5);
                     noticeInfo.link = cursor.getString(6);
                     noticeInfo.md5=cursor.getString(7);
-                    noticeInfo.message=cursor.getString(8);
-                    noticeInfo.isFav=Integer.parseInt(cursor.getString(9));
+                    noticeInfo.isFav=Integer.parseInt(cursor.getString(8));
 
                     Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.exp + "  " + noticeInfo.link + "  ");
 

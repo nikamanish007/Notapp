@@ -42,7 +42,6 @@ public class MyGcmPushReceiver extends GcmListenerService {
         String noticeBoard =""+ (Integer.parseInt(bundle.getString("dept")) - 1);
         String link = bundle.getString("link");
         String md5= bundle.getString("md5");
-        String message="";
 
         Log.e(TAG, "From: " + from);
         Log.e(TAG, "Title: " + title);
@@ -55,8 +54,8 @@ public class MyGcmPushReceiver extends GcmListenerService {
         showNotificationMessage(getApplicationContext(), title, uploadDate, name, resultIntent);
 
         NoticeDownloader noticeDownloader = new NoticeDownloader();
-        noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, exp, noticeBoard, link, md5, message);
-        if(!link.equals(""))
+        noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, exp, noticeBoard, link, md5);
+        if(!(link.charAt(0)=='#'))
             noticeDownloader.downloadFile(link);
     }
 
