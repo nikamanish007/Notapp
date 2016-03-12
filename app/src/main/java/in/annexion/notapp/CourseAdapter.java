@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -45,12 +46,14 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         CourseInfo courseInfo = courseList.get(i);
         courseViewHolder.textView_CourseCode.setText(courseInfo.courseCode);
         courseViewHolder.textView_CourseTitle.setText(courseInfo.courseTitle);
+        courseViewHolder.textView_percentage.setText(""+courseInfo.percentage);
     }
 
-    public class CourseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public class CourseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener
     {
         TextView textView_CourseCode;
         TextView textView_CourseTitle;
+        TextView textView_percentage;
         public CourseViewHolder(View itemView)
         {
             super(itemView);
@@ -61,6 +64,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
 
             textView_CourseCode=(TextView)itemView.findViewById(R.id.textView_CourseCode);
             textView_CourseTitle=(TextView)itemView.findViewById(R.id.textView_CourseTitle);
+            textView_percentage=(TextView)itemView.findViewById(R.id.textView_percentage);
 
             textView_CourseTitle.setTypeface(robotoCondensed_light);
         }
@@ -70,10 +74,16 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         {
             clickListener.itemClicked(v,getAdapterPosition());
         }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return false;
+        }
     }
 
     public interface ClickListener
     {
         void itemClicked(View view,int position);
+        void itemTouched(View view,MotionEvent event);
     }
 }
