@@ -5,7 +5,9 @@ package in.annexion.notapp;
  */
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -43,13 +45,16 @@ public class MyGcmPushReceiver extends GcmListenerService {
         String link = bundle.getString("link");
         String md5= bundle.getString("md5");
 
+        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putBoolean(""+noticeBoard,true);
+        editor.commit();
+
         Log.e(TAG, "From: " + from);
         Log.e(TAG, "Title: " + title);
         Log.e(TAG, "uploadDate: " + uploadDate);
 
-        Intent resultIntent = new Intent(getApplicationContext(), NoticesActivity.class);
-        resultIntent.putExtra("title", titleArray[Integer.parseInt(noticeBoard)]);
-        resultIntent.putExtra("nb",intentArray[Integer.parseInt(noticeBoard)]);
+        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
 
         showNotificationMessage(getApplicationContext(), title, uploadDate, name, resultIntent);
 

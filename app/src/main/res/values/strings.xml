@@ -161,6 +161,72 @@
     <string name="title_activity_register">Register</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+    <string-array name="drawablesRead">
+        <item>it</item>
+        <item>cse</item>
+        <item>eln</item>
+        <item>ele</item>
+        <item>civ</item>
+        <item>mech</item>
+        <item>phy</item>
+        <item>chem</item>
+        <item>math</item>
+        <item>bio</item>
+        <item>acses</item>
+        <item>sait</item>
+        <item>elesa</item>
+        <item>eesa</item>
+        <item>cesa</item>
+        <item>mesa</item>
+        <item>wlug</item>
+        <item>pace</item>
+        <item>rotaract</item>
+        <item>softa</item>
+        <item>artcircle</item>
+        <item>admin</item>
+        <item>exam</item>
+        <item>tpo</item>
+        <item>sports</item>
+        <item>schol</item>
+        <item>rector</item>
+        <item>lostfound</item>
+        <item>vision</item>
+        <item>library</item>
+    </string-array>
+
+    <string-array name="drawablesUnread">
+        <item>itu</item>
+        <item>cseu</item>
+        <item>elnu</item>
+        <item>eleu</item>
+        <item>civu</item>
+        <item>mechu</item>
+        <item>phyu</item>
+        <item>chemu</item>
+        <item>mathu</item>
+        <item>biou</item>
+        <item>acsesu</item>
+        <item>saitu</item>
+        <item>elesau</item>
+        <item>eesau</item>
+        <item>cesau</item>
+        <item>mesau</item>
+        <item>wlugu</item>
+        <item>paceu</item>
+        <item>rotaractu</item>
+        <item>softau</item>
+        <item>artcircleu</item>
+        <item>adminu</item>
+        <item>examu</item>
+        <item>tpou</item>
+        <item>sportsu</item>
+        <item>scholu</item>
+        <item>rectoru</item>
+        <item>lostfoundu</item>
+        <item>visionu</item>
+        <item>libraryu</item>
+    </string-array>
+
     <string-array name="intent">
         <item>it</item>
         <item>cse</item>

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,7 +31,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,8 +73,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Context context;
     int [] ids= new int[30];
     String [] sids;
-    String [] intentArray;
-    String [] titleArray;
+    String [] intentArray,titleArray,drawableReadArray,drawableUnreadArray;
+    int [] unreads=new int[30];
+    int [] reads=new int[30];
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
@@ -110,30 +114,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             //if((new ConnectionDetector(getBaseContext())).isConnectingToInternet())
                // sync();
-
-          /*  mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-
-                    // checking for type intent filter
-                    if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-                        // gcm successfully registered
-                        String token = intent.getStringExtra("token");
-
-                        Toast.makeText(getApplicationContext(), "RBR|GCM registration token: " + token, Toast.LENGTH_LONG).show();
-
-                    } else if (intent.getAction().equals(Config.SENT_TOKEN_TO_SERVER)) {
-                        // gcm registration id is stored in our server's MySQL
-
-                        Toast.makeText(getApplicationContext(), "GCM registration token is stored in server!", Toast.LENGTH_LONG).show();
-
-                    } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-                        // new push notification is received
-
-                        Toast.makeText(getApplicationContext(), "Push notification is received!", Toast.LENGTH_LONG).show();
-                    }
-                }
-            };  */
 
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -260,13 +240,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+
     private void setListeners()
     {
+
         sids=getResources().getStringArray(R.array.sids);
+        drawableReadArray=getResources().getStringArray(R.array.drawablesRead);
+        drawableUnreadArray=getResources().getStringArray(R.array.drawablesUnread);
         imageButtons= new ImageButton[30];
         for(int i=0;i<30;i++)
         {
             ids[i] = getResources().getIdentifier(sids[i], "id", getApplicationContext().getPackageName());
+            reads[i] = getResources().getIdentifier(drawableReadArray[i],"drawable",getApplicationContext().getPackageName());
+            unreads[i]= getResources().getIdentifier(drawableUnreadArray[i],"drawable",getApplicationContext().getPackageName());
+
             imageButtons[i]=(ImageButton) findViewById(ids[i]);
             imageButtons[i].setOnClickListener(this);
             imageButtons[i].setOnTouchListener(this);
@@ -303,11 +290,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
     private void iconsUpdate()
     {
         int setCount=0;
-        LinearLayout linearLayout=null;
+        LinearLayout linearLayout;
         Set<String> set = sharedPreferences.getStringSet("pref_depts", new Set<String>() {
             @Override
             public boolean add(String object) {
@@ -381,6 +367,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             selections=new ArrayList<>(set);
         for(int i=1;i<=30;i++)
         {
+            boolean read=sharedPreferences.getBoolean(""+(i-1),false);
+            Log.e("MainActivity","badge_"+read);
+            if(!read)
+                imageButtons[i-1].setBackgroundResource(reads[i-1]);
+            else
+                imageButtons[i-1].setBackgroundResource(unreads[i-1]);
+
             if(!selections.contains(""+i))
             {
                 linearLayout=(LinearLayout)imageButtons[i-1].getParent();
@@ -396,6 +389,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 imageButtons[i-1].setImageResource(R.color.transperent);
                 imageButtons[i-1].setEnabled(true);
             }
+
         }
         if(setCount==0)
             Snackbar.make(this.findViewById(R.id.coordinatorLayout_parentViewMA), "You have no Notice boards selected!\nGo to Settings to change your preferences." , Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -502,7 +496,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onClick(View v)
     {
         Intent intent;
-        switch (v.getId())
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        int i=v.getId();
+        switch (i)
         {
             case R.id.avatar:
                 intent=new Intent(Intent.ACTION_PICK);
@@ -511,180 +507,240 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.imageButton_it:
+                editor.putBoolean(""+0,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb", intentArray[0]);
                 intent.putExtra("title", titleArray[0]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_cse:
+                editor.putBoolean(""+1,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[1]);
                 intent.putExtra("title",titleArray[1]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_eln:
+                editor.putBoolean(""+2,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[2]);
                 intent.putExtra("title",titleArray[2]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_ele:
+                editor.putBoolean(""+3,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[3]);
                 intent.putExtra("title",titleArray[3]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_civ:
+                editor.putBoolean(""+4,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[4]);
                 intent.putExtra("title",titleArray[4]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_mech:
+                editor.putBoolean(""+5,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[5]);
                 intent.putExtra("title",titleArray[5]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_phy:
+                editor.putBoolean(""+6,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[6]);
                 intent.putExtra("title",titleArray[6]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_chem:
+                editor.putBoolean(""+7,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[7]);
                 intent.putExtra("title",titleArray[7]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_math:
+                editor.putBoolean(""+8,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[8]);
                 intent.putExtra("title",titleArray[8]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_bio:
+                editor.putBoolean(""+9,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[9]);
                 intent.putExtra("title",titleArray[9]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_acses:
+                editor.putBoolean(""+10,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[10]);
                 intent.putExtra("title",titleArray[10]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_sait:
+                editor.putBoolean(""+11,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[11]);
                 intent.putExtra("title",titleArray[11]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_elesa:
+                editor.putBoolean(""+12,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[12]);
                 intent.putExtra("title",titleArray[12]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_eesa:
+                editor.putBoolean(""+13,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[13]);
                 intent.putExtra("title",titleArray[13]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_cesa:
+                editor.putBoolean(""+14,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[14]);
                 intent.putExtra("title",titleArray[14]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_mesa:
+                editor.putBoolean(""+15,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[15]);
                 intent.putExtra("title",titleArray[15]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_wlug:
+                editor.putBoolean(""+16,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[16]);
                 intent.putExtra("title",titleArray[16]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_pace:
+                editor.putBoolean(""+17,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[17]);
                 intent.putExtra("title",titleArray[17]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_rotr:
+                editor.putBoolean(""+18,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[18]);
                 intent.putExtra("title",titleArray[18]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_softa:
+                editor.putBoolean(""+19,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[19]);
                 intent.putExtra("title",titleArray[19]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_artC:
+                editor.putBoolean(""+20,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[20]);
                 intent.putExtra("title",titleArray[20]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_admin:
+                editor.putBoolean(""+21,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[21]);
                 intent.putExtra("title",titleArray[21]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_exam:
+                editor.putBoolean(""+22,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[22]);
                 intent.putExtra("title",titleArray[22]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_tpo:
+                editor.putBoolean(""+23,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[23]);
                 intent.putExtra("title",titleArray[23]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_sports:
+                editor.putBoolean(""+24,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[24]);
                 intent.putExtra("title",titleArray[24]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_schol:
+                editor.putBoolean(""+25,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[25]);
                 intent.putExtra("title",titleArray[25]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_rector:
+                editor.putBoolean(""+26,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[26]);
                 intent.putExtra("title",titleArray[26]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_lost_found:
+                editor.putBoolean(""+27,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[27]);
                 intent.putExtra("title",titleArray[27]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_vision:
+                editor.putBoolean(""+28,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[28]);
                 intent.putExtra("title",titleArray[28]);
                 startActivity(intent);
                 break;
             case R.id.imageButton_library:
+                editor.putBoolean(""+29,false);
+                editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
                 intent.putExtra("nb",intentArray[29]);
                 intent.putExtra("title",titleArray[29]);
