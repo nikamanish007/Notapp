@@ -489,12 +489,10 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     //cursor.moveToNext();
 
                 }while (cursor.moveToNext());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+
+                Log.e("manish","no error11");
+
+                Log.e("manish","no error");
             }
         }
         catch (Exception e)
