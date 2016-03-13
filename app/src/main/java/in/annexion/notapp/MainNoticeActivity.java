@@ -98,7 +98,7 @@ public class MainNoticeActivity extends AppCompatActivity
 
         if(link.charAt(0)=='#')
         {
-            textView_Message.setText(link.substring(1,link.length()-1));
+            textView_Message.setText(link.substring(1,link.length()));
             textView_Message.setTypeface(roboto_CondensedLight);
         }
         else if(file.exists()&&md5.equals(getMD5EncryptedString(file))||noticeBoard.equals(""))
