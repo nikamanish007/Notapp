@@ -436,7 +436,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         public  boolean hasActiveConnection() {
             Boolean toPostExecute=false;
             try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://10.10.13.120").openConnection());
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://10.10.5.140").openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(5000);
@@ -465,7 +465,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
                 try {
                     db = SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
                     JsonParser jParser = new JsonParser();
-                    JSONObject json = jParser.getJSONFromUrl("http://10.10.13.120/n/moodle/attendance.php?prn=" + params[0]);
+                    JSONObject json = jParser.getJSONFromUrl("http://10.10.5.140/n/moodle/attendance.php?prn=" + params[0]);
                     Log.e("AttendanceActivity", "after jParser.getJSONFromUrl");
                     dataJsonArr = json.getJSONArray("result");
                     Log.e("AttendanceActivity", "after jParser.getJSONArray");
@@ -473,7 +473,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
 
                     Log.e("AttendanceActivity", "Length json: " + length + " " + dataJsonArr.length());
 
-                    db.execSQL("drop table attendance");
+                    db.execSQL("drop table if exists attendance");
                     db.execSQL("create table attendance(courseCode varchar(10) , courseTitle varchar(50) , percentage varchar(10))");
 
                     Log.e("AttendanceActivity", "Database ");
