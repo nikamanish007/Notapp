@@ -1,11 +1,17 @@
 package in.annexion.notapp;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.database.DataSetObserver;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -13,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -78,17 +85,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     int [] reads=new int[30];
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-
-    static boolean updateClass=false;
-    static boolean updateBranch=false;
-    static boolean updateDPrefs=false;
-    static boolean updateFName=false;
-    static boolean updateLName=false;
-    static boolean updateEMail=false;
-    static boolean updateNumber=false;
-    static boolean updateDOB=false;
-    static boolean updatePassword=false;
-
     public static String name;
 
     static List<String> selections;
@@ -112,8 +108,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else {
 
-            //if((new ConnectionDetector(getBaseContext())).isConnectingToInternet())
-               // sync();
+            if((new ConnectionDetector(getBaseContext())).isConnectingToInternet())
+               sync();
 
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -192,50 +188,268 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void sync() {
-        if(updateClass)
+
+        boolean updateClass,updateBranch,updateDPrefs,updateFName,updateLName,updateEMail,updateNumber,updateDOB,updatePassword;
+
+        SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(""+ Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+        db.enableWriteAheadLogging();
+
+        Cursor cursor=new Cursor() {
+            @Override
+            public int getCount() {
+                return 0;
+            }
+
+            @Override
+            public int getPosition() {
+                return 0;
+            }
+
+            @Override
+            public boolean move(int offset) {
+                return false;
+            }
+
+            @Override
+            public boolean moveToPosition(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean moveToFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean moveToLast() {
+                return false;
+            }
+
+            @Override
+            public boolean moveToNext() {
+                return false;
+            }
+
+            @Override
+            public boolean moveToPrevious() {
+                return false;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean isBeforeFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isAfterLast() {
+                return false;
+            }
+
+            @Override
+            public int getColumnIndex(String columnName) {
+                return 0;
+            }
+
+            @Override
+            public int getColumnIndexOrThrow(String columnName) throws IllegalArgumentException {
+                return 0;
+            }
+
+            @Override
+            public String getColumnName(int columnIndex) {
+                return null;
+            }
+
+            @Override
+            public String[] getColumnNames() {
+                return new String[0];
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 0;
+            }
+
+            @Override
+            public byte[] getBlob(int columnIndex) {
+                return new byte[0];
+            }
+
+            @Override
+            public String getString(int columnIndex) {
+                return null;
+            }
+
+            @Override
+            public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
+
+            }
+
+            @Override
+            public short getShort(int columnIndex) {
+                return 0;
+            }
+
+            @Override
+            public int getInt(int columnIndex) {
+                return 0;
+            }
+
+            @Override
+            public long getLong(int columnIndex) {
+                return 0;
+            }
+
+            @Override
+            public float getFloat(int columnIndex) {
+                return 0;
+            }
+
+            @Override
+            public double getDouble(int columnIndex) {
+                return 0;
+            }
+
+            @Override
+            public int getType(int columnIndex) {
+                return 0;
+            }
+
+            @Override
+            public boolean isNull(int columnIndex) {
+                return false;
+            }
+
+            @Override
+            public void deactivate() {
+
+            }
+
+            @Override
+            public boolean requery() {
+                return false;
+            }
+
+            @Override
+            public void close() {
+
+            }
+
+            @Override
+            public boolean isClosed() {
+                return false;
+            }
+
+            @Override
+            public void registerContentObserver(ContentObserver observer) {
+
+            }
+
+            @Override
+            public void unregisterContentObserver(ContentObserver observer) {
+
+            }
+
+            @Override
+            public void registerDataSetObserver(DataSetObserver observer) {
+
+            }
+
+            @Override
+            public void unregisterDataSetObserver(DataSetObserver observer) {
+
+            }
+
+            @Override
+            public void setNotificationUri(ContentResolver cr, Uri uri) {
+
+            }
+
+            @Override
+            public Uri getNotificationUri() {
+                return null;
+            }
+
+            @Override
+            public boolean getWantsAllOnMoveCalls() {
+                return false;
+            }
+
+            @Override
+            public void setExtras(Bundle extras) {
+
+            }
+
+            @Override
+            public Bundle getExtras() {
+                return null;
+            }
+
+            @Override
+            public Bundle respond(Bundle extras) {
+                return null;
+            }
+        };
+        cursor=db.rawQuery("select * from syncStatus",null);
+
+        if((cursor.moveToFirst()) ||cursor.getCount()>0)
         {
-            updateClass=false;
-            updateClass();
-        }
-        if(updateBranch)
-        {
-            updateBranch=false;
-            updateBranch();
-        }
-        if(updateDPrefs)
-        {
-            updateDPrefs=false;
-            updateDPrefs();
-        }
-        if(updateFName)
-        {
-            updateFName=false;
-            updateFName();
-        }
-        if(updateLName)
-        {
-            updateLName=false;
-            updateLName();
-        }
-        if(updateEMail)
-        {
-            updateEMail=false;
-            updateEMail();
-        }
-        if(updateNumber)
-        {
-            updateNumber=false;
-            updateNumber();
-        }
-        if(updateDOB)
-        {
-            updateDOB=false;
-            updateDOB();
-        }
-        if(updatePassword)
-        {
-            updatePassword=false;
-            updatePassword();
+            updateFName = cursor.getInt(0) == 1;
+            updateLName = cursor.getInt(1) == 1;
+            updateEMail = cursor.getInt(2) == 1;
+            updatePassword = cursor.getInt(3) == 1;
+            updateNumber = cursor.getInt(4) == 1;
+            updateDOB = cursor.getInt(5) == 1;
+            updateClass = cursor.getInt(6) == 1;
+            updateBranch = cursor.getInt(7) == 1;
+            updateDPrefs = cursor.getInt(8) == 1;
+
+            if (updateClass) {
+                db.execSQL("update syncStatus set class=0");
+                updateClass();
+            }
+            if (updateBranch) {
+                db.execSQL("update syncStatus set branch=0");
+                updateBranch();
+            }
+            if (updateDPrefs) {
+                db.execSQL("update syncStatus set dprefs=0");
+                updateDPrefs();
+            }
+            if (updateFName) {
+                db.execSQL("update syncStatus set fname=0");
+                updateFName();
+            }
+            if (updateLName) {
+                db.execSQL("update syncStatus set lname=0");
+                updateLName();
+            }
+            if (updateEMail) {
+                db.execSQL("update syncStatus set email=0");
+                updateEMail();
+            }
+            if (updateNumber) {
+                db.execSQL("update syncStatus set number=0");
+                updateNumber();
+            }
+            if (updateDOB) {
+                db.execSQL("update syncStatus set dob=0");
+                updateDOB();
+            }
+            if (updatePassword) {
+                db.execSQL("update syncStatus set password=0");
+                updatePassword();
+            }
         }
 
     }

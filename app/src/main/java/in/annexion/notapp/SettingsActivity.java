@@ -1,12 +1,21 @@
 package in.annexion.notapp;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.database.DataSetObserver;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
@@ -121,7 +130,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         loadHeadersFromResource(R.xml.pref_headers, target);
     }*/
 
-
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -132,6 +140,222 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         {
             String stringValue=null;
             HashSet hashSet=null;
+            Cursor cursor=new Cursor() {
+                @Override
+                public int getCount() {
+                    return 0;
+                }
+
+                @Override
+                public int getPosition() {
+                    return 0;
+                }
+
+                @Override
+                public boolean move(int offset) {
+                    return false;
+                }
+
+                @Override
+                public boolean moveToPosition(int position) {
+                    return false;
+                }
+
+                @Override
+                public boolean moveToFirst() {
+                    return false;
+                }
+
+                @Override
+                public boolean moveToLast() {
+                    return false;
+                }
+
+                @Override
+                public boolean moveToNext() {
+                    return false;
+                }
+
+                @Override
+                public boolean moveToPrevious() {
+                    return false;
+                }
+
+                @Override
+                public boolean isFirst() {
+                    return false;
+                }
+
+                @Override
+                public boolean isLast() {
+                    return false;
+                }
+
+                @Override
+                public boolean isBeforeFirst() {
+                    return false;
+                }
+
+                @Override
+                public boolean isAfterLast() {
+                    return false;
+                }
+
+                @Override
+                public int getColumnIndex(String columnName) {
+                    return 0;
+                }
+
+                @Override
+                public int getColumnIndexOrThrow(String columnName) throws IllegalArgumentException {
+                    return 0;
+                }
+
+                @Override
+                public String getColumnName(int columnIndex) {
+                    return null;
+                }
+
+                @Override
+                public String[] getColumnNames() {
+                    return new String[0];
+                }
+
+                @Override
+                public int getColumnCount() {
+                    return 0;
+                }
+
+                @Override
+                public byte[] getBlob(int columnIndex) {
+                    return new byte[0];
+                }
+
+                @Override
+                public String getString(int columnIndex) {
+                    return null;
+                }
+
+                @Override
+                public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
+
+                }
+
+                @Override
+                public short getShort(int columnIndex) {
+                    return 0;
+                }
+
+                @Override
+                public int getInt(int columnIndex) {
+                    return 0;
+                }
+
+                @Override
+                public long getLong(int columnIndex) {
+                    return 0;
+                }
+
+                @Override
+                public float getFloat(int columnIndex) {
+                    return 0;
+                }
+
+                @Override
+                public double getDouble(int columnIndex) {
+                    return 0;
+                }
+
+                @Override
+                public int getType(int columnIndex) {
+                    return 0;
+                }
+
+                @Override
+                public boolean isNull(int columnIndex) {
+                    return false;
+                }
+
+                @Override
+                public void deactivate() {
+
+                }
+
+                @Override
+                public boolean requery() {
+                    return false;
+                }
+
+                @Override
+                public void close() {
+
+                }
+
+                @Override
+                public boolean isClosed() {
+                    return false;
+                }
+
+                @Override
+                public void registerContentObserver(ContentObserver observer) {
+
+                }
+
+                @Override
+                public void unregisterContentObserver(ContentObserver observer) {
+
+                }
+
+                @Override
+                public void registerDataSetObserver(DataSetObserver observer) {
+
+                }
+
+                @Override
+                public void unregisterDataSetObserver(DataSetObserver observer) {
+
+                }
+
+                @Override
+                public void setNotificationUri(ContentResolver cr, Uri uri) {
+
+                }
+
+                @Override
+                public Uri getNotificationUri() {
+                    return null;
+                }
+
+                @Override
+                public boolean getWantsAllOnMoveCalls() {
+                    return false;
+                }
+
+                @Override
+                public void setExtras(Bundle extras) {
+
+                }
+
+                @Override
+                public Bundle getExtras() {
+                    return null;
+                }
+
+                @Override
+                public Bundle respond(Bundle extras) {
+                    return null;
+                }
+            };
+
+            SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+            db.enableWriteAheadLogging();
+            db.execSQL("create table if not exists syncStatus(fname integer default 0, lname integer default 0, email integer default 0, password integer default 0, number integer default 0, dob integer default 0, class integer default 0, branch integer default 0, dprefs integer default 0)");
+            cursor=db.rawQuery("select * from syncStatus",null);
+            if(cursor.getCount()==0)
+            {
+                db.execSQL("insert into syncStatus values(0,0,0,0,0,0,0,0,0)");
+            }
+
             if(preference instanceof MultiSelectListPreference) {
                 hashSet=(HashSet)value;
             }
@@ -148,11 +372,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
                 if(preference.getKey().equals("class"))
                 {
-                    MainActivity.updateClass=true;
+                    db.execSQL("update syncStatus set class=1");
                 }
                 if(preference.getKey().equals("branch"))
                 {
-                    MainActivity.updateBranch=true;
+                    db.execSQL("update syncStatus set branch=1");
                 }
 
                 preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
@@ -162,7 +386,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                 MainActivity.updateIcons=true;
                 MainActivity.selections=new ArrayList<>(hashSet);
 
-                MainActivity.updateDPrefs=true;
+                db.execSQL("update syncStatus set dprefs=1");
             }
             else if(preference instanceof EditTextPreference)
             {
@@ -175,23 +399,27 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
                 if (preference.getKey().equals("fname"))
                 {
-                    MainActivity.updateFName=true;
+                    db.execSQL("update syncStatus set fname=1");
                 }
-                if (preference.getKey().equals("lname"))
+                else if (preference.getKey().equals("lname"))
                 {
-                    MainActivity.updateLName=true;
+                    db.execSQL("update syncStatus set lname=1");
                 }
-                if (preference.getKey().equals("number"))
+                else if (preference.getKey().equals("number"))
                 {
-                    MainActivity.updateNumber=true;
+                    db.execSQL("update syncStatus set number=1");
                 }
-                if (preference.getKey().equals("email"))
+                else if (preference.getKey().equals("email"))
                 {
-                    MainActivity.updateEMail=true;
+                    db.execSQL("update syncStatus set email=1");
                 }
-                if (preference.getKey().equals("password"))
+                else if (preference.getKey().equals("password"))
                 {
-                    MainActivity.updatePassword=true;
+                    db.execSQL("update syncStatus set password=1");
+                }
+                else if(preference.getKey().equals("DOB"))
+                {
+                    db.execSQL("update syncStatus set dob=1");
                 }
             }
             return true;
