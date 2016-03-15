@@ -194,6 +194,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(""+ Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
         db.enableWriteAheadLogging();
 
+        db.execSQL("create table if not exists syncStatus(fname integer default 0, lname integer default 0, email integer default 0, password integer default 0, number integer default 0, dob integer default 0, class integer default 0, branch integer default 0, dprefs integer default 0)");
+
         Cursor cursor=new Cursor() {
             @Override
             public int getCount() {
