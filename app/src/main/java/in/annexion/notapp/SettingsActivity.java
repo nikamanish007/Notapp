@@ -25,6 +25,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.Toast;
@@ -46,8 +47,10 @@ import java.util.HashSet;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity
 {
-    SharedPreferences sharedPreferences;
+    static SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    static int cunt;
+    static boolean isEditProf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,7 +58,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         super.onCreate(savedInstanceState);
         setupActionBar();
 
+        cunt=0;
+        isEditProf=false;
 
+        sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor=sharedPreferences.edit();
 
         if(((getIntent()).getStringExtra("optionSelected")).equals("settings"))
             getFragmentManager().beginTransaction().replace(android.R.id.content, new AppPreferenceFragment()).commit();
@@ -140,221 +147,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         {
             String stringValue=null;
             HashSet hashSet=null;
-            Cursor cursor=new Cursor() {
-                @Override
-                public int getCount() {
-                    return 0;
-                }
 
-                @Override
-                public int getPosition() {
-                    return 0;
-                }
-
-                @Override
-                public boolean move(int offset) {
-                    return false;
-                }
-
-                @Override
-                public boolean moveToPosition(int position) {
-                    return false;
-                }
-
-                @Override
-                public boolean moveToFirst() {
-                    return false;
-                }
-
-                @Override
-                public boolean moveToLast() {
-                    return false;
-                }
-
-                @Override
-                public boolean moveToNext() {
-                    return false;
-                }
-
-                @Override
-                public boolean moveToPrevious() {
-                    return false;
-                }
-
-                @Override
-                public boolean isFirst() {
-                    return false;
-                }
-
-                @Override
-                public boolean isLast() {
-                    return false;
-                }
-
-                @Override
-                public boolean isBeforeFirst() {
-                    return false;
-                }
-
-                @Override
-                public boolean isAfterLast() {
-                    return false;
-                }
-
-                @Override
-                public int getColumnIndex(String columnName) {
-                    return 0;
-                }
-
-                @Override
-                public int getColumnIndexOrThrow(String columnName) throws IllegalArgumentException {
-                    return 0;
-                }
-
-                @Override
-                public String getColumnName(int columnIndex) {
-                    return null;
-                }
-
-                @Override
-                public String[] getColumnNames() {
-                    return new String[0];
-                }
-
-                @Override
-                public int getColumnCount() {
-                    return 0;
-                }
-
-                @Override
-                public byte[] getBlob(int columnIndex) {
-                    return new byte[0];
-                }
-
-                @Override
-                public String getString(int columnIndex) {
-                    return null;
-                }
-
-                @Override
-                public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-
-                }
-
-                @Override
-                public short getShort(int columnIndex) {
-                    return 0;
-                }
-
-                @Override
-                public int getInt(int columnIndex) {
-                    return 0;
-                }
-
-                @Override
-                public long getLong(int columnIndex) {
-                    return 0;
-                }
-
-                @Override
-                public float getFloat(int columnIndex) {
-                    return 0;
-                }
-
-                @Override
-                public double getDouble(int columnIndex) {
-                    return 0;
-                }
-
-                @Override
-                public int getType(int columnIndex) {
-                    return 0;
-                }
-
-                @Override
-                public boolean isNull(int columnIndex) {
-                    return false;
-                }
-
-                @Override
-                public void deactivate() {
-
-                }
-
-                @Override
-                public boolean requery() {
-                    return false;
-                }
-
-                @Override
-                public void close() {
-
-                }
-
-                @Override
-                public boolean isClosed() {
-                    return false;
-                }
-
-                @Override
-                public void registerContentObserver(ContentObserver observer) {
-
-                }
-
-                @Override
-                public void unregisterContentObserver(ContentObserver observer) {
-
-                }
-
-                @Override
-                public void registerDataSetObserver(DataSetObserver observer) {
-
-                }
-
-                @Override
-                public void unregisterDataSetObserver(DataSetObserver observer) {
-
-                }
-
-                @Override
-                public void setNotificationUri(ContentResolver cr, Uri uri) {
-
-                }
-
-                @Override
-                public Uri getNotificationUri() {
-                    return null;
-                }
-
-                @Override
-                public boolean getWantsAllOnMoveCalls() {
-                    return false;
-                }
-
-                @Override
-                public void setExtras(Bundle extras) {
-
-                }
-
-                @Override
-                public Bundle getExtras() {
-                    return null;
-                }
-
-                @Override
-                public Bundle respond(Bundle extras) {
-                    return null;
-                }
-            };
-
-            SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
-            db.enableWriteAheadLogging();
-            db.execSQL("create table if not exists syncStatus(fname integer default 0, lname integer default 0, email integer default 0, password integer default 0, number integer default 0, dob integer default 0, class integer default 0, branch integer default 0, dprefs integer default 0)");
-            cursor=db.rawQuery("select * from syncStatus",null);
-            if(cursor.getCount()==0)
-            {
-                db.execSQL("insert into syncStatus values(0,0,0,0,0,0,0,0,0)");
-            }
+            SharedPreferences.Editor editor=sharedPreferences.edit();
 
             if(preference instanceof MultiSelectListPreference) {
                 hashSet=(HashSet)value;
@@ -370,56 +164,93 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
 
-                if(preference.getKey().equals("class"))
+                if(preference.getKey().equals("c_name"))
                 {
-                    db.execSQL("update syncStatus set class=1");
+                    Log.e("onPreference:",""+preference.getKey());
+                    editor.putBoolean("updateClass", true);
+                    editor.commit();
                 }
-                if(preference.getKey().equals("branch"))
+                if(preference.getKey().equals("d_name"))
                 {
-                    db.execSQL("update syncStatus set branch=1");
+                    Log.e("onPreference:",""+preference.getKey());
+                    editor.putBoolean("updateBranch", true);
+                    editor.commit();
                 }
 
                 preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
             }
             else if (preference instanceof MultiSelectListPreference)
             {
-                MainActivity.updateIcons=true;
                 MainActivity.selections=new ArrayList<>(hashSet);
-
-                db.execSQL("update syncStatus set dprefs=1");
+                Log.e("onPreference:",""+preference.getKey());
+                editor.putBoolean("updateDprefs", true);
+                editor.commit();
             }
             else if(preference instanceof EditTextPreference)
             {
                 preference.setSummary(stringValue);
 
-                if(preference.getKey().equals("fname")||preference.getKey().equals("lname")||preference.getKey().equals("email"))
+                if(preference.getKey().equals("f_name")||preference.getKey().equals("l_name")||preference.getKey().equals("email"))
                 {
                     MainActivity.updateNav=true;
                 }
 
-                if (preference.getKey().equals("fname"))
+                if (preference.getKey().equals("f_name"))
                 {
-                    db.execSQL("update syncStatus set fname=1");
+                    Log.e("onPreference:",""+preference.getKey());
+                    editor.putBoolean("updateFname", true);
+                    editor.commit();
                 }
-                else if (preference.getKey().equals("lname"))
+                else if (preference.getKey().equals("l_name"))
                 {
-                    db.execSQL("update syncStatus set lname=1");
+                    Log.e("onPreference:",""+preference.getKey());
+                    editor.putBoolean("updateLname", true);
+                    editor.commit();
                 }
-                else if (preference.getKey().equals("number"))
+                else if (preference.getKey().equals("phone"))
                 {
-                    db.execSQL("update syncStatus set number=1");
+                    Log.e("onPreference:",""+preference.getKey());
+                    editor.putBoolean("updateNumber", true);
+                    editor.commit();
                 }
                 else if (preference.getKey().equals("email"))
                 {
-                    db.execSQL("update syncStatus set email=1");
+                    Log.e("onPreference:",""+preference.getKey());
+                    editor.putBoolean("updateEmail", true);
+                    editor.commit();
                 }
-                else if (preference.getKey().equals("password"))
+                else if (preference.getKey().equals("pword"))
                 {
-                    db.execSQL("update syncStatus set password=1");
+                    Log.e("onPreference:",""+preference.getKey());
+                    editor.putBoolean("updatePassword", true);
+                    editor.commit();
                 }
-                else if(preference.getKey().equals("DOB"))
+                else if(preference.getKey().equals("dob"))
                 {
-                    db.execSQL("update syncStatus set dob=1");
+                    Log.e("onPreference:",""+preference.getKey());
+                    editor.putBoolean("updateDOB",true);
+                    editor.commit();
+                }
+            }
+
+            if(isEditProf) {
+                if (cunt < 4) {
+                    editor.putBoolean("updateFname", false);
+                    editor.putBoolean("updateLname", false);
+                    editor.putBoolean("updateEmail", false);
+                    editor.putBoolean("updateNumber", false);
+                    editor.commit();
+                    cunt++;
+                    Log.e("Settings Activity", "We're Done!");
+                }
+            }
+            else {
+                if (cunt < 2) {
+                    editor.putBoolean("updateClass",false);
+                    editor.putBoolean("updateBranch", false);
+                    editor.commit();
+                    cunt++;
+                    Log.e("Settings Activity", "We're Done!");
                 }
             }
             return true;
@@ -442,7 +273,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
         // Trigger the listener immediately with the preference's
         // current value.
-        if(preference.getKey().equals("pref_depts"))
+        if(preference.getKey().equals("prefs"))
           sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
              PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getStringSet(preference.getKey(), new HashSet<String>(Arrays.asList(new String[]{}))));
         else
@@ -474,16 +305,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             addPreferencesFromResource(R.xml.pref_app);
             setHasOptionsMenu(true);
 
-            SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor editor=sharedPreferences.edit();
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("class"));
-            bindPreferenceSummaryToValue(findPreference("branch"));
-            bindPreferenceSummaryToValue(findPreference("pref_depts"));
-
+            bindPreferenceSummaryToValue(findPreference("c_name"));
+            bindPreferenceSummaryToValue(findPreference("d_name"));
+            bindPreferenceSummaryToValue(findPreference("prefs"));
         }
 
         @Override
@@ -509,18 +339,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             addPreferencesFromResource(R.xml.pref_editprofile);
             setHasOptionsMenu(true);
 
+            isEditProf=true;
+
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("fname"));
-            bindPreferenceSummaryToValue(findPreference("lname"));
+            bindPreferenceSummaryToValue(findPreference("f_name"));
+            bindPreferenceSummaryToValue(findPreference("l_name"));
             bindPreferenceSummaryToValue(findPreference("email"));
-            bindPreferenceSummaryToValue(findPreference("number"));
-            bindPreferenceSummaryToValue(findPreference("DOB"));
+            bindPreferenceSummaryToValue(findPreference("phone"));
+            bindPreferenceSummaryToValue(findPreference("dob"));
 
-            Preference preference_DOB=(Preference)findPreference("DOB");
+            Preference preference_DOB=findPreference("dob");
             preference_DOB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -532,11 +364,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            Preference preference=findPreference("DOB");
+            Preference preference=findPreference("dob");
             preference.setSummary(""+dayOfMonth+"-"+""+(monthOfYear+1)+"-"+""+year);
             SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getActivity());
             SharedPreferences.Editor editor=sharedPreferences.edit();
-            editor.putString("DOB",""+dayOfMonth+"-"+""+(monthOfYear+1)+"-"+""+year);
+            editor.putString("dob",""+dayOfMonth+"-"+""+(monthOfYear+1)+"-"+""+year);
             editor.commit();
         }
 
@@ -551,5 +383,4 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             return super.onOptionsItemSelected(item);
         }
     }
-
 }

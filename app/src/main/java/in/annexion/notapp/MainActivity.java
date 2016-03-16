@@ -1,25 +1,17 @@
 package in.annexion.notapp;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.CharArrayBuffer;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.database.DataSetObserver;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -189,273 +181,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void sync() {
 
-        boolean updateClass,updateBranch,updateDPrefs,updateFName,updateLName,updateEMail,updateNumber,updateDOB,updatePassword;
+        boolean updateClass,updateBranch,updateDprefs,updateFname,updateLname,updateEmail,updateNumber,updateDOB,updatePassword;
+        SharedPreferences.Editor editor=sharedPreferences.edit();
 
-        SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(""+ Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
-        db.enableWriteAheadLogging();
+        updateFname=sharedPreferences.getBoolean("updateFname",false); Log.e("updateFname=",""+updateFname);
+        updateLname=sharedPreferences.getBoolean("updateLname",false); Log.e("updateLname=",""+updateLname);
+        updateEmail=sharedPreferences.getBoolean("updateEmail",false); Log.e("updateEmail=",""+updateEmail);
+        updatePassword=sharedPreferences.getBoolean("updatePassword",false); Log.e("updatePassword=",""+updatePassword);
+        updateNumber=sharedPreferences.getBoolean("updateNumber",false); Log.e("updateNumber=",""+updateNumber);
+        updateDOB=sharedPreferences.getBoolean("updateDOB",false); Log.e("updateDOB=",""+updateDOB);
+        updateClass=sharedPreferences.getBoolean("updateClass",false); Log.e("updateClass=",""+updateClass);
+        updateBranch=sharedPreferences.getBoolean("updateBranch",false); Log.e("updateBranch=",""+updateBranch);
+        updateDprefs=sharedPreferences.getBoolean("updateDprefs",false); Log.e("updateDPrefs=",""+updateDprefs);
 
-        db.execSQL("create table if not exists syncStatus(fname integer default 0, lname integer default 0, email integer default 0, password integer default 0, number integer default 0, dob integer default 0, class integer default 0, branch integer default 0, dprefs integer default 0)");
-
-        Cursor cursor=new Cursor() {
-            @Override
-            public int getCount() {
-                return 0;
-            }
-
-            @Override
-            public int getPosition() {
-                return 0;
-            }
-
-            @Override
-            public boolean move(int offset) {
-                return false;
-            }
-
-            @Override
-            public boolean moveToPosition(int position) {
-                return false;
-            }
-
-            @Override
-            public boolean moveToFirst() {
-                return false;
-            }
-
-            @Override
-            public boolean moveToLast() {
-                return false;
-            }
-
-            @Override
-            public boolean moveToNext() {
-                return false;
-            }
-
-            @Override
-            public boolean moveToPrevious() {
-                return false;
-            }
-
-            @Override
-            public boolean isFirst() {
-                return false;
-            }
-
-            @Override
-            public boolean isLast() {
-                return false;
-            }
-
-            @Override
-            public boolean isBeforeFirst() {
-                return false;
-            }
-
-            @Override
-            public boolean isAfterLast() {
-                return false;
-            }
-
-            @Override
-            public int getColumnIndex(String columnName) {
-                return 0;
-            }
-
-            @Override
-            public int getColumnIndexOrThrow(String columnName) throws IllegalArgumentException {
-                return 0;
-            }
-
-            @Override
-            public String getColumnName(int columnIndex) {
-                return null;
-            }
-
-            @Override
-            public String[] getColumnNames() {
-                return new String[0];
-            }
-
-            @Override
-            public int getColumnCount() {
-                return 0;
-            }
-
-            @Override
-            public byte[] getBlob(int columnIndex) {
-                return new byte[0];
-            }
-
-            @Override
-            public String getString(int columnIndex) {
-                return null;
-            }
-
-            @Override
-            public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-
-            }
-
-            @Override
-            public short getShort(int columnIndex) {
-                return 0;
-            }
-
-            @Override
-            public int getInt(int columnIndex) {
-                return 0;
-            }
-
-            @Override
-            public long getLong(int columnIndex) {
-                return 0;
-            }
-
-            @Override
-            public float getFloat(int columnIndex) {
-                return 0;
-            }
-
-            @Override
-            public double getDouble(int columnIndex) {
-                return 0;
-            }
-
-            @Override
-            public int getType(int columnIndex) {
-                return 0;
-            }
-
-            @Override
-            public boolean isNull(int columnIndex) {
-                return false;
-            }
-
-            @Override
-            public void deactivate() {
-
-            }
-
-            @Override
-            public boolean requery() {
-                return false;
-            }
-
-            @Override
-            public void close() {
-
-            }
-
-            @Override
-            public boolean isClosed() {
-                return false;
-            }
-
-            @Override
-            public void registerContentObserver(ContentObserver observer) {
-
-            }
-
-            @Override
-            public void unregisterContentObserver(ContentObserver observer) {
-
-            }
-
-            @Override
-            public void registerDataSetObserver(DataSetObserver observer) {
-
-            }
-
-            @Override
-            public void unregisterDataSetObserver(DataSetObserver observer) {
-
-            }
-
-            @Override
-            public void setNotificationUri(ContentResolver cr, Uri uri) {
-
-            }
-
-            @Override
-            public Uri getNotificationUri() {
-                return null;
-            }
-
-            @Override
-            public boolean getWantsAllOnMoveCalls() {
-                return false;
-            }
-
-            @Override
-            public void setExtras(Bundle extras) {
-
-            }
-
-            @Override
-            public Bundle getExtras() {
-                return null;
-            }
-
-            @Override
-            public Bundle respond(Bundle extras) {
-                return null;
-            }
-        };
-        cursor=db.rawQuery("select * from syncStatus",null);
-
-        if((cursor.moveToFirst()) ||cursor.getCount()>0)
-        {
-            updateFName = cursor.getInt(0) == 1;
-            updateLName = cursor.getInt(1) == 1;
-            updateEMail = cursor.getInt(2) == 1;
-            updatePassword = cursor.getInt(3) == 1;
-            updateNumber = cursor.getInt(4) == 1;
-            updateDOB = cursor.getInt(5) == 1;
-            updateClass = cursor.getInt(6) == 1;
-            updateBranch = cursor.getInt(7) == 1;
-            updateDPrefs = cursor.getInt(8) == 1;
-
-            if (updateClass) {
-                db.execSQL("update syncStatus set class=0");
-                updateClass();
-            }
-            if (updateBranch) {
-                db.execSQL("update syncStatus set branch=0");
-                updateBranch();
-            }
-            if (updateDPrefs) {
-                db.execSQL("update syncStatus set dprefs=0");
-                updateDPrefs();
-            }
-            if (updateFName) {
-                db.execSQL("update syncStatus set fname=0");
-                updateFName();
-            }
-            if (updateLName) {
-                db.execSQL("update syncStatus set lname=0");
-                updateLName();
-            }
-            if (updateEMail) {
-                db.execSQL("update syncStatus set email=0");
-                updateEMail();
-            }
-            if (updateNumber) {
-                db.execSQL("update syncStatus set number=0");
-                updateNumber();
-            }
-            if (updateDOB) {
-                db.execSQL("update syncStatus set dob=0");
-                updateDOB();
-            }
-            if (updatePassword) {
-                db.execSQL("update syncStatus set password=0");
-                updatePassword();
-            }
+        if (updateClass) {
+            //db.execSQL("update syncStatus set class=0");
+            editor.putBoolean("updateClass",false);
+            editor.commit();
+            updateClass();
         }
-
+        if (updateBranch) {
+            //db.execSQL("update syncStatus set branch=0");
+            editor.putBoolean("updateBranch", false);
+            editor.commit();
+            updateBranch();
+        }
+        if (updateDprefs) {
+            //db.execSQL("update syncStatus set dprefs=0");
+            editor.putBoolean("updateDprefs", false);
+            editor.commit();
+            updateDPrefs();
+        }
+        if (updateFname) {
+            //db.execSQL("update syncStatus set fname=0");
+            editor.putBoolean("updateFname", false);
+            editor.commit();
+            updateFName();
+        }
+        if (updateLname) {
+            //db.execSQL("update syncStatus set lname=0");
+            editor.putBoolean("updateLname", false);
+            editor.commit();
+            updateLName();
+        }
+        if (updateEmail) {
+            //db.execSQL("update syncStatus set email=0");
+            editor.putBoolean("updateEmail", false);
+            editor.commit();
+            updateEMail();
+        }
+        if (updateNumber) {
+            //db.execSQL("update syncStatus set number=0");
+            editor.putBoolean("updateNumber", false);
+            editor.commit();
+            updateNumber();
+        }
+        if (updateDOB) {
+            //db.execSQL("update syncStatus set dob=0");
+            editor.putBoolean("updateDOB", false);
+            editor.commit();
+            updateDOB();
+        }
+        if (updatePassword) {
+            //db.execSQL("update syncStatus set password=0");
+            editor.putBoolean("updatePassword",false);
+            editor.commit();
+            updatePassword();
+        }
     }
-
 
     private void setListeners()
     {
@@ -485,9 +278,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Typeface roboto_light = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
 
         textView=(TextView)navHeader.findViewById(R.id.textView_Name);
-        s+=sharedPreferences.getString("fname", "Your");
+        s+=sharedPreferences.getString("f_name", "Your");
         s+=" ";
-        s+=sharedPreferences.getString("lname", "Name");
+        s+=sharedPreferences.getString("l_name", "Name");
         textView.setText(s);
         textView.setTypeface(roboto_light);
 
@@ -510,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         int setCount=0;
         LinearLayout linearLayout;
-        Set<String> set = sharedPreferences.getStringSet("pref_depts", new Set<String>() {
+        Set<String> set = sharedPreferences.getStringSet("prefs", new Set<String>() {
             @Override
             public boolean add(String object) {
                 return false;
@@ -584,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for(int i=1;i<=30;i++)
         {
             boolean read=sharedPreferences.getBoolean(""+(i-1),false);
-            Log.e("MainActivity","badge_"+read);
+            //Log.e("MainActivity","badge_"+read);
             if(!read)
                 imageButtons[i-1].setBackgroundResource(reads[i-1]);
             else
@@ -1029,47 +822,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void updateClass()
     {
-        String _class= sharedPreferences.getString("class", "b1");
-        upload("class",_class);
+        String _class= sharedPreferences.getString("c_name", "b1");
+        upload("c_name",_class);
     }
     public void updateBranch()
     {
-        String _branch= sharedPreferences.getString("branch", "cse");
-        upload("branch",_branch);
+        String _branch= sharedPreferences.getString("d_name", "cse");
+        upload("d_name",_branch);
     }
     public void updateDPrefs()
     {
-        Set<String> dprefs= sharedPreferences.getStringSet("dprefs", new HashSet<String>(Arrays.asList(new String[]{})));
+        Set<String> dprefs= sharedPreferences.getStringSet("prefs", new HashSet<String>(Arrays.asList(new String[]{})));
         String _dprefs="";
         Iterator iterator=dprefs.iterator();
         for (int i=0;i<dprefs.size();i++) {
             _dprefs+=""+iterator.next();
             _dprefs+=",";
         }
-        upload("dprefs",_dprefs);
+        upload("prefs",_dprefs.substring(0,_dprefs.length()-1));
     }
     public void updateFName()
     {
-        String _fname= sharedPreferences.getString("fname", "");
+        String _fname= sharedPreferences.getString("f_name", "");
         try {
             _fname= URLEncoder.encode(_fname,"utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        upload("fname",_fname);
-
+        upload("f_name",_fname);
 
     }
     public void updateLName()
     {
-        String _lname= sharedPreferences.getString("lname", "");
+        String _lname= sharedPreferences.getString("l_name", "");
         try {
             _lname= URLEncoder.encode(_lname,"utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        upload("lname",_lname);
-
+        upload("l_name",_lname);
 
     }
     public void updateEMail()
@@ -1084,24 +875,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public void updateNumber()
     {
-        String _number= sharedPreferences.getString("number", "b1");
+        String _number= sharedPreferences.getString("phone", "");
         upload("phone",_number);
 
     }
     public void updatePassword()
     {
-        String _password= sharedPreferences.getString("password", "");
-        upload("password",_password);
+        String _password= sharedPreferences.getString("pword", "");
+        upload("pword",_password);
     }
     public void updateDOB()
     {
-        String _dob= sharedPreferences.getString("DOB", "");
-        upload("DOB",_dob);
+        String _dob= sharedPreferences.getString("dob", "");
+        upload("dob",_dob);
 
     }
 
     private void upload(String key,String value) {
-        String URL="http://notapp.in/sync.php?PRN="+sharedPreferences.getString("PRN","")+"&"+key+"="+value;
+        String URL="http://notapp.in/sync.php?prn="+sharedPreferences.getString("PRN","")+"&key="+key+"&value="+value+"";
         new Sync().execute(URL);
     }
 
@@ -1110,6 +901,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected Void doInBackground(String... params) {
             DefaultHttpClient httpClient = new DefaultHttpClient();
+            Log.e("url", params[0]);
             HttpGet httpGet = new HttpGet(params[0]);
             HttpResponse httpResponse = null;
             try {
@@ -1119,6 +911,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
         }
     }
 }
