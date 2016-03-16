@@ -21,6 +21,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewStub;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,8 +100,19 @@ public class MainNoticeActivity extends AppCompatActivity
 
         if(link.charAt(0)=='#')
         {
+
+            ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
+            stub.setLayoutResource(R.layout.content_main_notice);
+            View inflated = stub.inflate();
+
+            textView_Title=(TextView)inflated.findViewById(R.id.textView_Title);
+            textView_Title.setText(title);
+            textView_Title.setTypeface(roboto_CondensedLight);
+
+            textView_Message=(TextView)inflated.findViewById(R.id.textView_Message);
             textView_Message.setText(link.substring(1,link.length()));
-            textView_Message.setTypeface(roboto_CondensedLight);
+            //textView_Message.setTypeface(roboto_CondensedLight);
+
         }
         else if(file.exists()&&md5.equals(getMD5EncryptedString(file))||noticeBoard.equals(""))
         {
