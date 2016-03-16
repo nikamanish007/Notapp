@@ -297,12 +297,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean("isLoggedIn", true);
-                        editor.putString("fname", fname);
-                        editor.putString("lname", lname);
+                        editor.putString("f_name", fname);
+                        editor.putString("l_name", lname);
                         editor.putString("email", email);
-                        editor.putString("number", phone);
+                        editor.putString("phone", phone);
                         editor.putString("dob", dob);
-                        editor.putStringSet("pref_depts",set);
+                        editor.putStringSet("prefs",set);
                         editor.commit();
                         result = true;
                     }

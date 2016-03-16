@@ -331,7 +331,7 @@ public class RegisterActivity extends AppCompatActivity
                         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         SharedPreferences.Editor editor = sp.edit();
                         editor.putString("PRN", ((EditText) getActivity().findViewById(R.id.editText_PRN)).getText().toString());
-                        editor.putString("Password", ((EditText) getActivity().findViewById(R.id.editText_Password)).getText().toString());
+                        editor.putString("pword", ((EditText) getActivity().findViewById(R.id.editText_Password)).getText().toString());
                         editor.commit();
                         vp.setCurrentItem(1);
                     } else {
@@ -488,7 +488,7 @@ public class RegisterActivity extends AppCompatActivity
                             editor.commit();
 
                             AppCompatButton button_DOB=(AppCompatButton)getActivity().findViewById(R.id.button_DOB);
-                            button_DOB.setText(sharedPreferences.getString("DOB",""));
+                            button_DOB.setText(sharedPreferences.getString("dob",""));
 
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
@@ -505,7 +505,7 @@ public class RegisterActivity extends AppCompatActivity
 
             SharedPreferences  sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getActivity());
             final SharedPreferences.Editor editor=sharedPreferences.edit();
-            dob[0]=sharedPreferences.getString("DOB","DOBgandla");
+            dob[0]=sharedPreferences.getString("dob","DOBgandla");
 
             new SendProfile().execute(sharedPreferences.getString("PRN", ""), firstName[0], lastName[0], email[0], phone[0], dob[0]);
             editor.putString("fname", firstName[0]);
@@ -617,9 +617,9 @@ public class RegisterActivity extends AppCompatActivity
             SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getActivity());
             SharedPreferences.Editor editor=sharedPreferences.edit();
 
-            _class=sharedPreferences.getString("class","b1");
-            _branch=sharedPreferences.getString("branch", "cse");
-            dept_prefs=sharedPreferences.getStringSet("pref_depts", new HashSet<String>(Arrays.asList(new String[]{})));
+            _class=sharedPreferences.getString("c_name","b1");
+            _branch=sharedPreferences.getString("b_name", "cse");
+            dept_prefs=sharedPreferences.getStringSet("prefs", new HashSet<String>(Arrays.asList(new String[]{})));
             Iterator iterator=dept_prefs.iterator();
             for (int i=0;i<dept_prefs.size();i++) {
                 _dept_prefs+=""+iterator.next();
