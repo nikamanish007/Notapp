@@ -133,10 +133,9 @@ public class MainNoticeActivity extends AppCompatActivity
                 finish();
             }
         }
-        else
-        {
-            db=SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-            cursor=new Cursor() {
+        else {
+            db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+            cursor = new Cursor() {
                 @Override
                 public int getCount() {
                     return 0;
@@ -342,27 +341,24 @@ public class MainNoticeActivity extends AppCompatActivity
                     return null;
                 }
             };
-            cursor=db.rawQuery("select isDone from notices where n_id=" + n_id, null);
+            cursor = db.rawQuery("select isDone from notices where n_id=" + n_id, null);
             cursor.moveToFirst();
 
             Log.e("MainNoticeActivity", "Cursor: " + cursor);
 
 
-            int isDone=cursor.getInt(0);
+            int isDone = cursor.getInt(0);
 
-            Log.e("MainNoticeActivity", "isDone:"+isDone);
+            Log.e("MainNoticeActivity", "isDone:" + isDone);
 
 
-            if(isDone==0)
-            {
+            if (isDone == 0) {
 
-                AlertDialogManager alert=new AlertDialogManager();
+                AlertDialogManager alert = new AlertDialogManager();
                 alert.showAlertDialog(context, "Downloading Notice..", "Please Wait.", true);
                 Log.e("MainNoticeActivity", "isDone=0 Still Downloading.");
-            }
-            else
-            {
-                db.execSQL("update notices set isDone=0 where n_id="+n_id);
+            } else {
+                db.execSQL("update notices set isDone=0 where n_id=" + n_id);
                 file.delete();
                 new DownloadFile().execute();
                 Log.e("MainNoticeActivity", "isDone=1 DownloadFile() called.");
@@ -453,7 +449,7 @@ public class MainNoticeActivity extends AppCompatActivity
             File file = new File("");
 
             try {
-                URL url = new URL("http://notapp.in/notices/" +noticeBoard+ "/" + link + ".pdf");
+                URL url = new URL("http://notapp.wce.ac.in/notices/" +noticeBoard+ "/" + link + ".pdf");
 
                 Log.e("n_downloader url ", url.toString());
                 URLConnection connection = url.openConnection();

@@ -35,6 +35,8 @@ public class GcmIntentService extends IntentService {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(sharedPreferences.getBoolean("isLoggedIn",false))
             registerGCM();
+
+        Log.e("gcmintent","onHandelIntent");
     }
 
     /**
@@ -72,7 +74,7 @@ public class GcmIntentService extends IntentService {
 
         try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
-            String url="http://notapp.in/json/gcmRegister.php"+"?PRN="+PRN+"&regId="+token;
+            String url="http://notapp.wce.ac.in/json/gcmRegister.php"+"?PRN="+PRN+"&regId="+token;
             HttpGet httpGet = new HttpGet(url);
             Log.e("url register: ",url);
             HttpResponse httpResponse = null;

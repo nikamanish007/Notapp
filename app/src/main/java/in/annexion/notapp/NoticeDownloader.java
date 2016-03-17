@@ -107,7 +107,7 @@ public class NoticeDownloader {
 
                 String nb = context.getResources().getStringArray(R.array.intent)[Integer.parseInt(noticeBoard)];
 
-                URL url = new URL("http://notapp.in/notices/" +nb+ "/" + link + ".pdf");
+                URL url = new URL("http://notapp.wce.ac.in/notices/" +nb+ "/" + link + ".pdf");
 
                 Log.e("n_downloader url ", url.toString());
                 URLConnection connection = url.openConnection();

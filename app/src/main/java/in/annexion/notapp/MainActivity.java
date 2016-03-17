@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void registerGCM() {
         Intent intent = new Intent(this, GcmIntentService.class);
-        intent.putExtra("key", "register");
+        intent.putExtra("key",  "register");
         startService(intent);
     }
 
@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return true;
     }
+
 
     @Override
     protected void onResume() {
@@ -494,6 +495,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             editor.commit();
                         }})
                     .setNegativeButton(android.R.string.no, null).show();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
@@ -890,12 +892,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         upload("dob",_dob);
 
     }
-
-    private void upload(String key,String value) {
-        String URL="http://notapp.in/sync.php?prn="+sharedPreferences.getString("PRN","")+"&key="+key+"&value="+value+"";
+    private void upload(String key,String value)
+    {
+        String URL="http://notapp.wce.ac.in/sync.php?prn="+sharedPreferences.getString("PRN","")+"&key="+key+"&value="+value+"";
         new Sync().execute(URL);
     }
-
     class Sync extends AsyncTask<String,Void,Void>
     {
         @Override

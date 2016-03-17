@@ -267,7 +267,7 @@ public class RegisterActivity extends AppCompatActivity
                 }
                 try {
                     DefaultHttpClient httpClient = new DefaultHttpClient();
-                    String url="http://notapp.in/json/register.php?PRN="+PRN+"&"+"password="+Password+"";
+                    String url="http://notapp.wce.ac.in/json/register.php?PRN="+PRN+"&"+"password="+Password+"";
                     HttpGet httpGet = new HttpGet(url);
                     Log.e("url register: ",url);
                     HttpResponse httpResponse = null;
@@ -554,7 +554,7 @@ public class RegisterActivity extends AppCompatActivity
                     params[4]= URLEncoder.encode(params[4],"utf-8");
                     params[5]= URLEncoder.encode(params[5],"utf-8");
 
-                    String url="http://notapp.in/json/upProf.php?PRN="+params[0]+"&fname="+params[1]+"&lname="+params[2]+"&email="+params[3]+"&phone="+params[4]+"&dob="+params[5];
+                    String url="http://notapp.wce.ac.in/json/upProf.php?PRN="+params[0]+"&fname="+params[1]+"&lname="+params[2]+"&email="+params[3]+"&phone="+params[4]+"&dob="+params[5];
                     HttpGet httpGet = new HttpGet(url);
 
                     Log.e("url sendProf",url);
@@ -646,7 +646,7 @@ public class RegisterActivity extends AppCompatActivity
 
                     DefaultHttpClient httpClient = new DefaultHttpClient();
 
-                    String url="http://notapp.in/json/getPrefs.php?PRN="+params[0]+"&class="+params[1]+"&branch="+params[2]+"&dprefs="+params[3];
+                    String url="http://notapp.wce.ac.in/json/getPrefs.php?PRN="+params[0]+"&class="+params[1]+"&branch="+params[2]+"&dprefs="+params[3];
                     HttpGet httpGet = new HttpGet(url);
                     Log.e("SendClass:",url);
 

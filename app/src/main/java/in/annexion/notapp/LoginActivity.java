@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         alert=new AlertDialogManager();
         cd=new ConnectionDetector(getBaseContext());
 
-        GCMRegistrar.unregister(this);
+        //GCMRegistrar.unregister(this);
         sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         /*if(sharedPreferences.getBoolean("isLoggedIn", false))
         {
@@ -200,7 +200,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public  boolean hasActiveConnection() {
             Boolean toPostExecute=false;
             try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://notapp.in").openConnection());
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://notapp.wce.ac.in").openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(5000);
@@ -237,7 +237,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             {
                 try {
                     DefaultHttpClient httpClient = new DefaultHttpClient();
-                    HttpGet httpGet = new HttpGet("http://notapp.in/json/login.php?PRN=" + params[0] + "&password=" + params[1] + "");
+                    HttpGet httpGet = new HttpGet("http://notapp.wce.ac.in/json/login.php?PRN=" + params[0] + "&password=" + params[1] + "");
                     HttpResponse httpResponse = null;
                     httpResponse = httpClient.execute(httpGet);
                     HttpEntity httpEntity = httpResponse.getEntity();
