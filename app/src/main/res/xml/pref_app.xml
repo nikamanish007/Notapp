@@ -4,7 +4,7 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
         <ListPreference
-            android:key="class"
+            android:key="c_name"
             android:title="Class"
             android:summary="%s"
             android:defaultValue="b1"
@@ -15,7 +15,7 @@
             />
 
         <ListPreference
-            android:key="branch"
+            android:key="d_name"
             android:title="Branch"
             android:summary="%s"
             android:defaultValue="cse"
@@ -28,7 +28,7 @@
         <MultiSelectListPreference
             android:entries="@array/depts"
             android:entryValues="@array/deptValues"
-            android:key="pref_depts"
+            android:key="prefs"
             android:persistent="true"
             android:title="Departments"
             android:summary="Select Departments to get notices from"

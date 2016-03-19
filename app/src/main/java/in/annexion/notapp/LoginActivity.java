@@ -274,7 +274,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         phone = j.getString("phone");
                         dob = j.getString("dob");
                         dprefs=j.getString("dprefs");
-                        dprefs=dprefs.substring(0,dprefs.length()-1);
+                        if(dprefs.length()!=0)
+                            dprefs=dprefs.substring(0,dprefs.length()-1);
+                        else
+                            dprefs="";
 
                         Log.e("Authenticate", "Dprefs:"+" "+dprefs );
 

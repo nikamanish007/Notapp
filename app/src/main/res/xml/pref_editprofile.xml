@@ -8,7 +8,7 @@
         >
 
         <EditTextPreference
-            android:key="fname"
+            android:key="f_name"
             android:title="First Name"
             android:inputType="textCapWords"
             android:defaultValue="Your"
@@ -16,7 +16,7 @@
             android:dialogTitle="Edit your Name"
             />
         <EditTextPreference
-            android:key="lname"
+            android:key="l_name"
             android:title="Last Name"
             android:inputType="textCapWords"
             android:defaultValue="Name"
@@ -37,7 +37,7 @@
             />
 
         <EditTextPreference
-            android:key="password"
+            android:key="pword"
             android:title="Password"
             android:inputType="textPassword"
             android:summary="Change Password"
@@ -45,8 +45,8 @@
             />
 
         <EditTextPreference
-            android:key="number"
-            android:title="Number"
+            android:key="phone"
+            android:title="Phone Number"
             android:inputType="phone"
             android:maxLength="10"
             android:summary="Change Password"
@@ -58,12 +58,11 @@
     <!-- http://stackoverflow.com/questions/12127408/android-pick-an-image-from-gallery-in-preferencescreen -->
     <PreferenceCategory>
         <Preference
-            android:key="DOB"
+            android:key="dob"
             android:title="DOB"
             android:summary="Change DOB"
             />
     </PreferenceCategory>
-
 
 
 
