@@ -33,6 +33,7 @@ import java.net.URLEncoder;
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener , View.OnTouchListener , View.OnFocusChangeListener
 {
     AppCompatButton button_register;
+    TextView textView_Login;
     EditText editText_PRN,editText_Password,editText_PasswordConfirm;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -43,10 +44,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        textView_Login=(TextView)findViewById(R.id.textView_Login);
         editText_PRN=(EditText)findViewById(R.id.editText_PRN);
         editText_Password=(EditText)findViewById(R.id.editText_Password);
         editText_PasswordConfirm=(EditText)findViewById(R.id.editText_PasswordConfirm);
 
+        textView_Login.setOnClickListener(this);
         editText_PRN.setOnFocusChangeListener(this);
         editText_Password.setOnFocusChangeListener(this);
         editText_PasswordConfirm.setOnFocusChangeListener(this);
@@ -211,10 +214,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("PRN", editText_PRN.getText().toString());
         editor.putString("pword", editText_Password.getText().toString());
+        editor.putBoolean("isLoggedIn", true);
+        editor.putBoolean("isFirstTime",true);
         editor.commit();
 
         Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
         intent.putExtra("optionSelected", "editProfile");
+        intent.putExtra("isFirst",true);
         startActivity(intent);
         finish();
     }
@@ -222,27 +228,34 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v)
     {
-        String PRN = editText_PRN.getText().toString();
-        String Password=editText_Password.getText().toString();
-        String PasswordConfirm=editText_PasswordConfirm.getText().toString();
-        if(v.getId()==R.id.button_Register)
+        switch (v.getId())
         {
-            if(isInvalid(PRN))
-                editText_PRN.setError("Enter PRN!!");
-            else if(Password.equals(""))
-                editText_Password.setError("Cannot be blank!!");
-            else if(PasswordConfirm.equals(""))
-                editText_PasswordConfirm.setError("Cannot be blank!!");
-            else
-            {
-                if(!Password.equals(PasswordConfirm))
-                {
-                    editText_PasswordConfirm.setText("");
-                    editText_PasswordConfirm.setError("Password doesn't match.!!");
-                }
+            case R.id.button_Register:
+                String PRN = editText_PRN.getText().toString();
+                String Password=editText_Password.getText().toString();
+                String PasswordConfirm=editText_PasswordConfirm.getText().toString();
+
+                if(isInvalid(PRN))
+                    editText_PRN.setError("Enter PRN!!");
+                else if(Password.equals(""))
+                    editText_Password.setError("Cannot be blank!!");
+                else if(PasswordConfirm.equals(""))
+                    editText_PasswordConfirm.setError("Cannot be blank!!");
                 else
-                    new Authenticate().execute(PRN,Password);
-            }
+                {
+                    if(!Password.equals(PasswordConfirm))
+                    {
+                        editText_PasswordConfirm.setText("");
+                        editText_PasswordConfirm.setError("Password doesn't match.!!");
+                    }
+                    else
+                        new Authenticate().execute(PRN,Password);
+                }
+                break;
+            case R.id.textView_Login:
+                Log.e("Register","Login Clicked");
+                startActivity(new Intent(getBaseContext(), LoginActivity.class));
+                finish();
         }
     }
 

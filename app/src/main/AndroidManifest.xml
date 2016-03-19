@@ -24,8 +24,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <uses-sdk tools:overrideLibrary="ivb.com.materialstepper" />
 
+        <uses-sdk tools:overrideLibrary="ivb.com.materialstepper" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -68,21 +68,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.annexion.notapp.NoticesActivity" />
         </activity>
-
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
             android:theme="@style/SettingsTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.annexion.notapp.MainActivity" />
-        </activity>
-
-        <activity
-            android:name=".RegisterActivity"
-            android:label="@string/title_activity_register"
-            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.annexion.notapp.MainActivity" />
@@ -105,7 +95,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.annexion.notapp.MainActivity" />
         </activity>
-
+        <activity
+            android:name=".FavouritesActivity"
+            android:label="Favourites"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.annexion.notapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.annexion.notapp.LoginActivity" />
+        </activity>
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -120,7 +124,6 @@
                 <category android:name="in.annexion.notapp" />
             </intent-filter>
         </receiver>
-
         <service
             android:name=".MyGcmPushReceiver"
             android:exported="false">
@@ -136,14 +139,6 @@
             </intent-filter>
         </service>
 
-        <activity
-            android:name=".FavouritesActivity"
-            android:label="Favourites"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.annexion.notapp.MainActivity" />
-        </activity>
     </application>
 
 </manifest>

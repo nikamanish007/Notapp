@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.CharArrayBuffer;
@@ -48,7 +49,7 @@ import java.util.HashSet;
 public class SettingsActivity extends AppCompatPreferenceActivity
 {
     static SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    static SharedPreferences.Editor editor;
     static int cunt;
     static boolean isEditProf;
 
@@ -62,7 +63,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         isEditProf=false;
 
         sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor=sharedPreferences.edit();
 
         if(((getIntent()).getStringExtra("optionSelected")).equals("settings"))
             getFragmentManager().beginTransaction().replace(android.R.id.content, new AppPreferenceFragment()).commit();
@@ -106,7 +107,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
     @Override
     public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
+        Intent intent;
+        if(sharedPreferences.getBoolean("isFirstTime",false)){
+            editor.putBoolean("isFirstTime",false);
+            editor.commit();
+            intent=new Intent(this,SettingsActivity.class);
+            intent.putExtra("optionSelected","settings");
+            startActivity(intent);
+            finish();
+        }
+        else {
+            intent=new Intent(this,MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     /**

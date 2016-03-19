@@ -127,6 +127,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 case R.id.textView_Register:
                     startActivity(new Intent(getBaseContext(), RegisterActivity.class));
+                    finish();
         }
     }
 

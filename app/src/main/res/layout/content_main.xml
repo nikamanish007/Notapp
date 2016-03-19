@@ -277,7 +277,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/cse"
+                        android:background="@drawable/wlug"
                         android:layout_margin="5dp"
                         android:src="@color/foreground"
                         />
@@ -286,7 +286,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/it"
+                        android:background="@drawable/pace"
                         android:layout_margin="5dp"
                         android:src="@color/foreground"
                         />
@@ -295,7 +295,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/eln"
+                        android:background="@drawable/rotaract"
                         android:layout_margin="5dp"
                         android:src="@color/foreground"
                         />
@@ -304,7 +304,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/ele"
+                        android:background="@drawable/softa"
                         android:layout_margin="5dp"
                         android:src="@color/foreground"
                         />
@@ -313,7 +313,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/civ"
+                        android:background="@drawable/artcircle"
                         android:layout_margin="5dp"
                         android:src="@color/foreground"
                         />
@@ -441,7 +441,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/schol"
+                        android:background="@drawable/library"
                         android:layout_margin="5dp"
                         android:src="@color/foreground"
                         />
