@@ -342,7 +342,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         intent.putExtra("md5",md5);
         intent.putExtra("n_id",nID);
         startActivity(intent);
-        finish();
     }
 
     @Override
