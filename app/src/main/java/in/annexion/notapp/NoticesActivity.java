@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -244,7 +246,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     String nbClicked;
     String title;
     SQLiteDatabase db;
-
+    AppBarLayout appBarLayout;
     CollapsingToolbarLayout collapsingToolbarLayout;
 
     int width;
@@ -258,6 +260,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        appBarLayout=(AppBarLayout)findViewById(R.id.app_bar);
         collapsingToolbarLayout=(CollapsingToolbarLayout)findViewById(R.id.toolbar_layout);
 
         Point p = new Point();
@@ -303,14 +306,20 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
 
         layoutManager=new LinearLayoutManager(this);
         recyclerView_Notices.setLayoutManager(layoutManager);
+        recyclerView_Notices.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState== RecyclerView.SCROLL_STATE_DRAGGING)
+                    appBarLayout.setExpanded(false,true);
+            }
+        });
 
 
         adapter= new NoticeAdapter(noticeList,getBaseContext(),this);
         recyclerView_Notices.setAdapter(adapter);
 
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
 
@@ -340,7 +349,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         intent.putExtra("link", link);
         intent.putExtra("message", message);
         intent.putExtra("md5",md5);
-        intent.putExtra("n_id",nID);
+        intent.putExtra("n_id", nID);
         startActivity(intent);
     }
 

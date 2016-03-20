@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="fill_vertical"
-    android:background="@color/grayLight"
+    android:background="@color/white"
     tools:showIn="@layout/activity_notices"
     tools:context="in.annexion.notapp.NoticesActivity"
     >
@@ -34,9 +34,10 @@
                 android:orientation="vertical"
                 android:scrollbars="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="1dp"
+                android:paddingRight="1dp"
                 />
 
     </LinearLayout>
