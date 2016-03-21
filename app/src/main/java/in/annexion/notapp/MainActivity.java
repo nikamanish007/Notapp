@@ -1,5 +1,6 @@
 package in.annexion.notapp;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -102,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if((new ConnectionDetector(getBaseContext())).isConnectingToInternet())
                sync();
+
+            NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancelAll();
 
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -295,8 +299,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         File imgFile=new File(sharedPreferences.getString("avatarPath",""));
 
         if(imgFile.exists()){
-            // Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            //avatar.setImageBitmap(myBitmap);
+             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+             avatar.setImageBitmap(myBitmap);
         }
     }
 
@@ -373,8 +377,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return null;
             }
         });
-        if(set!=null)
-            selections=new ArrayList<>(set);
         for(int i=1;i<=30;i++)
         {
             boolean read=sharedPreferences.getBoolean(""+(i-1),false);
@@ -834,7 +836,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public void updateDPrefs()
     {
-        Set<String> dprefs= sharedPreferences.getStringSet("prefs", new HashSet<String>(Arrays.asList(new String[]{})));
+        Set<String> dprefs= sharedPreferences.getStringSet("prefs", new HashSet<>(Arrays.asList(new String[]{})));
         String _dprefs="";
         Iterator iterator=dprefs.iterator();
         for (int i=0;i<dprefs.size();i++) {
