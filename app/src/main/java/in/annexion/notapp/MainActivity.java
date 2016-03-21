@@ -906,9 +906,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             DefaultHttpClient httpClient = new DefaultHttpClient();
             Log.e("url", params[0]);
             HttpGet httpGet = new HttpGet(params[0]);
-            HttpResponse httpResponse = null;
             try {
-                httpResponse = httpClient.execute(httpGet);
+                httpClient.execute(httpGet);
             } catch (IOException e) {
                 Log.e("Sync:",""+e);
                 e.printStackTrace();
