@@ -37,7 +37,6 @@ public class MyGcmPushReceiver extends GcmListenerService {
         Log.e("onMessageReceived", "registration id =====  "+from);
         String title = bundle.getString("title");
         String uploadDate = bundle.getString("uploadDate");
-        String name = bundle.getString("name");
         String uploadedBy = bundle.getString("name");
         String n_id = bundle.getString("n_id");
         String exp = bundle.getString("exp");
@@ -56,7 +55,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
 
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
 
-        showNotificationMessage(getApplicationContext(), title, uploadDate, name, resultIntent);
+        showNotificationMessage(getApplicationContext(), title, uploadDate, uploadedBy, resultIntent);
 
         NoticeDownloader noticeDownloader = new NoticeDownloader();
         noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, exp, noticeBoard, link, md5);
