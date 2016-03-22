@@ -24,7 +24,7 @@
             android:id="@+id/arc_progress"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="35dp"
             android:layout_gravity="center_vertical|center_horizontal"
             app:arc_progress="75"
             app:arc_bottom_text_size="20sp"
@@ -34,11 +34,6 @@
             app:arc_finished_color="@color/colorAccent"
             app:arc_unfinished_color="@color/white"
             />
-
-
-           <!--     app:arc_bottom_text="3CS105"
-                app:arc_text_color="@color/colorPrimary"
-                app:arc_bottom_text_size="20sp"   -->
         <TextView
             android:id="@+id/textView_CourseTitleShowing"
             android:layout_width="wrap_content"
@@ -59,14 +54,33 @@
         android:layout_height="1dp"
         android:background="@color/grayLight"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView_Courses"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:orientation="vertical"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/grayLight"
-        />
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageView_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@color/white"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView_Courses"
+                android:layout_weight="1"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:orientation="vertical"
+                android:scrollbars="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transperent"
+                />
+
+        </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

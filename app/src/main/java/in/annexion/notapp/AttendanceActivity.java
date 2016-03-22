@@ -1,7 +1,6 @@
 package in.annexion.notapp;
 
 import android.animation.ObjectAnimator;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,9 +18,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +29,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,9 +55,11 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
 {
     ArrayList<CourseInfo> courseList;
     ArcProgress arcProgress;
+    SwipeRefreshLayout swipeRefreshLayout;
     TextView textView_CourseTitleShowing;
     RecyclerView recyclerView_Courses;
     RecyclerView.Adapter adapter;
+    ImageView imageView_placeholder2;
     RecyclerView.LayoutManager layoutManager;
     SQLiteDatabase db;
     SharedPreferences sharedPreferences;
@@ -283,7 +285,6 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
             file.mkdirs();
         }
 
-
         arcProgress=(ArcProgress)findViewById(R.id.arc_progress);
         arcProgress.setProgress(75);
         arcProgress.setFinishedStrokeColor(Color.GRAY);
@@ -292,8 +293,10 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
 
         courseList=new ArrayList<CourseInfo>();
 
+        swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout);
         recyclerView_Courses=(RecyclerView)findViewById(R.id.recyclerView_Courses);
         recyclerView_Courses.setHasFixedSize(true);
+        imageView_placeholder2=(ImageView)findViewById(R.id.imageView_placeholder);
 
         layoutManager=new LinearLayoutManager(this);
         recyclerView_Courses.setLayoutManager(layoutManager);
@@ -303,11 +306,9 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
 
         fetchFromDB();
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View view) {
+            public void onRefresh() {
                 sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                 PRN=sharedPreferences.getString("PRN","");
                 new SyncAttendance().execute(PRN);
@@ -330,8 +331,14 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         int ctr=0;
 
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0) {
-
-            Toast.makeText(getBaseContext(),"LATER BRO",Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(),"No Data!",Toast.LENGTH_LONG).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    imageView_placeholder2.setImageResource(R.drawable.placeholder2);
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
         else {
 
@@ -346,12 +353,11 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
                 courseInfo.percentage = Float.parseFloat(cursor.getString(2));
 
                 courseList.add(courseInfo);
-                adapter.notifyDataSetChanged();
-
             } while (cursor.moveToNext());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    imageView_placeholder2.setVisibility(View.INVISIBLE);
                     adapter.notifyDataSetChanged();
                 }
             });
@@ -370,8 +376,6 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
     @Override
     public void itemClicked(View view, int position)
     {
-        //recyclerView_Courses.getChildAt(lastSelection).setBackgroundColor(getResources().getColor(R.color.white));
-        //view.setBackgroundColor(getResources().getColor(R.color.colorAccentLight));
         arcProgress.setFinishedStrokeColor(Color.argb(1, 20, 20, 20));
         String courseCodeSelected=((TextView) view.findViewById(R.id.textView_CourseTitle)).getText().toString();
 
@@ -404,24 +408,9 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
     }
 
     private class SyncAttendance extends AsyncTask<String,Void,Void> {
-
-        ProgressDialog progressDialog;
         private JSONArray dataJsonArr;
         JSONObject jsonObject;
-
         boolean hasActiveConnection=false;
-
-
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-                progressDialog=new ProgressDialog(AttendanceActivity.this);
-                progressDialog.setTitle("Updating Attendance");
-                progressDialog.setMessage("Please Wait");
-                progressDialog.show();
-        }
-
 
         public boolean isConnectingToInternet(){
             boolean res=false;
@@ -436,7 +425,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         public  boolean hasActiveConnection() {
             Boolean toPostExecute=false;
             try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://10.10.5.141").openConnection());
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://10.10.13.213").openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(5000);
@@ -465,7 +454,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
                 try {
                     db = SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
                     JsonParser jParser = new JsonParser();
-                    JSONObject json = jParser.getJSONFromUrl("http://10.10.5.141/n/moodle/attendance.php?prn=" + params[0]);
+                    JSONObject json = jParser.getJSONFromUrl("http://10.10.5.140/n/moodle/attendance.php?prn=" + params[0]);
                     Log.e("AttendanceActivity", "after jParser.getJSONFromUrl");
                     dataJsonArr = json.getJSONArray("result");
                     Log.e("AttendanceActivity", "after jParser.getJSONArray");
@@ -500,13 +489,12 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         protected void onPostExecute(Void aVoid)
         {
             super.onPostExecute(aVoid);
-            progressDialog.dismiss();
             if(hasActiveConnection)
             {
                 startActivity(new Intent(getBaseContext(), AttendanceActivity.class));
                 finish();
             }
-
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 

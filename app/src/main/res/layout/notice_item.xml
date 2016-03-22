@@ -31,7 +31,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/textPrimary"
                     android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="19"
                     android:paddingBottom="3dp"
