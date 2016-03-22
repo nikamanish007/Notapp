@@ -1,18 +1,30 @@
 package in.annexion.notapp;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,14 +38,27 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.conn.ConnectTimeoutException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.ClickListener
 {
     ArrayList<NoticeInfo> noticeList;
-    //NoticeInfo noticeInfo;
     Intent intent;
+    android.app.AlertDialog alertDialog;
     RecyclerView recyclerView_Notices;
     Cursor cursor = new Cursor() {
         @Override
@@ -247,32 +272,39 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     String title;
     SQLiteDatabase db;
     AppBarLayout appBarLayout;
+    FloatingActionButton fab;
     CollapsingToolbarLayout collapsingToolbarLayout;
 
     int width;
     int height;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notices);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        appBarLayout=(AppBarLayout)findViewById(R.id.app_bar);
-        collapsingToolbarLayout=(CollapsingToolbarLayout)findViewById(R.id.toolbar_layout);
-
-        Point p = new Point();
-        getWindowManager().getDefaultDisplay().getSize(p);
-        collapsingToolbarLayout.getLayoutParams().height = (p.x)/2;
-        collapsingToolbarLayout.requestLayout();
 
         intent=getIntent();
         nbClicked=intent.getStringExtra("nb");
         title=intent.getStringExtra("title" );
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         setTitle(title);
+
+        appBarLayout=(AppBarLayout)findViewById(R.id.app_bar);
+        collapsingToolbarLayout=(CollapsingToolbarLayout)findViewById(R.id.toolbar_layout);
+        recyclerView_Notices=(RecyclerView)findViewById(R.id.recyclerView_Notices);
+        fab=(FloatingActionButton)findViewById(R.id.fab);
+        recyclerView_Notices.setHasFixedSize(true);
+        context=getBaseContext();
+
+        /*Point p = new Point();
+        getWindowManager().getDefaultDisplay().getSize(p);
+        collapsingToolbarLayout.getLayoutParams().height = (p.x)/2;
+        collapsingToolbarLayout.requestLayout();*/
 
         File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
         if (!file.exists()) {
@@ -280,14 +312,8 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         }
 
         db=SQLiteDatabase.openDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-        //db.enableWriteAheadLogging();
 
-        //noticeInfo = new NoticeInfo();
-        noticeList= new ArrayList<NoticeInfo>();
-
-
-        recyclerView_Notices=(RecyclerView)findViewById(R.id.recyclerView_Notices);
-        recyclerView_Notices.setHasFixedSize(true);
+        noticeList= new ArrayList<>();
 
         registerForContextMenu(recyclerView_Notices);
 
@@ -297,21 +323,19 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         width = size.x;
         height = size.y;
 
-        //new AsyncTaskParseJson().execute();
-
         fetchFromDB();
 
         recyclerView_Notices.setMinimumHeight(height - 180);
-        //recyclerView_Notices.setNestedScrollingEnabled(false);
 
         layoutManager=new LinearLayoutManager(this);
         recyclerView_Notices.setLayoutManager(layoutManager);
+
         recyclerView_Notices.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState== RecyclerView.SCROLL_STATE_DRAGGING)
-                    appBarLayout.setExpanded(false,true);
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING)
+                    appBarLayout.setExpanded(false, true);
             }
         });
 
@@ -319,16 +343,33 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         adapter= new NoticeAdapter(noticeList,getBaseContext(),this);
         recyclerView_Notices.setAdapter(adapter);
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NoticesActivity.this);
+                alertDialog.setTitle("Confirm Delete...");
+                alertDialog.setMessage("Are you sure you want delete this?");
+                alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        new NoticesPuller().execute();
+                    }
+                });
+                alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
+
+            }
+        });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-
 
     @Override
     public void itemClicked(View view, int position)
     {
-        //String noticeTitle=((TextView) recyclerView_Notices.getChildAt(position).findViewById(R.id.textView_NoticeTitle)).getText().toString();
-        //View viewCliked=recyclerView_Notices.getChildAt(position);
         NoticeInfo item=noticeList.get(position);
         String title,link,message,md5;
         title=item.title;
@@ -336,8 +377,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         message=item.message;
         md5=item.md5;
         int nID=item.n_id;
-
-        //nID=Integer.parseInt(((TextView) viewCliked.findViewById(R.id.textView_nID)).getText().toString());
 
         Log.e("intent na", title + "  " + link);
 
@@ -351,6 +390,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         intent.putExtra("md5",md5);
         intent.putExtra("n_id", nID);
         startActivity(intent);
+
     }
 
     @Override
@@ -365,10 +405,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     @Override
     public void delete(int pos)
     {
-
-        //View viewToBeRemoved=recyclerView_Notices.getChildAt(pos);
         NoticeInfo item=noticeList.get(pos);
-        //int nID=Integer.parseInt(((TextView) viewToBeRemoved.findViewById(R.id.textView_nID)).getText().toString());
         int nID=item.n_id;
         Cursor cursor2;
 
@@ -428,7 +465,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         finish();
     }
 
-
     public  void fetchFromDB()
     {
         Log.e("ffdb", "coming in ffdb");
@@ -473,7 +509,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     }
                 });
             } else {
-                //Log.e("ffdb", "fetching from db");
                 int ctr = 0;
 
                 do  {
@@ -492,7 +527,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     noticeInfo.isFav=Integer.parseInt(cursor.getString(8));
 
                     Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.exp + "  " + noticeInfo.link + "  ");
-
                     noticeList.add(noticeInfo);
                     //cursor.moveToNext();
 
@@ -511,15 +545,14 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
 
     }
 
-    /*public class AsyncTaskParseJson extends AsyncTask<Void, Void, Void> {
+    public class NoticesPuller extends AsyncTask<Void, Void, Void> {
 
-        final String TAG = "AsyncTaskParseJson.java";
-        byte data[], full[];
         int maxn_id;
+        boolean isConnected;
         SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String _class=sharedPreferences.getString("class","b3");
-        String _branch=sharedPreferences.getString("branch","cse");
-        String yourJsonStringUrl = "http://notapp.in/json/index.php?dept=" + nbClicked + "&class="+_class+"&branch="+_branch;
+        String _class=sharedPreferences.getString("c_name","b1");
+        String _branch=sharedPreferences.getString("d_name","cse");
+        String yourJsonStringUrl = "http://notapp.wce.ac.in/json/index.php?dept=" + nbClicked + "&class="+_class+"&branch="+_branch;
         JSONArray dataJsonArr = null;
         Cursor cursor = new Cursor() {
             @Override
@@ -731,25 +764,28 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
 
         @Override
         protected void onPreExecute() {
+            super.onPreExecute();
             progressDialog=new ProgressDialog(NoticesActivity.this);
-            progressDialog.setTitle("Loading Notices");
-            progressDialog.setMessage("Please wait...");
+            progressDialog.setTitle("Downloading");
+            progressDialog.setMessage("Please Wait");
             progressDialog.show();
         }
 
         @Override
         protected Void doInBackground(Void... params)
         {
-
-            if(isOnline())
+            isConnected=(new ConnectionDetector(getBaseContext())).isConnectingToInternet();
+            if(isConnected)
             {
                 int length=0;
-                int[] n_id;
+                String[] n_id;
                 String[] title;
                 String[] uploadDate;
                 String[] uploadedBy;
                 String[] exp;
+                String[] noticeBoard;
                 String[] link;
+                String[] md5;
 
                 try {
                     try {
@@ -764,9 +800,9 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                         maxn_id=cursor.getInt(0);
                     }
 
-                    _class=URLEncoder.encode(_class,"utf-8");
+                    _class= URLEncoder.encode(_class, "utf-8");
                     _branch=URLEncoder.encode(_branch,"utf-8");
-                    yourJsonStringUrl= "http://notapp.in/json/index.php?dept=" + nbClicked + "&class="+_class+"&branch="+_branch;
+                    yourJsonStringUrl= "http://notapp.wce.ac.in/json/index.php?dept=" + nbClicked + "&class="+_class+"&branch="+_branch;
                     yourJsonStringUrl=yourJsonStringUrl+"&n_id="+maxn_id;
                     Log.e("sarang URL: ",yourJsonStringUrl );
 
@@ -777,38 +813,38 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
 
                     Log.e("Length json", ""+length+" "+dataJsonArr.length());
 
-                    n_id = new int[length];
+                    n_id = new String[length];
                     title = new String[length];
                     uploadDate = new String[length];
                     uploadedBy=new String[length];
                     exp = new String[length];
                     link = new String[length];
+                    noticeBoard=new String[length];
+                    md5=new String[length];
                     Log.e("coming","coming in before for");
                     for (int i = 0; i < length; i++)
                     {
                         JSONObject c = dataJsonArr.getJSONObject(i);
 
-                        n_id[i] = c.getInt("n_id");
+                        n_id[i] = c.getString("n_id");
                         title[i] = c.getString("title");
                         uploadDate[i] = c.getString("uploadDate");
                         uploadedBy[i]=c.getString("uploadedBy");
                         exp[i] = c.getString("exp");
                         link[i] = c.getString("name");
+                        noticeBoard[i]=""+0;
+                        md5[i]="";
 
                         Log.e("notices", "" + n_id[i] + "  " + title[i] + "  " + uploadDate[i] + "  " + exp[i] + "  " + link[i] + "  ");
                         //noticeList.add(noticeInfo);
-                        db.execSQL("insert into notices values(" + n_id[i] + ",'" + title[i] + "','"+uploadedBy[i]+"','" + uploadDate[i] + "','" + exp[i] + "','" + nbClicked + "','" + link[i] + "')");
-
-                    }
-
-                    for (int i = 0; i < length; i++)
-                    {
-
-                        downloadFile(link[i], title[i]);
+                        NoticeDownloader noticeDownloader = new NoticeDownloader();
+                        noticeDownloader.insertIntoDB(context, title[i], uploadDate[i], uploadedBy[i], ""+n_id[i], exp[i], noticeBoard[i], link[i], md5[i]);
+                        if(!(link[i].charAt(0)=='#'))
+                            noticeDownloader.downloadFile(link[i]);
                     }
 
                 } catch (JSONException e) {
-                    Snackbar.make(findViewById(R.id.nestedscrollview_parentView),"Yay, you are up to date" , Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(findViewById(R.id.nestedscrollview_parentView), "Yay, you are up to date", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     e.printStackTrace();
                     Log.e("url",yourJsonStringUrl);
 
@@ -821,76 +857,27 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     e.printStackTrace();
                 }
             }
-            publishProgress();
-            fetchFromDB();
-
+            else
+                isConnected=false;
             return null;
-        }
-
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-
-        }
-
-        protected String downloadFile(String link, String title)
-        {
-            int count;
-            int file_size = 0;
-
-            try {
-                link= URLEncoder.encode(link,"utf-8");
-
-                URL url = new URL("http://notapp.in/notices/" + nbClicked + "/" + link + ".pdf");
-                URLConnection connection = url.openConnection();
-                connection.setConnectTimeout(2000);
-                connection.connect();
-                file_size = connection.getContentLength();
-
-                // download the file
-                File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp");
-                if (!file.exists()) {
-                    file.mkdirs();
-                }
-                file = new File(Environment.getExternalStorageDirectory().toString() + "/Notapp/" + link + ".pdf");
-
-                InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                FileOutputStream fos = new FileOutputStream(file);
-
-                data = new byte[file_size];
-
-                while ((count = input.read(data)) != -1) {
-                    fos.write(data, 0, count);
-                }
-                fos.flush();
-                input.close();
-                fos.close();
-            } catch (ConnectTimeoutException e ) {
-                Snackbar.make(findViewById(R.id.nestedscrollview_parentView),"Connection Timed Out!!" , Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                Log.e("Error: ", e.getMessage());
-                e.printStackTrace();
-            } catch (IOException e){
-                Snackbar.make(findViewById(R.id.nestedscrollview_parentView),"Connection Error" , Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-
-            return "" + file_size;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progressDialog.dismiss();
-        }
-
-        public boolean isOnline() {
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo netInfo = cm.getActiveNetworkInfo();
-            if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-                return true;
+            if (!isConnected)
+                Snackbar.make(findViewById(R.id.nestedscrollview_parentView), "You are offline!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            else {
+                Intent intent2;
+                intent2 = new Intent(getBaseContext(), NoticesActivity.class);
+                intent2.putExtra("nb", nbClicked);
+                intent2.putExtra("title", title);
+                startActivity(intent);
+                finish();
             }
-            return false;
+
         }
-    }*/
+    }
 
 }

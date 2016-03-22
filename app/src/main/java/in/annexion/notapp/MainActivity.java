@@ -133,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (updateNav)
                 navUpdate();
 
-
             if (checkPlayServices()) {
                 registerGCM();
             }
@@ -377,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return null;
             }
         });
+        selections=new ArrayList<>(set);
         for(int i=1;i<=30;i++)
         {
             boolean read=sharedPreferences.getBoolean(""+(i-1),false);
