@@ -36,12 +36,11 @@
             android:dialogTitle="Enter email"
             />
 
-        <EditTextPreference
+        <Preference
             android:key="pword"
             android:title="Password"
-            android:inputType="textPassword"
+            android:enabled="true"
             android:summary="Change Password"
-            android:dialogTitle="Enter New Password"
             />
 
         <EditTextPreference

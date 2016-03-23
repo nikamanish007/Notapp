@@ -3,6 +3,8 @@ package in.annexion.notapp;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.DialogPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
@@ -26,9 +29,12 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -52,6 +58,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     static SharedPreferences.Editor editor;
     static int cunt;
     static boolean isEditProf;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -305,6 +313,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                 || AppPreferenceFragment.class.getName().equals(fragmentName);
     }
 
+
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -344,8 +353,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class EditProfilePreferenceFragment extends PreferenceFragment implements DatePickerDialog.OnDateSetListener
+    public static class EditProfilePreferenceFragment extends PreferenceFragment implements DatePickerDialog.OnDateSetListener , Preference.OnPreferenceClickListener ,  View.OnClickListener
     {
+        EditText editText_CurrentPassword,editText_NewPassword,editText_ConfirmNewPassword;
+        AppCompatButton button_Done;
+        Dialog dialog;
+        Preference pword;
         @Override
         public void onCreate(Bundle savedInstanceState)
         {
@@ -354,7 +367,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             setHasOptionsMenu(true);
 
             isEditProf=true;
-
+            pword=(Preference)findPreference("pword");
+            pword.setOnPreferenceClickListener(this);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
@@ -370,7 +384,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             preference_DOB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    new DatePickerDialog(getActivity(),EditProfilePreferenceFragment.this,1995,0,1).show();
+                    new DatePickerDialog(getActivity(), EditProfilePreferenceFragment.this, 1995, 0, 1).show();
                     return false;
                 }
             });
@@ -379,7 +393,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             Preference preference=findPreference("dob");
-            preference.setSummary(""+dayOfMonth+"-"+""+(monthOfYear+1)+"-"+""+year);
+            preference.setSummary("" + dayOfMonth + "-" + "" + (monthOfYear + 1) + "-" + "" + year);
             SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getActivity());
             SharedPreferences.Editor editor=sharedPreferences.edit();
             editor.putString("dob",""+dayOfMonth+"-"+""+(monthOfYear+1)+"-"+""+year);
@@ -395,6 +409,54 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                 return true;
             }
             return super.onOptionsItemSelected(item);
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            Log.e("SettingsActivity","Inside onPreferenceClicked");
+            if(preference.getKey().equals("pword"))
+            {
+                Log.e("SettingsActivity","Inside onPreferenceClicked");
+                dialog=new Dialog(getActivity());
+                dialog.setContentView(R.layout.dialog_change_password);
+                dialog.setTitle("Change Password");
+                dialog.show();
+                button_Done=(AppCompatButton)dialog.findViewById(R.id.button_Done);
+                editText_CurrentPassword=(EditText)dialog.findViewById(R.id.editText_CurrentPassword);
+                editText_NewPassword=(EditText)dialog.findViewById(R.id.editText_NewPassword);
+                editText_ConfirmNewPassword=(EditText)dialog.findViewById(R.id.editText_ConfirmNewPassword);
+                button_Done.setOnClickListener(this);
+            }
+            return false;
+        }
+        @Override
+        public void onClick(View v) {
+            switch (v.getId())
+            {
+                case R.id.button_Done:
+                    onClickDone();
+                    break;
+            }
+        }
+
+        private void onClickDone() {
+            String currentPassword,newPassword,confirmNewPassword;
+            currentPassword=editText_CurrentPassword.getText().toString();
+            newPassword=editText_NewPassword.getText().toString();
+            confirmNewPassword=editText_ConfirmNewPassword.getText().toString();
+
+            if(!currentPassword.equals(sharedPreferences.getString("pword","")))
+                editText_CurrentPassword.setError("EnTer Valid Password");
+            else if(!newPassword.equals(confirmNewPassword)){
+                editText_ConfirmNewPassword.setText("");
+                editText_ConfirmNewPassword.setError("Passowod Doest Not Matches");
+            }
+            else {
+                editor.putBoolean("updatePassword", true);
+                editor.putString("pword", editText_NewPassword.getText().toString());
+                editor.commit();
+                dialog.dismiss();
+            }
         }
     }
 }
