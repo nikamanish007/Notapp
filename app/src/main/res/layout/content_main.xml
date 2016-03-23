@@ -42,8 +42,8 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_it"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/it"
                         android:layout_margin="5dp"
@@ -52,8 +52,8 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_cse"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/cse"
                         android:layout_margin="5dp"
@@ -62,8 +62,8 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_eln"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/eln"
                         android:layout_margin="5dp"
@@ -71,8 +71,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_ele"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/ele"
                         android:layout_margin="5dp"
@@ -80,8 +80,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_civ"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/civ"
                         android:layout_margin="5dp"
@@ -89,8 +89,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_mech"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/mech"
                         android:layout_margin="5dp"
@@ -126,8 +126,8 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_phy"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/phy"
                         android:layout_margin="5dp"
@@ -135,8 +135,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_chem"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/chem"
                         android:layout_margin="5dp"
@@ -144,8 +144,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_math"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/math"
                         android:layout_margin="5dp"
@@ -153,8 +153,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_bio"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/bio"
                         android:layout_margin="5dp"
@@ -191,8 +191,8 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_acses"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/acses"
                         android:layout_margin="5dp"
@@ -200,8 +200,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_sait"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/sait"
                         android:layout_margin="5dp"
@@ -209,8 +209,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_elesa"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/elesa"
                         android:layout_margin="5dp"
@@ -218,8 +218,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_eesa"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/eesa"
                         android:layout_margin="5dp"
@@ -227,8 +227,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_cesa"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/cesa"
                         android:layout_margin="5dp"
@@ -236,8 +236,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_mesa"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/mesa"
                         android:layout_margin="5dp"
@@ -274,8 +274,8 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_wlug"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/wlug"
                         android:layout_margin="5dp"
@@ -283,8 +283,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_pace"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/pace"
                         android:layout_margin="5dp"
@@ -292,8 +292,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_rotr"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/rotaract"
                         android:layout_margin="5dp"
@@ -301,8 +301,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_softa"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/softa"
                         android:layout_margin="5dp"
@@ -310,8 +310,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_artC"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/artcircle"
                         android:layout_margin="5dp"
@@ -347,8 +347,8 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_admin"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/admin"
                         android:layout_margin="5dp"
@@ -357,8 +357,8 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_exam"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/exam"
                         android:layout_margin="5dp"
@@ -366,8 +366,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_tpo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/tpo"
                         android:layout_margin="5dp"
@@ -402,8 +402,8 @@
                     >
                     <ImageButton
                         android:id="@+id/imageButton_sports"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/sports"
                         android:layout_margin="5dp"
@@ -411,8 +411,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_schol"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/schol"
                         android:layout_margin="5dp"
@@ -420,8 +420,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_rector"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/rector"
                         android:layout_margin="5dp"
@@ -429,8 +429,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_lost_found"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/lostfound"
                         android:layout_margin="5dp"
@@ -438,8 +438,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_library"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/library"
                         android:layout_margin="5dp"
@@ -447,8 +447,8 @@
                         />
                     <ImageButton
                         android:id="@+id/imageButton_vision"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
                         android:background="@drawable/schol"
                         android:layout_margin="5dp"
