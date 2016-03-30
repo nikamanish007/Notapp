@@ -1,10 +1,12 @@
 package in.annexion.notapp;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
@@ -23,6 +25,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -272,7 +275,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     String title;
     SQLiteDatabase db;
     AppBarLayout appBarLayout;
-    FloatingActionButton fab;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
     CollapsingToolbarLayout collapsingToolbarLayout;
 
     int width;
@@ -288,6 +291,16 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         intent=getIntent();
         nbClicked=intent.getStringExtra("nb");
         title=intent.getStringExtra("title" );
+
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // checking for type intent filter
+                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                    refresh();
+                }
+            }
+        };
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -404,13 +417,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
 
         recyclerView_Notices.removeViewAt(pos);
         adapter.notifyDataSetChanged();
-
-        Intent intent2;
-        intent2= new Intent(getBaseContext(),NoticesActivity.class);
-        intent2.putExtra("nb", nbClicked);
-        intent2.putExtra("title", title);
-        startActivity(intent);
-        finish();
+        refresh();
     }
 
     @Override
@@ -418,14 +425,8 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     {
         NoticeInfo item=noticeList.get(pos);
         int nID=item.n_id;
-        db.execSQL("update notices set isFav=1 where n_id="+nID);
-
-        Intent intent2;
-        intent2= new Intent(getBaseContext(),NoticesActivity.class);
-        intent2.putExtra("nb", nbClicked);
-        intent2.putExtra("title", title);
-        startActivity(intent);
-        finish();
+        db.execSQL("update notices set isFav=1 where n_id=" + nID);
+        refresh();
     }
 
     @Override
@@ -434,13 +435,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         NoticeInfo item=noticeList.get(pos);
         int nID=item.n_id;
         db.execSQL("update notices set isFav=0 where n_id="+nID);
-
-        Intent intent2;
-        intent2= new Intent(getBaseContext(),NoticesActivity.class);
-        intent2.putExtra("nb", nbClicked);
-        intent2.putExtra("title", title);
-        startActivity(intent);
-        finish();
+        refresh();
     }
 
     public  void fetchFromDB()
@@ -452,7 +447,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             file.mkdirs();
         }
 
-        Log.e("ffdb","db path:"+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db");
+        Log.e("ffdb", "db path:" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db");
 
         try {
 
@@ -521,6 +516,33 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             Log.e("error_manish ", "" + e.toString());
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // register GCM registration complete receiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.REGISTRATION_COMPLETE));
+        // register new push message receiver
+        // by doing this, the activity will be notified each time a new message arrives
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.PUSH_NOTIFICATION));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
+    }
+
+    void refresh() {
+        Intent intent;
+        intent= new Intent(getBaseContext(),NoticesActivity.class);
+        intent.putExtra("nb", nbClicked);
+        intent.putExtra("title", title);
+        startActivity(intent);
+        finish();
     }
 
 }
