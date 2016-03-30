@@ -71,19 +71,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawer;
     SharedPreferences sharedPreferences;
     Context context;
+
     int [] ids= new int[30];
-    String [] sids;
-    String [] intentArray,titleArray,drawableReadArray,drawableUnreadArray;
     int [] unreads=new int[30];
     int [] reads=new int[30];
 
+    String [] sids,intentArray,titleArray,drawableReadArray,drawableUnreadArray;
+
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     public static String name;
+    Sync sync;
 
     static List<String> selections;
-
-    static boolean updateNav=true, updateIcons=true;
-
+    static boolean updateNav=true, updateIcons=true , active;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -101,8 +101,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else {
 
-            if((new ConnectionDetector(getBaseContext())).isConnectingToInternet())
-               sync();
+            mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+
+                    // checking for type intent filter
+                    if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                        startActivity(new Intent(context,MainActivity.class));
+                        finish();
+                    }
+                }
+            };
+
+            context = getBaseContext();
+            Log.e("MainActivity","Sync Called");
+            sync=new Sync(context);
 
             NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancelAll();
@@ -123,8 +136,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             avatar.setOnClickListener(this);
             avatar.setOnTouchListener(this);
 
-            context = getBaseContext();
-
             setListeners();
 
             if (updateIcons)
@@ -141,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void registerGCM() {
         Intent intent = new Intent(this, GcmIntentService.class);
-        intent.putExtra("key",  "register");
+        intent.putExtra("key", "register");
         startService(intent);
     }
 
@@ -170,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // register GCM registration complete receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.REGISTRATION_COMPLETE));
-
         // register new push message receiver
         // by doing this, the activity will be notified each time a new message arrives
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
@@ -183,80 +193,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onPause();
     }
 
-    private void sync() {
-
-        boolean updateClass,updateBranch,updateDprefs,updateFname,updateLname,updateEmail,updateNumber,updateDOB,updatePassword;
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-
-        updateFname=sharedPreferences.getBoolean("updateFname",false); Log.e("updateFname=",""+updateFname);
-        updateLname=sharedPreferences.getBoolean("updateLname",false); Log.e("updateLname=",""+updateLname);
-        updateEmail=sharedPreferences.getBoolean("updateEmail",false); Log.e("updateEmail=",""+updateEmail);
-        updatePassword=sharedPreferences.getBoolean("updatePassword",false); Log.e("updatePassword=",""+updatePassword);
-        updateNumber=sharedPreferences.getBoolean("updateNumber",false); Log.e("updateNumber=",""+updateNumber);
-        updateDOB=sharedPreferences.getBoolean("updateDOB",false); Log.e("updateDOB=",""+updateDOB);
-        updateClass=sharedPreferences.getBoolean("updateClass",false); Log.e("updateClass=",""+updateClass);
-        updateBranch=sharedPreferences.getBoolean("updateBranch",false); Log.e("updateBranch=",""+updateBranch);
-        updateDprefs=sharedPreferences.getBoolean("updateDprefs",false); Log.e("updateDPrefs=",""+updateDprefs);
-
-        if (updateClass) {
-            //db.execSQL("update syncStatus set class=0");
-            editor.putBoolean("updateClass",false);
-            editor.commit();
-            updateClass();
-        }
-        if (updateBranch) {
-            //db.execSQL("update syncStatus set branch=0");
-            editor.putBoolean("updateBranch", false);
-            editor.commit();
-            updateBranch();
-        }
-        if (updateDprefs) {
-            //db.execSQL("update syncStatus set dprefs=0");
-            editor.putBoolean("updateDprefs", false);
-            editor.commit();
-            updateDPrefs();
-        }
-        if (updateFname) {
-            //db.execSQL("update syncStatus set fname=0");
-            editor.putBoolean("updateFname", false);
-            editor.commit();
-            updateFName();
-        }
-        if (updateLname) {
-            //db.execSQL("update syncStatus set lname=0");
-            editor.putBoolean("updateLname", false);
-            editor.commit();
-            updateLName();
-        }
-        if (updateEmail) {
-            //db.execSQL("update syncStatus set email=0");
-            editor.putBoolean("updateEmail", false);
-            editor.commit();
-            updateEMail();
-        }
-        if (updateNumber) {
-            //db.execSQL("update syncStatus set number=0");
-            editor.putBoolean("updateNumber", false);
-            editor.commit();
-            updateNumber();
-        }
-        if (updateDOB) {
-            //db.execSQL("update syncStatus set dob=0");
-            editor.putBoolean("updateDOB", false);
-            editor.commit();
-            updateDOB();
-        }
-        if (updatePassword) {
-            //db.execSQL("update syncStatus set password=0");
-            editor.putBoolean("updatePassword",false);
-            editor.commit();
-            updatePassword();
-        }
-    }
-
     private void setListeners()
     {
-
         sids=getResources().getStringArray(R.array.sids);
         drawableReadArray=getResources().getStringArray(R.array.drawablesRead);
         drawableUnreadArray=getResources().getStringArray(R.array.drawablesUnread);
@@ -288,12 +226,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         textView.setText(s);
         textView.setTypeface(roboto_light);
 
-
         textView=(TextView)navHeader.findViewById(R.id.textView_email);
         s=sharedPreferences.getString("PRN", "20__B__0__");
         textView.setText(s);
-
-
 
         File imgFile=new File(sharedPreferences.getString("avatarPath",""));
 
@@ -319,9 +254,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void clear() {
-
-            }
+            public void clear() {}
 
             @Override
             public boolean contains(Object object) {
@@ -380,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for(int i=1;i<=30;i++)
         {
             boolean read=sharedPreferences.getBoolean(""+(i-1),false);
-            //Log.e("MainActivity","badge_"+read);
             if(!read)
                 imageButtons[i-1].setBackgroundResource(reads[i-1]);
             else
@@ -401,7 +333,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 imageButtons[i-1].setImageResource(R.color.transperent);
                 imageButtons[i-1].setEnabled(true);
             }
-
         }
         if(setCount==0)
             Snackbar.make(this.findViewById(R.id.coordinatorLayout_parentViewMA), "You have no Notice boards selected!\nGo to Settings to change your preferences." , Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -440,7 +371,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this,FavouritesActivity.class));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -762,7 +692,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode,int resultCode, Intent imageReturnedIntent)
     {
@@ -822,103 +751,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return false;
      }
-
-
-    public void updateClass()
-    {
-        String _class= sharedPreferences.getString("c_name", "b1");
-        upload("c_name",_class);
-    }
-    public void updateBranch()
-    {
-        String _branch= sharedPreferences.getString("d_name", "cse");
-        upload("d_name",_branch);
-    }
-    public void updateDPrefs()
-    {
-        Set<String> dprefs= sharedPreferences.getStringSet("prefs", new HashSet<>(Arrays.asList(new String[]{})));
-        String _dprefs="";
-        Iterator iterator=dprefs.iterator();
-        for (int i=0;i<dprefs.size();i++) {
-            _dprefs+=""+iterator.next();
-            _dprefs+=",";
-        }
-        upload("prefs",_dprefs.substring(0,_dprefs.length()-1));
-    }
-    public void updateFName()
-    {
-        String _fname= sharedPreferences.getString("f_name", "");
-        try {
-            _fname= URLEncoder.encode(_fname,"utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        upload("f_name",_fname);
-
-    }
-    public void updateLName()
-    {
-        String _lname= sharedPreferences.getString("l_name", "");
-        try {
-            _lname= URLEncoder.encode(_lname,"utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        upload("l_name",_lname);
-
-    }
-    public void updateEMail()
-    {
-        String _email= sharedPreferences.getString("email", "b1");
-        try {
-            _email= URLEncoder.encode(_email,"utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        upload("email",_email);
-    }
-    public void updateNumber()
-    {
-        String _number= sharedPreferences.getString("phone", "");
-        upload("phone",_number);
-
-    }
-    public void updatePassword()
-    {
-        String _password= sharedPreferences.getString("pword", "");
-        upload("pword",_password);
-    }
-    public void updateDOB()
-    {
-        String _dob= sharedPreferences.getString("dob", "");
-        upload("dob",_dob);
-
-    }
-    private void upload(String key,String value)
-    {
-        String URL="http://notapp.wce.ac.in/sync.php?prn="+sharedPreferences.getString("PRN","")+"&key="+key+"&value="+value+"";
-        new Sync().execute(URL);
-    }
-    class Sync extends AsyncTask<String,Void,Void>
-    {
-        @Override
-        protected Void doInBackground(String... params) {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            Log.e("url", params[0]);
-            HttpGet httpGet = new HttpGet(params[0]);
-            try {
-                httpClient.execute(httpGet);
-            } catch (IOException e) {
-                Log.e("Sync:",""+e);
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-        }
-    }
 }

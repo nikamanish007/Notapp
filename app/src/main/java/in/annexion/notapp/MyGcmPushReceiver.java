@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -53,6 +54,12 @@ public class MyGcmPushReceiver extends GcmListenerService {
         Log.e(TAG, "Title: " + title);
         Log.e(TAG, "uploadDate: " + uploadDate);
 
+        if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+            // app is in foreground, broadcast the push message
+            Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
+        }
+
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
 
         showNotificationMessage(getApplicationContext(), title, uploadDate, uploadedBy, resultIntent);
@@ -61,6 +68,8 @@ public class MyGcmPushReceiver extends GcmListenerService {
         noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, exp, noticeBoard, link, md5);
         if(!(link.charAt(0)=='#'))
             noticeDownloader.downloadFile(link);
+        if(MainActivity.active)
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
     }
 
     /**
