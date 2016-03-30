@@ -1,8 +1,11 @@
 package in.annexion.notapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -25,9 +28,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener , View.OnTouchListener , View.OnFocusChangeListener
@@ -37,12 +43,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     EditText editText_PRN,editText_Password,editText_PasswordConfirm;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    Context context;
+    AlertDialogManager alert;
+    int done;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        context=getBaseContext();
+
+        alert=new AlertDialogManager();
 
         textView_Login=(TextView)findViewById(R.id.textView_Login);
         editText_PRN=(EditText)findViewById(R.id.editText_PRN);
@@ -122,6 +134,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         JSONObject jObj = null;
         String json = "";
         int consent;
+        boolean result,isConnectingToInternet,hasActiveConnection;
 
         @Override
         protected void onPreExecute() {
@@ -133,56 +146,108 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         }
 
+        public boolean isConnectingToInternet(){
+            boolean res=false;
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+                res=true;
+            }
+            return res;
+        }
+
+        public  boolean hasActiveConnection() {
+            Boolean toPostExecute=false;
+            try {
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://notapp.wce.ac.in").openConnection());
+                urlc.setRequestProperty("User-Agent", "Test");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(5000);
+                urlc.connect();
+                toPostExecute = (urlc.getResponseCode() == 204 || urlc.getResponseCode()==200);
+                Log.e("CD", "ResponseCode: " + urlc.getResponseCode() + "  " + toPostExecute);
+            } catch (IOException e) {
+                Log.e("ConnectionD", "Error checking internet connection", e);
+            }
+            return toPostExecute;
+        }
+
         @Override
         protected Boolean doInBackground(String[] params) {
             String PRN = "";
             String Password = "";
-            try {
-                PRN = URLEncoder.encode(params[0], "utf-8");
-                Password = URLEncoder.encode(params[1], "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                Log.e("Encoding gandesh", ":" + e);
-                e.printStackTrace();
-            }
-            try {
-                DefaultHttpClient httpClient = new DefaultHttpClient();
-                String url = "http://notapp.wce.ac.in/json/register.php?PRN=" + PRN + "&" + "password=" + Password + "";
-                HttpGet httpGet = new HttpGet(url);
-                Log.e("url register: ", url);
-                HttpResponse httpResponse = null;
-                httpResponse = httpClient.execute(httpGet);
 
-                HttpEntity httpEntity = httpResponse.getEntity();
-                is = httpEntity.getContent();
-            } catch (Exception e) {
-                Log.e("Authenticate Error: ", "" + e);
+            isConnectingToInternet=isConnectingToInternet();
+
+            Log.e("ConnectionD", " is connecting"+isConnectingToInternet);
+
+            hasActiveConnection=false;
+
+            if(isConnectingToInternet)
+            {
+                hasActiveConnection = hasActiveConnection();
             }
 
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
+            if(isConnectingToInternet)
+            {
+                hasActiveConnection = hasActiveConnection();
+            }
+
+            Log.e("ConnectionD", "has active " + hasActiveConnection);
+
+            if(!hasActiveConnection) {
+                return  result;
+            }
+            else {
+
+                try {
+                    PRN = URLEncoder.encode(params[0], "utf-8");
+                    Password = URLEncoder.encode(params[1], "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    Log.e("Encoding gandesh", ":" + e);
+                    e.printStackTrace();
                 }
-                is.close();
-                json = sb.toString();
-            } catch (Exception e) {
-                Log.e("Authenticate", "Error converting result " + e.toString());
-            }
+                try {
+                    DefaultHttpClient httpClient = new DefaultHttpClient();
+                    String url = "http://notapp.wce.ac.in/json/register.php?PRN=" + PRN + "&" + "password=" + Password + "";
+                    HttpGet httpGet = new HttpGet(url);
+                    Log.e("url register: ", url);
+                    HttpResponse httpResponse = null;
+                    httpResponse = httpClient.execute(httpGet);
 
-            publishProgress();
-            // try parse the string to a JSON object
-            try {
-                jObj = new JSONObject(json);
-                JSONArray jsonArray = jObj.getJSONArray("result");
-                JSONObject j = jsonArray.getJSONObject(0);
-                consent = j.getInt("consent");
-            } catch (JSONException e) {
-                Log.e("Authenticate", "Error parsing data " + e.toString());
-            }
+                    HttpEntity httpEntity = httpResponse.getEntity();
+                    is = httpEntity.getContent();
+                } catch (Exception e) {
+                    Log.e("Authenticate Error: ", "" + e);
+                }
 
-            Log.e("Consent : ", "" + consent);
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+                } catch (Exception e) {
+                    Log.e("Authenticate", "Error converting result " + e.toString());
+                }
+
+                publishProgress();
+                // try parse the string to a JSON object
+                try {
+                    jObj = new JSONObject(json);
+                    JSONArray jsonArray = jObj.getJSONArray("result");
+                    JSONObject j = jsonArray.getJSONObject(0);
+                    consent = j.getInt("consent");
+                } catch (JSONException e) {
+                    Log.e("Authenticate", "Error parsing data " + e.toString());
+                }
+
+                Log.e("Consent : ", "" + consent);
+            }
+            done=consent;
             return consent == 1;
         }
 
@@ -195,34 +260,41 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         protected void onPostExecute(Boolean result) {
             progressDialog.dismiss();
 
-            if (result) {
-                conclude();
-            } else {
-                Snackbar.make(findViewById(R.id.login_parentView), "Invalid PRN..!!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                editText_PRN.setText("");
-                editText_PRN.requestFocus();
-                editText_Password.setText("");
-                editText_PasswordConfirm.setText("");
+            if (!result) {
+                if(hasActiveConnection) {
+                    Snackbar.make(findViewById(R.id.login_parentView), "Registration Failed! Please enter valid credentials.", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    editText_PRN.setText("");
+                    editText_PRN.requestFocus();
+                    editText_Password.setText("");
+                    editText_PasswordConfirm.setText("");
+                }
+                else {
+                    alert.showAlertDialog(RegisterActivity.this, "Offline or Weak Connection!", "Connect to Internet and try again.", false);
+                }
             }
         }
     }
 
-    private void conclude()
-    {
-        Toast.makeText(getBaseContext(),"Registered Successfully!!",Toast.LENGTH_LONG).show();
-        sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("PRN", editText_PRN.getText().toString());
-        editor.putString("pword", editText_Password.getText().toString());
-        editor.putBoolean("isLoggedIn", true);
-        editor.putBoolean("isFirstTime",true);
-        editor.commit();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("done=",""+done);
+        if(done==1) {
+            Toast.makeText(getBaseContext(), "Registered Successfully!!", Toast.LENGTH_LONG).show();
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("PRN", editText_PRN.getText().toString());
+            editor.putString("pword", editText_Password.getText().toString());
+            editor.putBoolean("isLoggedIn", true);
+            editor.putBoolean("isFirstTime", true);
+            editor.commit();
 
-        Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
-        intent.putExtra("optionSelected", "editProfile");
-        intent.putExtra("isFirst",true);
-        startActivity(intent);
-        finish();
+            Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
+            intent.putExtra("optionSelected", "editProfile");
+            intent.putExtra("isFirst", true);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override

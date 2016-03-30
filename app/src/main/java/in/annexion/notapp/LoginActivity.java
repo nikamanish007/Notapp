@@ -53,16 +53,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        alert=new AlertDialogManager();
         cd=new ConnectionDetector(getBaseContext());
 
-        //GCMRegistrar.unregister(this);
         sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        /*if(sharedPreferences.getBoolean("isLoggedIn", false))
-        {
-            startActivity(new Intent(getBaseContext(),MainActivity.class));
-            return;
-        }*/
+
+        alert=new AlertDialogManager();
 
         button_login=(AppCompatButton)findViewById(R.id.button_Login);
         button_login.setOnClickListener(this);
@@ -119,15 +114,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v)
     {
-
         switch (v.getId()) {
             case R.id.button_Login:
                 new AuthenticateLogin(LoginActivity.this).execute(editText_PRN.getText().toString(), editText_Password.getText().toString());
                 break;
 
-                case R.id.textView_Register:
-                    startActivity(new Intent(getBaseContext(), RegisterActivity.class));
-                    finish();
+            case R.id.textView_Register:
+                startActivity(new Intent(getBaseContext(), RegisterActivity.class));
+                finish();
         }
     }
 
@@ -155,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return false;
     }
 
-        public class AuthenticateLogin extends AsyncTask<String,Void,Boolean>
+    public class AuthenticateLogin extends AsyncTask<String,Void,Boolean>
     {
         ProgressDialog progressDialog;
         private InputStream is;
@@ -341,9 +335,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 else {
                     alert.showAlertDialog(context, "Offline or Weak Connection!", "Connect to Internet and try again.", false);
                 }
-
             }
         }
     }
-
 }
