@@ -66,7 +66,7 @@ public class MainNoticeActivity extends AppCompatActivity
 
         textView_Message=(TextView)findViewById(R.id.textView_Message);
         textView_Title=(TextView)findViewById(R.id.textView_Title);
-        roboto_Thin = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Thin.ttf");
+        roboto_Thin = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Bold.ttf");
         roboto_CondensedLight = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
 
         intent=getIntent();
