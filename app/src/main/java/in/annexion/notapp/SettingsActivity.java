@@ -1,25 +1,12 @@
 package in.annexion.notapp;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.database.CharArrayBuffer;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.database.DataSetObserver;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.preference.DialogPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
@@ -58,8 +45,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     static SharedPreferences.Editor editor;
     static int cunt;
     static boolean isEditProf;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -116,48 +101,31 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     @Override
     public void onBackPressed() {
         Intent intent;
-        if(sharedPreferences.getBoolean("isFirstTime",false)){
-            editor.putBoolean("isFirstTime",false);
-            editor.commit();
-            intent=new Intent(this,SettingsActivity.class);
-            intent.putExtra("optionSelected","settings");
-            startActivity(intent);
-            finish();
+        if(isEditProf) {
+            if (sharedPreferences.getBoolean("isFirstTime", false)) {
+                intent = new Intent(this, SettingsActivity.class);
+                intent.putExtra("optionSelected", "settings");
+                startActivity(intent);
+                finish();
+            } else {
+                intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
         else {
-            intent=new Intent(this,MainActivity.class);
-            startActivity(intent);
-            finish();
+            if (sharedPreferences.getBoolean("isFirstTime", false)) {
+                intent=new Intent(this, HelpActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            else{
+                intent=new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
-    }
-
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context)
-    {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    /*@Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target)
-    {
-        loadHeadersFromResource(R.xml.pref_headers, target);
-    }*/
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -313,7 +281,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                 || AppPreferenceFragment.class.getName().equals(fragmentName);
     }
 
-
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -393,10 +360,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             Preference preference=findPreference("dob");
-            preference.setSummary("" + dayOfMonth + "-" + "" + (monthOfYear + 1) + "-" + "" + year);
+            preference.setSummary("" + year + "-" + "" + (monthOfYear + 1) + "-" + "" + dayOfMonth);
             SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getActivity());
             SharedPreferences.Editor editor=sharedPreferences.edit();
-            editor.putString("dob",""+dayOfMonth+"-"+""+(monthOfYear+1)+"-"+""+year);
+            editor.putString("dob",""+year+"-"+""+(monthOfYear+1)+"-"+""+dayOfMonth);
             editor.commit();
         }
 
@@ -419,7 +386,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                 Log.e("SettingsActivity","Inside onPreferenceClicked");
                 dialog=new Dialog(getActivity());
                 dialog.setContentView(R.layout.dialog_change_password);
-                dialog.setTitle("Change Password");
+                dialog.setTitle("Edit Password");
                 dialog.show();
                 button_Done=(AppCompatButton)dialog.findViewById(R.id.button_Done);
                 editText_CurrentPassword=(EditText)dialog.findViewById(R.id.editText_CurrentPassword);

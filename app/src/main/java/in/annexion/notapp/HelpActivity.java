@@ -1,6 +1,9 @@
 package in.annexion.notapp;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +26,8 @@ public class HelpActivity extends AppCompatActivity {
     Bundle args;
     static int[] imageIDs=new int[5];
     static ImageView imageView;
+    static SharedPreferences sharedPreferences;
+    static SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,10 +111,7 @@ public class HelpActivity extends AppCompatActivity {
     }
     public static class ThirdSlidePageFragment extends Fragment
     {
-        Bundle args;
         ImageView imageView;
-        int ID;
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -122,9 +124,7 @@ public class HelpActivity extends AppCompatActivity {
     }
     public static class ForthSlidePageFragment extends Fragment
     {
-        Bundle args;
         ImageView imageView;
-        int ID;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -138,9 +138,7 @@ public class HelpActivity extends AppCompatActivity {
     }
     public static class FifthSlidePageFragment extends Fragment
     {
-        Bundle args;
         ImageView imageView;
-        int ID;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -155,6 +153,17 @@ public class HelpActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
+        startActivity(new Intent(this,MainActivity.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
+        editor=sharedPreferences.edit();
+        if(sharedPreferences.getBoolean("isFirstTime",false)){
+            editor.putBoolean("isFirstTime",false);
+            editor.commit();
+        }
     }
 }
