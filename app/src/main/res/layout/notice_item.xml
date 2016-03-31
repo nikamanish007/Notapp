@@ -60,27 +60,37 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/textView_UploadedBy"
-                android:text="Dr. S.H. Bhandari"
-                android:textStyle="normal"
-                android:textColor="@color/textSecondary"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="9dp"
-            />
-            <TextView
-                android:id="@+id/textView_Date"
-                android:text="28th April"
-                android:textStyle="normal"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/textSecondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:paddingRight="4dp"
-            />
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <TextView
+                    android:id="@+id/textView_UploadedBy"
+                    android:text="Dr. S.H. Bhandari"
+                    android:textStyle="normal"
+                    android:textColor="@color/textSecondary"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="9dp"
+                    android:layout_weight="7"
+                    />
+
+
+                <TextView
+                    android:id="@+id/textView_Date"
+                    android:text="28th April"
+                    android:textStyle="normal"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/textSecondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
