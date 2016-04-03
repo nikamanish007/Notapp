@@ -58,6 +58,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
             // app is in foreground, broadcast the push message
             Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
             LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
+            Log.e("MyGcmPushReceiver", "Title-" + title);
         }
 
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
@@ -68,8 +69,6 @@ public class MyGcmPushReceiver extends GcmListenerService {
         noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, exp, noticeBoard, link, md5);
         if(!(link.charAt(0)=='#'))
             noticeDownloader.downloadFile(link);
-        if(MainActivity.active)
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
     }
 
     /**
