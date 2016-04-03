@@ -99,7 +99,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     }
 
     @Override
-    public void onBackPressed() {
+    protected void onStop() {
+        super.onStop();
         Intent intent;
         if(isEditProf) {
             if (sharedPreferences.getBoolean("isFirstTime", false)) {

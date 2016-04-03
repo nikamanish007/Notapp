@@ -45,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     SharedPreferences.Editor editor;
     Context context;
     AlertDialogManager alert;
-    int done;
+    boolean done;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -247,7 +247,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                 Log.e("Consent : ", "" + consent);
             }
-            done=consent;
             return consent == 1;
         }
 
@@ -259,7 +258,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         @Override
         protected void onPostExecute(Boolean result) {
             progressDialog.dismiss();
-
+            done=result;
             if (!result) {
                 if(hasActiveConnection) {
                     Snackbar.make(findViewById(R.id.login_parentView), "Registration Failed! Please enter valid credentials.", Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -272,29 +271,31 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     alert.showAlertDialog(RegisterActivity.this, "Offline or Weak Connection!", "Connect to Internet and try again.", false);
                 }
             }
+            else {
+                conclude();
+            }
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e("done=",""+done);
-        if(done==1) {
-            Toast.makeText(getBaseContext(), "Registered Successfully!!", Toast.LENGTH_LONG).show();
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("PRN", editText_PRN.getText().toString());
-            editor.putString("pword", editText_Password.getText().toString());
-            editor.putBoolean("isLoggedIn", true);
-            editor.putBoolean("isFirstTime", true);
-            editor.commit();
+    void conclude() {
+        Toast.makeText(getBaseContext(), "Registered Successfully!!", Toast.LENGTH_LONG).show();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("PRN", editText_PRN.getText().toString());
+        editor.putString("pword", editText_Password.getText().toString());
+        editor.putBoolean("isLoggedIn", true);
+        editor.putBoolean("isFirstTime", true);
+        editor.commit();
 
-            Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
-            intent.putExtra("optionSelected", "editProfile");
-            intent.putExtra("isFirst", true);
-            startActivity(intent);
-            finish();
-        }
+        editText_PRN.setEnabled(false);
+        editText_PRN.setVisibility(View.INVISIBLE);
+        editText_Password.setEnabled(false);
+        editText_Password.setVisibility(View.INVISIBLE);
+        editText_PasswordConfirm.setEnabled(false);
+        editText_PasswordConfirm.setVisibility(View.INVISIBLE);
+        textView_Login.setVisibility(View.INVISIBLE);
+        button_register.setText("Next");
+        Log.e("done=", "" + done);
     }
 
     @Override
@@ -303,25 +304,31 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId())
         {
             case R.id.button_Register:
-                String PRN = editText_PRN.getText().toString();
-                String Password=editText_Password.getText().toString();
-                String PasswordConfirm=editText_PasswordConfirm.getText().toString();
+                if(done) {
+                    String PRN = editText_PRN.getText().toString();
+                    String Password = editText_Password.getText().toString();
+                    String PasswordConfirm = editText_PasswordConfirm.getText().toString();
 
-                if(isInvalid(PRN))
-                    editText_PRN.setError("Enter PRN!!");
-                else if(Password.equals(""))
-                    editText_Password.setError("Cannot be blank!!");
-                else if(PasswordConfirm.equals(""))
-                    editText_PasswordConfirm.setError("Cannot be blank!!");
-                else
-                {
-                    if(!Password.equals(PasswordConfirm))
-                    {
-                        editText_PasswordConfirm.setText("");
-                        editText_PasswordConfirm.setError("Password doesn't match.!!");
+                    if (isInvalid(PRN))
+                        editText_PRN.setError("Enter PRN!!");
+                    else if (Password.equals(""))
+                        editText_Password.setError("Cannot be blank!!");
+                    else if (PasswordConfirm.equals(""))
+                        editText_PasswordConfirm.setError("Cannot be blank!!");
+                    else {
+                        if (!Password.equals(PasswordConfirm)) {
+                            editText_PasswordConfirm.setText("");
+                            editText_PasswordConfirm.setError("Password doesn't match.!!");
+                        } else
+                            new Authenticate().execute(PRN, Password);
                     }
-                    else
-                        new Authenticate().execute(PRN,Password);
+                }
+                else {
+                    Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
+                    intent.putExtra("optionSelected", "editProfile");
+                    intent.putExtra("isFirst", true);
+                    startActivity(intent);
+                    finish();
                 }
                 break;
             case R.id.textView_Login:
