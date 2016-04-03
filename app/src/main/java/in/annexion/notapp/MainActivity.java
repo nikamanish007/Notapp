@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Sync sync;
 
     static List<String> selections;
-    static boolean updateNav=true, updateIcons=true , active;
+    static boolean updateNav=true, updateIcons=true , synced=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     // checking for type intent filter
                     if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                        Log.e("MainActivity","Refreshed on Broadcast.");
                         startActivity(new Intent(context,MainActivity.class));
                         finish();
                     }
@@ -114,8 +115,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             };
 
             context = getBaseContext();
-            Log.e("MainActivity","Sync Called");
-            sync=new Sync(context);
+            if(!synced) {
+                Log.e("MainActivity", "Sync Called");
+                sync=new Sync(context);
+            }
 
             NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancelAll();
