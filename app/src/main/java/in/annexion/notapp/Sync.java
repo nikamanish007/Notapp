@@ -342,71 +342,36 @@ public class Sync
         if (!file.exists()) {
             file.mkdirs();
         }
-        db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+       // db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+        db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+        db.enableWriteAheadLogging();
+
+        db.execSQL("create table if not exists notices" +
+                "(n_id int(11), " +                 //0
+                "title varchar(50), " +             //1
+                "uploadedBy varchar(30) , " +       //2
+                "uploadDate varchar(15) , " +       //3
+                "exp varchar(15) , " +              //4
+                "noticeBoard varchar(15) , " +      //5
+                "link varchar(500) , " +            //6
+                "md5 varchar(50) , " +              //7
+                "isFav integer default 0 , " +      //8
+                "isRead integer default 0 ," +      //9
+                "isDone integer default 0)");
+
         if(new ConnectionDetector(context).isConnectingToInternet()) {
             sync();
-            Log.e("MainActivity", "Sync Called");
-            for(int i=0,v=0;i<selections.size();i++)
-            {
-                v=Integer.parseInt(selections.get(i));
-                Log.e("Sync","v="+v);
-                new NoticesPuller(intentArray[v-1]).execute();
+            Log.e("Sync", "synced" + MainActivity.synced);
+            for (int i = 0, v = 0; i < selections.size(); i++) {
+                v = Integer.parseInt(selections.get(i));
+                Log.e("Sync", "v=" + v);
+                new NoticesPuller(intentArray[v - 1]).execute();
             }
+            MainActivity.synced=true;
+            Log.e("Sync","synced="+MainActivity.synced);
         }
     }
 
-    void sync()
-    {
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-
-        updateFname=sharedPreferences.getBoolean("updateFname",false); Log.e("updateFname=", "" + updateFname);
-        updateLname=sharedPreferences.getBoolean("updateLname",false); Log.e("updateLname=",""+updateLname);
-        updateEmail=sharedPreferences.getBoolean("updateEmail",false); Log.e("updateEmail=",""+updateEmail);
-        updatePassword=sharedPreferences.getBoolean("updatePassword",false); Log.e("updatePassword=",""+updatePassword);
-        updateNumber=sharedPreferences.getBoolean("updateNumber",false); Log.e("updateNumber=",""+updateNumber);
-        updateDOB=sharedPreferences.getBoolean("updateDOB",false); Log.e("updateDOB=",""+updateDOB);
-        updateClass=sharedPreferences.getBoolean("updateClass",false); Log.e("updateClass=",""+updateClass);
-        updateBranch=sharedPreferences.getBoolean("updateBranch",false); Log.e("updateBranch=",""+updateBranch);
-        updateDprefs=sharedPreferences.getBoolean("updateDprefs",false); Log.e("updateDPrefs=",""+updateDprefs);
-
-        if (updateClass) {
-            editor.putBoolean("updateClass",false);
-            updateClass();
-        }
-        if (updateBranch) {
-            editor.putBoolean("updateBranch",false);
-            updateBranch();
-        }
-        if (updateDprefs) {
-            editor.putBoolean("updateDprefs",false);
-            updateDPrefs();
-        }
-        if (updateFname) {
-            editor.putBoolean("updateFname",false);
-            updateFName();
-        }
-        if (updateLname) {
-            editor.putBoolean("updateLname",false);
-            updateLName();
-        }
-        if (updateEmail) {
-            editor.putBoolean("updateEmail",false);
-            updateEMail();
-        }
-        if (updateNumber) {
-            editor.putBoolean("updateNumber",false);
-            updateNumber();
-        }
-        if (updateDOB) {
-            editor.putBoolean("updateDOB",false);
-            updateDOB();
-        }
-        if (updatePassword) {
-            editor.putBoolean("updatePassword",false);
-            updatePassword();
-        }
-        editor.commit();
-    }
 
     public class NoticesPuller extends AsyncTask<Void, Void, Void>
     {
@@ -426,7 +391,7 @@ public class Sync
         @Override
         protected Void doInBackground(Void... params)
         {
-            int length=0;
+            int length;
             String[] n_id;
             String[] title;
             String[] uploadDate;
@@ -439,28 +404,26 @@ public class Sync
             try {
                 try {
                     cursor = db.rawQuery("select max(n_id) from notices where noticeBoard='" + nbClicked + "'", null);
+                    Log.e("Sync","cursor worked");
                 } catch (Exception e) {
+                    Log.e("Sync","cursor fucked up");
                 }
-
-                if (!(cursor.moveToFirst()) || cursor.getCount() ==0) {
-                    maxn_id = -1;
-                }
-                else {
-                    maxn_id=cursor.getInt(0);
-                }
+                cursor.moveToFirst();
+                maxn_id=cursor.getInt(0);
+                Log.e("Sync"," max n_id in "+nbClicked+"-"+maxn_id);
 
                 _class= URLEncoder.encode(_class, "utf-8");
                 _branch=URLEncoder.encode(_branch,"utf-8");
                 yourJsonStringUrl= "http://notapp.wce.ac.in/json/index.php?dept=" + nbClicked + "&class="+_class+"&branch="+_branch;
                 yourJsonStringUrl=yourJsonStringUrl+"&n_id="+maxn_id;
-                Log.e("sarang URL: ",yourJsonStringUrl );
+                Log.e("Sync","URL "+yourJsonStringUrl );
 
                 JsonParser jParser = new JsonParser();
                 JSONObject json = jParser.getJSONFromUrl(yourJsonStringUrl);
                 dataJsonArr = json.getJSONArray("result");
                 length = dataJsonArr.length();
 
-                Log.e("Length json", ""+length+" "+dataJsonArr.length());
+                Log.e("Sync", "Length json"+length+" "+dataJsonArr.length());
 
                 n_id = new String[length];
                 title = new String[length];
@@ -472,29 +435,31 @@ public class Sync
                 md5=new String[length];
                 Log.e("Sync","coming in before for");
 
-                if(length>0) {
-                    Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(pushNotification);
-                }
-
                 for (int i = 0; i < length; i++)
                 {
                     JSONObject c = dataJsonArr.getJSONObject(i);
-
+                    Log.e("Sync","After JObject");
                     n_id[i] = c.getString("n_id");
                     title[i] = c.getString("title");
                     uploadDate[i] = c.getString("uploadDate");
                     uploadedBy[i]=c.getString("uploadedBy");
                     exp[i] = c.getString("exp");
                     link[i] = c.getString("name");
-                    noticeBoard[i]=""+0;
+                    noticeBoard[i]=""+ (Integer.parseInt(c.getString("noticeBoard")) - 1);
                     md5[i]="";
-
+                    Log.e("Sync","After Read");
                     intent = new Intent(context, MainActivity.class);
 
                     notificationUtils = new NotificationUtils(context);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    notificationUtils.showNotificationMessage(title[i], uploadDate[i], uploadedBy[i] , intent);
+                    notificationUtils.showNotificationMessage(title[i], uploadDate[i], uploadedBy[i], intent);
+
+                    SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putBoolean("" + noticeBoard, true);
+                    editor.commit();
+
+                    Log.e("Sync","Received-"+title[i]);
 
                     Log.e("notices", "" + n_id[i] + "  " + title[i] + "  " + uploadDate[i] + "  " + exp[i] + "  " + link[i] + "  ");
                     NoticeDownloader noticeDownloader = new NoticeDownloader();
@@ -502,11 +467,16 @@ public class Sync
                     if(!(link[i].charAt(0)=='#'))
                         noticeDownloader.downloadFile(link[i]);
                 }
+                if(length>0) {
+                    Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(pushNotification);
+                }
+
             } catch (JSONException e) {
-                Log.e("Upto Date: url",yourJsonStringUrl);
+                Log.e("Sync","Upto Date "+nbClicked);
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {
-                Log.e("Server Not Found*",yourJsonStringUrl);
+                Log.e("Sync","Server Not found ");
                 e.printStackTrace();
             }
             catch (Exception e) {
@@ -619,4 +589,57 @@ public class Sync
             super.onPostExecute(aVoid);
         }
     }
+    void sync()
+    {
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+
+        updateFname=sharedPreferences.getBoolean("updateFname",false); Log.e("updateFname=", "" + updateFname);
+        updateLname=sharedPreferences.getBoolean("updateLname",false); Log.e("updateLname=",""+updateLname);
+        updateEmail=sharedPreferences.getBoolean("updateEmail",false); Log.e("updateEmail=",""+updateEmail);
+        updatePassword=sharedPreferences.getBoolean("updatePassword",false); Log.e("updatePassword=",""+updatePassword);
+        updateNumber=sharedPreferences.getBoolean("updateNumber",false); Log.e("updateNumber=",""+updateNumber);
+        updateDOB=sharedPreferences.getBoolean("updateDOB",false); Log.e("updateDOB=",""+updateDOB);
+        updateClass=sharedPreferences.getBoolean("updateClass",false); Log.e("updateClass=",""+updateClass);
+        updateBranch=sharedPreferences.getBoolean("updateBranch",false); Log.e("updateBranch=",""+updateBranch);
+        updateDprefs=sharedPreferences.getBoolean("updateDprefs",false); Log.e("updateDPrefs=",""+updateDprefs);
+
+        if (updateClass) {
+            editor.putBoolean("updateClass",false);
+            updateClass();
+        }
+        if (updateBranch) {
+            editor.putBoolean("updateBranch",false);
+            updateBranch();
+        }
+        if (updateDprefs) {
+            editor.putBoolean("updateDprefs",false);
+            updateDPrefs();
+        }
+        if (updateFname) {
+            editor.putBoolean("updateFname",false);
+            updateFName();
+        }
+        if (updateLname) {
+            editor.putBoolean("updateLname",false);
+            updateLName();
+        }
+        if (updateEmail) {
+            editor.putBoolean("updateEmail",false);
+            updateEMail();
+        }
+        if (updateNumber) {
+            editor.putBoolean("updateNumber",false);
+            updateNumber();
+        }
+        if (updateDOB) {
+            editor.putBoolean("updateDOB",false);
+            updateDOB();
+        }
+        if (updatePassword) {
+            editor.putBoolean("updatePassword",false);
+            updatePassword();
+        }
+        editor.commit();
+    }
+
 }

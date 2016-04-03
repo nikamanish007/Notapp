@@ -22,7 +22,7 @@ import java.net.URLEncoder;
  * Created by fanatic on 7/2/16.
  */
 public class NoticeDownloader {
-    String title, uploadDate, uploadedBy, exp , noticeBoard , link, n_id, md5, message;
+    String title, uploadDate, uploadedBy, exp , noticeBoard , link, n_id, md5;
     SQLiteDatabase db;
     Context context;
 
@@ -70,7 +70,7 @@ public class NoticeDownloader {
                     "isRead integer default 0 ," +      //9
                     "isDone integer default 0)");       //10
 
-        Log.e("n_downloader", "" + n_id + "  " + title + "  " + uploadDate + "  " + exp + "  " + link + "  ");
+        Log.e("NoticeDownloader", "" + n_id + "  " + title + "  " + uploadDate + "  " + exp + "  " + link + "  ");
         //noticeList.add(noticeInfo);
         String nb = context.getResources().getStringArray(R.array.intent)[Integer.parseInt(noticeBoard)];
         int id = Integer.parseInt(n_id);
@@ -109,7 +109,7 @@ public class NoticeDownloader {
 
                 URL url = new URL("http://notapp.wce.ac.in/notices/" +nb+ "/" + link + ".pdf");
 
-                Log.e("n_downloader url ", url.toString());
+                Log.e("NoticeDownloader","url  "+ url.toString());
                 URLConnection connection = url.openConnection();
                 connection.setConnectTimeout(2000);
                 connection.connect();
@@ -134,7 +134,7 @@ public class NoticeDownloader {
                 input.close();
                 fos.close();
             } catch (ConnectTimeoutException e ) {
-                Log.e("n_downloader Error: ", e.getMessage());
+                Log.e("NoticeDownloader", e.getMessage());
                 e.printStackTrace();
             } catch (IOException e) {
 
