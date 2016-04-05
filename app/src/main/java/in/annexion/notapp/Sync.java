@@ -446,7 +446,7 @@ public class Sync
                     exp[i] = c.getString("exp");
                     link[i] = c.getString("name");
                     noticeBoard[i]=""+ (Integer.parseInt(c.getString("noticeBoard")) - 1);
-                    md5[i]="";
+                    md5[i]=c.getString("md5");
                     Log.e("Sync","After Read");
                     intent = new Intent(context, MainActivity.class);
 
