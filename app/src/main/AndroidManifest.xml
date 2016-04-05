@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
 
     <permission
         android:name="in.annexion.notapp.permission.C2D_MESSAGE"
@@ -29,6 +31,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
+            android:exported="true"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,6 +41,7 @@
         </activity>
         <activity
             android:name=".LoginActivity"
+            android:exported="true"
             android:clearTaskOnLaunch="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -46,6 +50,7 @@
         <activity
             android:name=".NoticesActivity"
             android:label="@string/title_activity_notices"
+            android:exported="true"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -55,6 +60,7 @@
         <activity
             android:name=".AttendanceActivity"
             android:label="@string/title_activity_attendance"
+            android:exported="true"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -63,6 +69,7 @@
         </activity>
         <activity
             android:name=".MainNoticeActivity"
+            android:exported="true"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -71,6 +78,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
+            android:exported="true"
             android:parentActivityName=".MainActivity"
             android:theme="@style/SettingsTheme">
             <meta-data
@@ -80,6 +88,7 @@
         <activity
             android:name=".HelpActivity"
             android:label="@string/title_activity_help"
+            android:exported="true"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -89,6 +98,7 @@
         <activity
             android:name=".AboutUsActivity"
             android:label="@string/title_activity_about_us"
+            android:exported="true"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -98,6 +108,7 @@
         <activity
             android:name=".FavouritesActivity"
             android:label="Favourites"
+            android:exported="true"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -105,6 +116,7 @@
         </activity>
         <activity
             android:name=".RegisterActivity"
+            android:exported="true"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
