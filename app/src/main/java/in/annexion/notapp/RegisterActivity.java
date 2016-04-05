@@ -38,7 +38,7 @@ import java.net.URLEncoder;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener , View.OnTouchListener , View.OnFocusChangeListener
 {
-    AppCompatButton button_register;
+    AppCompatButton button_register,button_go;
     TextView textView_Login;
     EditText editText_PRN,editText_Password,editText_PasswordConfirm;
     SharedPreferences sharedPreferences;
@@ -67,9 +67,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         editText_PasswordConfirm.setOnFocusChangeListener(this);
 
         button_register=(AppCompatButton)findViewById(R.id.button_Register);
+        button_go=(AppCompatButton)findViewById(R.id.button_Go);
         button_register.setOnClickListener(this);
+        button_go.setOnClickListener(this);
         button_register.setOnTouchListener(this);
-
+        button_go.setOnClickListener(this);
     }
 
     @Override
@@ -294,8 +296,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         editText_PasswordConfirm.setEnabled(false);
         editText_PasswordConfirm.setVisibility(View.INVISIBLE);
         textView_Login.setVisibility(View.INVISIBLE);
-        button_register.setText("Next");
-        Log.e("done=", "" + done);
+        button_go.setVisibility(View.VISIBLE);
+        Log.e("Sync", "done=" + done);
     }
 
     @Override
@@ -304,36 +306,34 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId())
         {
             case R.id.button_Register:
-                if(done) {
-                    String PRN = editText_PRN.getText().toString();
-                    String Password = editText_Password.getText().toString();
-                    String PasswordConfirm = editText_PasswordConfirm.getText().toString();
+                String PRN = editText_PRN.getText().toString();
+                String Password = editText_Password.getText().toString();
+                String PasswordConfirm = editText_PasswordConfirm.getText().toString();
 
-                    if (isInvalid(PRN))
-                        editText_PRN.setError("Enter PRN!!");
-                    else if (Password.equals(""))
-                        editText_Password.setError("Cannot be blank!!");
-                    else if (PasswordConfirm.equals(""))
-                        editText_PasswordConfirm.setError("Cannot be blank!!");
-                    else {
-                        if (!Password.equals(PasswordConfirm)) {
-                            editText_PasswordConfirm.setText("");
-                            editText_PasswordConfirm.setError("Password doesn't match.!!");
-                        } else
-                            new Authenticate().execute(PRN, Password);
-                    }
-                }
+                if (isInvalid(PRN))
+                    editText_PRN.setError("Enter PRN!!");
+                else if (Password.equals(""))
+                    editText_Password.setError("Cannot be blank!!");
+                else if (PasswordConfirm.equals(""))
+                    editText_PasswordConfirm.setError("Cannot be blank!!");
                 else {
-                    Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
-                    intent.putExtra("optionSelected", "editProfile");
-                    intent.putExtra("isFirst", true);
-                    startActivity(intent);
-                    finish();
+                    if (!Password.equals(PasswordConfirm)) {
+                        editText_PasswordConfirm.setText("");
+                        editText_PasswordConfirm.setError("Password doesn't match.!!");
+                    } else
+                        new Authenticate().execute(PRN, Password);
                 }
                 break;
             case R.id.textView_Login:
-                Log.e("Register","Login Clicked");
+                Log.e("Register", "Login Clicked");
                 startActivity(new Intent(getBaseContext(), LoginActivity.class));
+                finish();
+                break;
+            case R.id.button_Go:
+                Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
+                intent.putExtra("optionSelected", "editProfile");
+                intent.putExtra("isFirst", true);
+                startActivity(intent);
                 finish();
         }
     }
@@ -341,17 +341,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onTouch(View v, MotionEvent event)
     {
-        switch (v.getId())
-        {
-            case R.id.button_Login:
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    button_register.setBackgroundColor(getResources().getColor(R.color.grayDark));
-                }
-                else {
-                    button_register.setBackgroundColor(getResources().getColor(R.color.white));
-                }
-                break;
-        }
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
+            v.setBackgroundColor(getResources().getColor(R.color.grayDark));
+        else
+            v.setBackgroundColor(getResources().getColor(R.color.white));
         return false;
     }
 }
