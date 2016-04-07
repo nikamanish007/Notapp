@@ -277,8 +277,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
         if(cursor.getCount()>0)
             isRead=cursor.getInt(0);
 
-        if(isRead==0)   
+        if(isRead==0)
             noticeViewHolder.textView_NoticeTitle.setTextColor(context.getResources().getColor(R.color.colorAccent));
+
     }
 
     @Override
@@ -308,8 +309,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
             imageView_fav=(ImageView)itemView.findViewById(R.id.imageView_fav);
 
             Typeface roboto_light = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
+            Typeface roboto_bold = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Bold.ttf");
 
-            textView_NoticeTitle.setTypeface(roboto_light);
+            textView_NoticeTitle.setTypeface(roboto_bold);
             textView_UploadedBy.setTypeface(roboto_light);
             textView_Date.setTypeface(roboto_light);
 
