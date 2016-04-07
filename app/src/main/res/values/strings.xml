@@ -158,6 +158,9 @@
     <string name="title_activity_edit_profile">Settings</string>
     <string name="register"><u>Register</u></string>
     <string name="login"><u>Login</u></string>
+    <string name="be_a_rebel"><u>  Be a Rebel  </u></string>
+    <string name="fragment_1"><u>  Attendance  </u></string>
+    <string name="fragment_2"><u>  Subscriptions  </u></string>
     <string name="blank"></string>
     <string name="title_activity_register">Register</string>
     <string name="section_format">Hello World from section: %1$d</string>

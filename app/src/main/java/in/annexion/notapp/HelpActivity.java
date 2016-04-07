@@ -1,5 +1,6 @@
 package in.annexion.notapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,15 +18,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class HelpActivity extends AppCompatActivity {
 
-    ViewPager viewPager_Help;
+    static ViewPager viewPager_Help;
     FragmentPagerAdapter pagerAdapter;
     Bundle args;
-    static int[] imageIDs=new int[5];
-    static ImageView imageView;
     static SharedPreferences sharedPreferences;
     static SharedPreferences.Editor editor;
 
@@ -35,12 +37,6 @@ public class HelpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_help);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        imageIDs[0]=R.drawable.it;
-        imageIDs[1]=R.drawable.cse;
-        imageIDs[2]=R.drawable.eln;
-        imageIDs[3]=R.drawable.ele;
-        imageIDs[4]=R.drawable.civ;
 
         args=new Bundle();
         viewPager_Help=(ViewPager)findViewById(R.id.viewPager_Help);
@@ -85,68 +81,101 @@ public class HelpActivity extends AppCompatActivity {
         }
     }
 
-    public static class FirstSlidePageFragment extends Fragment
+    public static class FirstSlidePageFragment extends Fragment implements View.OnClickListener
     {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.layout_view_pager, container, false);
+            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.help_fragment, container, false);
             Log.e("HelpActivity","First");
-            imageView=(ImageView)rootView.findViewById(R.id.imageView_Help);
-            imageView.setImageDrawable(getResources().getDrawable(imageIDs[0]));
+            Button button_take_a_tour=(Button)rootView.findViewById(R.id.button_take_a_tour);
+            TextView textView_fragment_1=(TextView)rootView.findViewById(R.id.textView_fragment_1);
+            TextView textView_fragment_2=(TextView)rootView.findViewById(R.id.textView_fragment_2);
+            TextView textView_fragment_3=(TextView)rootView.findViewById(R.id.textView_fragment_3);
+            TextView textView_fragment_4=(TextView)rootView.findViewById(R.id.textView_fragment_4);
+            TextView textView_fragment_5=(TextView)rootView.findViewById(R.id.textView_fragment_5);
+            textView_fragment_1.setOnClickListener(this);
+            textView_fragment_2.setOnClickListener(this);
+            textView_fragment_3.setOnClickListener(this);
+            textView_fragment_4.setOnClickListener(this);
+            textView_fragment_5.setOnClickListener(this);
+            button_take_a_tour.setOnClickListener(this);
+            return rootView;
+        }
+
+        @Override
+        public void onClick(View v) {
+           switch (v.getId())
+           {
+               case R.id.textView_fragment_1:
+               case R.id.button_take_a_tour:
+                   viewPager_Help.setCurrentItem(1);
+                   break;
+               case R.id.textView_fragment_2:
+                   viewPager_Help.setCurrentItem(2);
+                   break;
+               case R.id.textView_fragment_3:
+                   viewPager_Help.setCurrentItem(3);
+                   break;
+               case R.id.textView_fragment_4:
+                   viewPager_Help.setCurrentItem(4);
+                   break;
+           }
+        }
+    }
+    public static class SecondSlidePageFragment extends Fragment {
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.help_fragment_1, container, false);
+            Log.e("HelpActivity", "Second");
             return rootView;
         }
     }
-    public static class SecondSlidePageFragment extends Fragment
+    public static class ThirdSlidePageFragment extends Fragment implements View.OnClickListener
     {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.layout_view_pager, container, false);
-            Log.e("HelpActivity","Second");
-            imageView=(ImageView)rootView.findViewById(R.id.imageView_Help);
-            imageView.setImageDrawable(getResources().getDrawable(imageIDs[1]));
-            return rootView;
-        }
-    }
-    public static class ThirdSlidePageFragment extends Fragment
-    {
-        ImageView imageView;
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-        {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.layout_view_pager, container, false);
+            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.help_fragment_2, container, false);
             Log.e("HelpActivity","Third");
-            imageView=(ImageView)rootView.findViewById(R.id.imageView_Help);
-            imageView.setImageDrawable(getResources().getDrawable(imageIDs[2]));
+            Button button_manage=(Button)rootView.findViewById(R.id.button_manage);
+            button_manage.setOnClickListener(this);
             return rootView;
         }
+
+        @Override
+        public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.button_manage:
+                Toast toast=new Toast(getActivity());
+                ImageView imageView=new ImageView(getActivity());
+                imageView.setImageResource(R.drawable.help_easter_egg);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(imageView);
+                toast.show();
+                break;
+        }
+    }
     }
     public static class ForthSlidePageFragment extends Fragment
     {
-        ImageView imageView;
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.layout_view_pager, container, false);
+            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.help_fragment_3, container, false);
             Log.e("HelpActivity","Forth");
-            imageView=(ImageView)rootView.findViewById(R.id.imageView_Help);
-            imageView.setImageDrawable(getResources().getDrawable(imageIDs[3]));
             return rootView;
         }
     }
     public static class FifthSlidePageFragment extends Fragment
     {
-        ImageView imageView;
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.layout_view_pager, container, false);
+            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.help_fragment_4, container, false);
             Log.e("HelpActivity","Fifth");
-            imageView=(ImageView)rootView.findViewById(R.id.imageView_Help);
-            imageView.setImageDrawable(getResources().getDrawable(imageIDs[4]));
             return rootView;
         }
     }
