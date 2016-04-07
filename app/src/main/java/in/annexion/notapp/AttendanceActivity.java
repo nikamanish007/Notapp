@@ -341,8 +341,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
             });
         }
         else {
-
-
+            recyclerView_Courses.setBackgroundResource(R.color.white);
             do {
                 ctr++;
                 Log.e("ffdb", "fetching from db  " + ctr);
@@ -425,7 +424,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         public  boolean hasActiveConnection() {
             Boolean toPostExecute=false;
             try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://10.10.13.213").openConnection());
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://10.10.5.140").openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(5000);
