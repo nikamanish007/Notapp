@@ -40,7 +40,7 @@ import java.util.Set;
 /**
  * Created by fanatic on 28/3/16.
  */
-public class Sync
+public class Sync implements Runnable
 {
     static boolean updateClass,updateBranch,updateDprefs,updateFname,updateLname,updateEmail,updateNumber,updateDOB,updatePassword;
     static SharedPreferences sharedPreferences;
@@ -337,13 +337,12 @@ public class Sync
                 return null;
             }
         };
-
         File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
         if (!file.exists()) {
             file.mkdirs();
         }
-       // db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-        db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+        // db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+        db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, null);
         db.enableWriteAheadLogging();
 
         db.execSQL("create table if not exists notices" +
@@ -358,6 +357,11 @@ public class Sync
                 "isFav integer default 0 , " +      //8
                 "isRead integer default 0 ," +      //9
                 "isDone integer default 0)");
+
+    }
+
+    @Override
+    public void run() {
 
         if(new ConnectionDetector(context).isConnectingToInternet()) {
             sync();
