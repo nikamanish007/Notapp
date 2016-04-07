@@ -62,13 +62,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener, View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener, View.OnTouchListener{
     View navHeader;
     TextView textView;
     ImageButton [] imageButtons;
     CircleImageView avatar;
     NavigationView navigationView;
     DrawerLayout drawer;
+    Thread thread;
     SharedPreferences sharedPreferences;
     Context context;
 
@@ -80,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     public static String name;
-    Sync sync;
 
     static List<String> selections;
     static boolean updateNav=true, updateIcons=true , synced=false;
@@ -108,8 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // checking for type intent filter
                     if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                         Log.e("MainActivity","Refreshed on Broadcast.");
-                        startActivity(new Intent(context,MainActivity.class));
-                        finish();
+                        refresh();
                     }
                 }
             };
@@ -117,11 +116,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             context = getBaseContext();
             if(!synced) {
                 Log.e("MainActivity", "Sync Called");
-                sync=new Sync(context);
+                new Thread(new Sync(context)).start();
             }
-
-            NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancelAll();
 
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -151,6 +147,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 registerGCM();
             }
         }
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+
+    }
+
+    private void refresh() {
+        startActivity(new Intent(context, MainActivity.class));
+        finish();
     }
 
     private void registerGCM() {
