@@ -1,68 +1,44 @@
 package in.annexion.notapp;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.apache.http.conn.ConnectTimeoutException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
-public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.ClickListener
-{
+public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.ClickListener, android.support.v7.view.ActionMode.Callback {
     ArrayList<NoticeInfo> noticeList;
     Intent intent;
-    android.app.AlertDialog alertDialog;
     RecyclerView recyclerView_Notices;
+    android.support.v7.view.ActionMode actionMode;
     Cursor cursor = new Cursor() {
         @Override
         public int getCount() {
@@ -274,74 +250,60 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     String nbClicked;
     String title;
     SQLiteDatabase db;
+    Toolbar toolbar;
+    boolean includesFav,longPressed;
     AppBarLayout appBarLayout;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     CollapsingToolbarLayout collapsingToolbarLayout;
-
-    int width;
-    int height;
     private Context context;
+    Boolean firstFlag;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notices);
 
-        intent=getIntent();
-        nbClicked=intent.getStringExtra("nb");
-        title=intent.getStringExtra("title" );
+        intent = getIntent();
+        nbClicked = intent.getStringExtra("nb");
+        title = intent.getStringExtra("title");
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 // checking for type intent filter
                 if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-                    Log.e("MainActivity","Refreshed no Broadcast.");
+                    Log.e("MainActivity", "Refreshed no Broadcast.");
                     refresh();
                 }
             }
         };
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         setTitle(title);
 
-        appBarLayout=(AppBarLayout)findViewById(R.id.app_bar);
-        collapsingToolbarLayout=(CollapsingToolbarLayout)findViewById(R.id.toolbar_layout);
-        recyclerView_Notices=(RecyclerView)findViewById(R.id.recyclerView_Notices);
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        recyclerView_Notices = (RecyclerView) findViewById(R.id.recyclerView_Notices);
         recyclerView_Notices.setHasFixedSize(true);
-        context=getBaseContext();
+        context = getBaseContext();
 
-        /*Point p = new Point();
-        getWindowManager().getDefaultDisplay().getSize(p);
-        collapsingToolbarLayout.getLayoutParams().height = (p.x)/2;
-        collapsingToolbarLayout.requestLayout();*/
-
-        File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
+        File file = new File(Environment.getExternalStorageDirectory().toString() + "/Notapp/DB");
         if (!file.exists()) {
             file.mkdirs();
         }
 
-        db=SQLiteDatabase.openDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+        db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
 
-        noticeList= new ArrayList<>();
-
-        registerForContextMenu(recyclerView_Notices);
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        width = size.x;
-        height = size.y;
+        noticeList = new ArrayList<>();
 
         fetchFromDB();
 
-        recyclerView_Notices.setMinimumHeight(height - 180);
-
-        layoutManager=new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         recyclerView_Notices.setLayoutManager(layoutManager);
+        recyclerView_Notices.setHasFixedSize(true);
 
         recyclerView_Notices.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -353,97 +315,151 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         });
 
 
-        adapter= new NoticeAdapter(noticeList,getBaseContext(),this);
+        adapter = new NoticeAdapter(noticeList, getBaseContext(), this);
         recyclerView_Notices.setAdapter(adapter);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
-    public void itemClicked(View view, int position)
-    {
-        NoticeInfo item=noticeList.get(position);
-        String title,link,message,md5;
-        title=item.title;
-        link=item.link;
-        message=item.message;
-        md5=item.md5;
-        int nID=item.n_id;
+    public void itemClicked(View view, int position) {
+        if (actionMode != null) {
+            myToggleSelection(position);
+
+            if(firstFlag)
+            {
+                view.setBackgroundColor(getResources().getColor(R.color.colorAccentTransperent));
+                firstFlag = false;
+            }
+
+
+            Log.e("NoticesActivity","onClick"+position);
+            if (adapter.isSeleted(position)) {
+                view.setBackgroundColor(getResources().getColor(R.color.colorAccentTransperent));
+                Log.e("NoticesActivity", "selected");
+            }
+            else {
+                view.setBackgroundColor(getResources().getColor(R.color.white));
+                Log.e("NoticesActivity", "deselected");
+            }
+
+            //first favorite so far
+            if (Integer.parseInt(((TextView)view.findViewById(R.id.textView_isFav)).getText().toString())==0&&includesFav) {
+                includesFav=false;
+                actionMode = startSupportActionMode(this);
+                Log.e("NoticesActivity", "actionMode reStarted");
+            }
+            return;
+        }
+
+        NoticeInfo item = noticeList.get(position);
+        String title, link, message, md5;
+        title = item.title;
+        link = item.link;
+        message = item.message;
+        md5 = item.md5;
+        int nID = item.n_id;
 
         Log.e("intent na", title + "  " + link);
 
         db.execSQL("update notices set isRead=1 where n_id=" + nID);
 
-        Intent intent=new Intent(getBaseContext(), MainNoticeActivity.class);
-        intent.putExtra("title",title);
+        Intent intent = new Intent(getBaseContext(), MainNoticeActivity.class);
+        intent.putExtra("title", title);
         intent.putExtra("nb", nbClicked);
         intent.putExtra("link", link);
         intent.putExtra("message", message);
-        intent.putExtra("md5",md5);
+        intent.putExtra("md5", md5);
         intent.putExtra("n_id", nID);
         startActivity(intent);
 
     }
 
     @Override
-    public void itemTouched(View view,MotionEvent event )
-    {
-        if (event.getAction() == MotionEvent.ACTION_DOWN)
-            view.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
-        else
-            view.setBackgroundColor(getResources().getColor(R.color.white));
+    public void itemLongPress(View view,int pos) {
+        longPressed=true;
+        firstFlag = true;
+        if (actionMode != null) {
+            Log.e("NoticesActivity", "actionMode not null returnedhttp://cpn.canon-europe.com/content/education/infobank/firmware/camera_operating_system.do");
+            return;
+        }
+        if(Integer.parseInt(((TextView)view.findViewById(R.id.textView_isFav)).getText().toString())!=0)
+            includesFav=true;
+        Log.e("NoticesActivity", "actionMode created");
+        actionMode = startSupportActionMode(this);
+
+        Log.e("NoticesActivity", "actionMode = " + actionMode);
+    }
+
+
+    private void myToggleSelection(int idx) {
+        adapter.toggleSelection(idx);
+        String title = "" + adapter.getSelectedItemCount() + " Notices selected";
+        actionMode.setTitle(title);
     }
 
     @Override
-    public void delete(int pos)
-    {
-        NoticeInfo item=noticeList.get(pos);
-        int nID=item.n_id;
+    public void itemTouched(View view, MotionEvent event) {
+
+        if(!longPressed) {
+            Log.e("NoticesActivity","itemTouched");
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                Log.e("NoticesActivity", "Event=" + event.getAction());
+                view.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
+            }
+            else {
+                Log.e("NoticesActivity","Event="+event.getAction());
+                view.setBackgroundColor(getResources().getColor(R.color.white));
+            }
+        }
+    }
+
+    @Override
+    public void delete(int pos) {
+        NoticeInfo item = noticeList.get(pos);
+        int nID = item.n_id;
         Cursor cursor2;
 
-        cursor2= db.rawQuery("select * from notices where n_id=" + nID, null);
+        noticeList.remove(pos);
+        cursor2 = db.rawQuery("select * from notices where n_id=" + nID, null);
         Log.e("Delete", "select link from notices where nid=" + nID);
         cursor2.moveToFirst();
-        String gibberish=cursor2.getString(6);
-        Log.e("Delete", "fh " + nID);
-        db.execSQL("delete from notices where n_id=" + nID);
-        Log.e("Delete", "delete * from notices where n_id=" + nID);
+        if(cursor2.getCount()!=0) {
+            String gibberish = cursor2.getString(6);
+            Log.e("Delete", "fh " + nID);
+            db.execSQL("delete from notices where n_id=" + nID);
+            Log.e("Delete", "delete * from notices where n_id=" + nID);
 
-        File file=new File(Environment.getExternalStorageDirectory().toString()+"/Notapp/"+gibberish +".pdf");
+            File file = new File(Environment.getExternalStorageDirectory().toString() + "/Notapp/" + gibberish + ".pdf");
 
-        if(file.exists())
-            file.delete();
-
-        Toast.makeText(getBaseContext(),""+gibberish+" deleted.",Toast.LENGTH_LONG).show();
-
-        recyclerView_Notices.removeViewAt(pos);
-        adapter.notifyDataSetChanged();
-        refresh();
+            if (file.exists())
+                file.delete();
+        }
+        adapter.notifyItemRangeChanged(pos, noticeList.size());
     }
 
     @Override
-    public void addToFav(int pos)
-    {
-        NoticeInfo item=noticeList.get(pos);
-        int nID=item.n_id;
+    public void addToFav(int pos) {
+        NoticeInfo item = noticeList.get(pos);
+        int nID = item.n_id;
         db.execSQL("update notices set isFav=1 where n_id=" + nID);
-        refresh();
+        Log.e("NoticesActivity",""+nID + "added to favorites");
+        adapter.notifyItemChanged(pos);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void removeFromFav(int pos)
-    {
-        NoticeInfo item=noticeList.get(pos);
-        int nID=item.n_id;
-        db.execSQL("update notices set isFav=0 where n_id="+nID);
-        refresh();
+    public void removeFromFav(int pos) {
+        NoticeInfo item = noticeList.get(pos);
+        int nID = item.n_id;
+        db.execSQL("update notices set isFav=0 where n_id=" + nID);
+        adapter.notifyDataSetChanged();
     }
 
-    public  void fetchFromDB()
-    {
+    public void fetchFromDB() {
         Log.e("ffdb", "coming in ffdb");
 
-        File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
+        File file = new File(Environment.getExternalStorageDirectory().toString() + "/Notapp/DB");
         if (!file.exists()) {
             file.mkdirs();
         }
@@ -454,19 +470,17 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
 
             try {
                 cursor = db.rawQuery("select * from notices where noticeBoard= '" + nbClicked + "' order by n_id desc", null);
-            }
-            catch (Exception x)
-            {
+            } catch (Exception x) {
                 Log.e("ffdb", "after cursor");
             }
 
-            Log.e("ffdb", "after cursor: "+cursor);
-            Log.e("ffdb", "move to first: "+cursor.moveToFirst());
+            Log.e("ffdb", "after cursor: " + cursor);
+            Log.e("ffdb", "move to first: " + cursor.moveToFirst());
             Log.e("ffdb", "cursor.getCount: " + cursor.getCount());
 
-            if (!(cursor.moveToFirst()) || cursor.getCount() ==0) {
+            if (!(cursor.moveToFirst()) || cursor.getCount() == 0) {
 
-                Log.e("ffdb", "cursor null"  );
+                Log.e("ffdb", "cursor null");
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -485,10 +499,10 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             } else {
                 int ctr = 0;
 
-                do  {
+                do {
                     ctr++;
-                    Log.e("ffdb", "fetching from db  "+ctr);
-                    NoticeInfo noticeInfo=new NoticeInfo();
+                    Log.e("ffdb", "fetching from db  " + ctr);
+                    NoticeInfo noticeInfo = new NoticeInfo();
 
                     noticeInfo.n_id = cursor.getInt(0);
                     noticeInfo.title = cursor.getString(1);
@@ -497,26 +511,23 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     noticeInfo.exp = cursor.getString(4);
                     noticeInfo.noticeBoard = cursor.getString(5);
                     noticeInfo.link = cursor.getString(6);
-                    noticeInfo.md5=cursor.getString(7);
-                    noticeInfo.isFav=Integer.parseInt(cursor.getString(8));
+                    noticeInfo.md5 = cursor.getString(7);
+                    noticeInfo.isFav = Integer.parseInt(cursor.getString(8));
 
                     Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.exp + "  " + noticeInfo.link + "  ");
                     noticeList.add(noticeInfo);
                     //cursor.moveToNext();
 
-                }while (cursor.moveToNext());
+                } while (cursor.moveToNext());
 
-                Log.e("manish","no error11");
+                Log.e("manish", "no error11");
 
-                Log.e("manish","no error");
+                Log.e("manish", "no error");
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e("error_manish ", "" + e.toString());
         }
-
     }
 
     @Override
@@ -529,21 +540,75 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         // by doing this, the activity will be notified each time a new message arrives
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
+        adapter.notifyDataSetChanged();
+        db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
     }
 
     @Override
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
+        db.close();
     }
+
 
     void refresh() {
         Intent intent;
-        intent= new Intent(getBaseContext(),NoticesActivity.class);
+        intent = new Intent(getBaseContext(), NoticesActivity.class);
         intent.putExtra("nb", nbClicked);
         intent.putExtra("title", title);
         startActivity(intent);
         finish();
     }
 
+    @Override
+    public boolean onCreateActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
+        longPressed=true;
+
+        MenuInflater inflater = mode.getMenuInflater();
+        if(includesFav)
+            inflater.inflate(R.menu.menu_notices_2, menu);
+        else
+            inflater.inflate(R.menu.menu_notices_1,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(android.support.v7.view.ActionMode mode, MenuItem item) {
+        List<Integer> selectedItemPositions;
+        switch (item.getItemId()) {
+            case R.id.menu_delete:
+                selectedItemPositions = adapter.getSelectedItems();
+                for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                    delete(selectedItemPositions.get(i));
+                }
+            case R.id.menu_favorite:
+                selectedItemPositions = adapter.getSelectedItems();
+                for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                    addToFav(selectedItemPositions.get(i));
+                }
+            case R.id.menu_deFavorite:
+                selectedItemPositions = adapter.getSelectedItems();
+                for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                    removeFromFav(selectedItemPositions.get(i));
+                }
+        }
+        actionMode.finish();
+        return true;
+    }
+
+
+
+    @Override
+    public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
+        this.actionMode = null;
+        adapter.clearSelections();
+        includesFav=false;
+        longPressed=false;
+    }
 }

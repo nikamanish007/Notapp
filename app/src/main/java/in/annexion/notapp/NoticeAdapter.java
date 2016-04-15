@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sarang on 1/1/16.
@@ -34,6 +37,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
     private ArrayList<NoticeInfo> noticeList;
     private Context context;
     public ClickListener clickListener;
+    private SparseBooleanArray selectedItems;
     private int position;
     Cursor cursor = new Cursor() {
         @Override
@@ -248,6 +252,40 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
         this.noticeList = noticeList;
         this.context=context;
         this.clickListener=clickListener;
+        selectedItems=new SparseBooleanArray();
+    }
+
+    public void toggleSelection(int pos) {
+        if (selectedItems.get(pos, false)) {
+            Log.e("NoticesAdapter", "pos="+pos+"get=true");
+            selectedItems.delete(pos);
+        }
+        else {
+            Log.e("NoticesAdapter", "pos="+pos+"get=false");
+            selectedItems.put(pos, true);
+        }
+    }
+
+    public boolean isSeleted(int position) {
+        return selectedItems.get(position, false);
+    }
+
+    public void clearSelections() {
+        selectedItems.clear();
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedItemCount() {
+        return selectedItems.size();
+    }
+
+    public List<Integer> getSelectedItems() {
+        List<Integer> items =
+                new ArrayList<Integer>(selectedItems.size());
+        for (int i = 0; i < selectedItems.size(); i++) {
+            items.add(selectedItems.keyAt(i));
+        }
+        return items;
     }
 
     @Override
@@ -289,7 +327,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
         return new NoticeViewHolder(itemView);
     }
 
-    public class NoticeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener, View.OnLongClickListener, View.OnTouchListener {
+    public class NoticeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, MenuItem.OnMenuItemClickListener, View.OnLongClickListener, View.OnTouchListener {
         TextView textView_NoticeTitle;
         TextView textView_UploadedBy;
         TextView textView_Date;
@@ -315,7 +353,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
             textView_UploadedBy.setTypeface(roboto_light);
             textView_Date.setTypeface(roboto_light);
 
-            itemView.setOnCreateContextMenuListener(this);
             itemView.setOnClickListener(this);
             itemView.setOnTouchListener(this);
             itemView.setOnLongClickListener(this);
@@ -327,26 +364,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
             clickListener.itemClicked(v, getAdapterPosition());
         }
 
-        @Override
-        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
-        {
-            menu.setHeaderTitle(R.string.blank);
-            MenuItem menuItemDelete;
-            MenuItem menuItemFavorite;
-
-            menuItemDelete=menu.add(0,0,0,"Delete");
-            menuItemDelete.setOnMenuItemClickListener(this);
-
-            if(Integer.parseInt(((TextView)v.findViewById(R.id.textView_isFav)).getText().toString())==0) {
-                menuItemFavorite = menu.add(0, 1, 0, "Add to Favorites");
-                menuItemFavorite.setOnMenuItemClickListener(this);
-            }
-            else {
-                menuItemFavorite = menu.add(0, 2, 0, "Remove from Favorites");
-                menuItemFavorite.setOnMenuItemClickListener(this);
-            }
-
-        }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -371,7 +388,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
 
         @Override
         public boolean onLongClick(View v) {
-            setPos(getAdapterPosition());
+            int pos=getAdapterPosition();
+            clickListener.itemLongPress(v,pos);
             return false;
         }
 
@@ -386,14 +404,11 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
         return position;
     }
 
-    public void setPos(int position) {
-        this.position = position;
-    }
-
     public interface ClickListener
     {
         void itemClicked(View view,int position);
         void itemTouched(View view,MotionEvent motionEvent);
+        void itemLongPress(View view,int pos);
         void delete(int pos);
         void addToFav(int pos);
         void removeFromFav(int pos);
