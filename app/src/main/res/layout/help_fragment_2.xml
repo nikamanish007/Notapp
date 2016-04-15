@@ -4,20 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:foregroundGravity="top|center_horizontal"
-    android:background="#016FB9"
+    android:foregroundGravity="center_horizontal"
+    android:background="@drawable/help_attendance"
     >
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/help_attendance"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            android:layout_gravity="center_horizontal"
+            />
+        <Button
+            android:id="@+id/button_manage"
+            android:text="Manage your Attendance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textSize="16dp"
+            android:layout_marginTop="-80dp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/transperent"/>
+
 
     </LinearLayout>
 

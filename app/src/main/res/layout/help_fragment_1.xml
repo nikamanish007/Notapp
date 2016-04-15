@@ -2,35 +2,25 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:fillViewport="true"
-    android:foregroundGravity="top"
-    android:background="#7030A0"
+    android:foregroundGravity="center_horizontal"
     >
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center"
+        android:gravity="center_vertical">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/help_attendance"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/it"
             android:adjustViewBounds="true"/>
 
-        <Button
-            android:id="@+id/button_manage"
-            android:text="Manage your Attendance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            android:textSize="16dp"
-            android:layout_marginTop="-80dp"
-            android:fontFamily="sans-serif-thin"
-            android:gravity="center"
-            android:background="@color/transperent"/>
 
     </LinearLayout>
 

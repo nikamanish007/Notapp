@@ -14,6 +14,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,7 +100,7 @@ public class HelpActivity extends AppCompatActivity {
             textView_fragment_2.setOnClickListener(this);
             textView_fragment_3.setOnClickListener(this);
             textView_fragment_4.setOnClickListener(this);
-            textView_fragment_5.setOnClickListener(this);
+            textView_fragment_5.setMovementMethod(LinkMovementMethod.getInstance());
             button_take_a_tour.setOnClickListener(this);
             return rootView;
         }
@@ -134,12 +136,13 @@ public class HelpActivity extends AppCompatActivity {
     }
     public static class ThirdSlidePageFragment extends Fragment implements View.OnClickListener
     {
+        static Button button_manage;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.help_fragment_2, container, false);
             Log.e("HelpActivity","Third");
-            Button button_manage=(Button)rootView.findViewById(R.id.button_manage);
+            button_manage=(Button)rootView.findViewById(R.id.button_manage);
             button_manage.setOnClickListener(this);
             return rootView;
         }

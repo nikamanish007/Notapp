@@ -159,9 +159,11 @@
     <string name="register"><u>Register</u></string>
     <string name="login"><u>Login</u></string>
     <string name="be_a_rebel"><u>  Be a Rebel  </u></string>
-    <string name="fragment_1"><u>  Attendance  </u></string>
-    <string name="fragment_2"><u>  Subscriptions  </u></string>
+    <string name="fragment_1"><u>  What is Notapp?  </u></string>
+    <string name="fragment_2"><u>  Attendance  </u></string>
+    <string name="fragment_3"><u>  Subscriptions  </u></string>
     <string name="blank"></string>
+    <string name="privacy_policy"><a href="http://wce.ac.in/notapp/aboutus.php">Privacy Policy</a></string>
     <string name="title_activity_register">Register</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
