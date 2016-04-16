@@ -32,220 +32,12 @@ import java.util.List;
  */
 public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeViewHolder>
 {
-
-    private android.database.sqlite.SQLiteDatabase db;
     private ArrayList<NoticeInfo> noticeList;
     private Context context;
     public ClickListener clickListener;
     private SparseBooleanArray selectedItems;
     private int position;
-    Cursor cursor = new Cursor() {
-        @Override
-        public int getCount() {
-            return 0;
-        }
-
-        @Override
-        public int getPosition() {
-            return 0;
-        }
-
-        @Override
-        public boolean move(int offset) {
-            return false;
-        }
-
-        @Override
-        public boolean moveToPosition(int position) {
-            return false;
-        }
-
-        @Override
-        public boolean moveToFirst() {
-            return false;
-        }
-
-        @Override
-        public boolean moveToLast() {
-            return false;
-        }
-
-        @Override
-        public boolean moveToNext() {
-            return false;
-        }
-
-        @Override
-        public boolean moveToPrevious() {
-            return false;
-        }
-
-        @Override
-        public boolean isFirst() {
-            return false;
-        }
-
-        @Override
-        public boolean isLast() {
-            return false;
-        }
-
-        @Override
-        public boolean isBeforeFirst() {
-            return false;
-        }
-
-        @Override
-        public boolean isAfterLast() {
-            return false;
-        }
-
-        @Override
-        public int getColumnIndex(String columnName) {
-            return 0;
-        }
-
-        @Override
-        public int getColumnIndexOrThrow(String columnName) throws IllegalArgumentException {
-            return 0;
-        }
-
-        @Override
-        public String getColumnName(int columnIndex) {
-            return null;
-        }
-
-        @Override
-        public String[] getColumnNames() {
-            return new String[0];
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 0;
-        }
-
-        @Override
-        public byte[] getBlob(int columnIndex) {
-            return new byte[0];
-        }
-
-        @Override
-        public String getString(int columnIndex) {
-            return null;
-        }
-
-        @Override
-        public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-
-        }
-
-        @Override
-        public short getShort(int columnIndex) {
-            return 0;
-        }
-
-        @Override
-        public int getInt(int columnIndex) {
-            return 0;
-        }
-
-        @Override
-        public long getLong(int columnIndex) {
-            return 0;
-        }
-
-        @Override
-        public float getFloat(int columnIndex) {
-            return 0;
-        }
-
-        @Override
-        public double getDouble(int columnIndex) {
-            return 0;
-        }
-
-        @Override
-        public int getType(int columnIndex) {
-            return 0;
-        }
-
-        @Override
-        public boolean isNull(int columnIndex) {
-            return false;
-        }
-
-        @Override
-        public void deactivate() {
-
-        }
-
-        @Override
-        public boolean requery() {
-            return false;
-        }
-
-        @Override
-        public void close() {
-
-        }
-
-        @Override
-        public boolean isClosed() {
-            return false;
-        }
-
-        @Override
-        public void registerContentObserver(ContentObserver observer) {
-
-        }
-
-        @Override
-        public void unregisterContentObserver(ContentObserver observer) {
-
-        }
-
-        @Override
-        public void registerDataSetObserver(DataSetObserver observer) {
-
-        }
-
-        @Override
-        public void unregisterDataSetObserver(DataSetObserver observer) {
-
-        }
-
-        @Override
-        public void setNotificationUri(ContentResolver cr, Uri uri) {
-
-        }
-
-        @Override
-        public Uri getNotificationUri() {
-            return null;
-        }
-
-        @Override
-        public boolean getWantsAllOnMoveCalls() {
-            return false;
-        }
-
-        @Override
-        public void setExtras(Bundle extras) {
-
-        }
-
-        @Override
-        public Bundle getExtras() {
-            return null;
-        }
-
-        @Override
-        public Bundle respond(Bundle extras) {
-            return null;
-        }
-    };
-
+    NoticeInfo noticeInfo;
 
     public NoticeAdapter(ArrayList<NoticeInfo> noticeList, Context context , ClickListener clickListener)
     {
@@ -295,29 +87,28 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
     }
 
     @Override
-    public void onBindViewHolder(NoticeViewHolder noticeViewHolder, int i)
-    {
-        int isRead=1;
-        NoticeInfo noticeInfo = noticeList.get(i);
+    public void onBindViewHolder(NoticeViewHolder noticeViewHolder, int i) {
+        noticeInfo = noticeList.get(i);
         noticeViewHolder.textView_NoticeTitle.setText(noticeInfo.title);
         noticeViewHolder.textView_UploadedBy.setText(noticeInfo.uploadedBy);
         noticeViewHolder.textView_Date.setText(noticeInfo.uploadDate);
-        noticeViewHolder.textView_nID.setText(""+noticeInfo.n_id);
-        noticeViewHolder.textView_isFav.setText(""+noticeInfo.isFav);
-        if(noticeInfo.isFav==1)
+        noticeViewHolder.textView_nID.setText("" + noticeInfo.n_id);
+        noticeViewHolder.textView_isFav.setText("" + noticeInfo.isFav);
+        if (noticeInfo.isFav == 1) {
             noticeViewHolder.imageView_fav.setImageResource(R.drawable.ic_heart_pink);
+            Log.e("NoticesAdapter", "heart set for "+noticeInfo.n_id);
+        }
+        else{
+            noticeViewHolder.imageView_fav.setImageResource(R.color.transperent);
+            Log.e("NoticesAdapter", "null set set for "+noticeInfo.n_id);
+        }
 
-        db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-
-        cursor=db.rawQuery("select isRead from notices where n_id="+noticeInfo.n_id,null);
-        cursor.moveToFirst();
-
-        if(cursor.getCount()>0)
-            isRead=cursor.getInt(0);
-
-        if(isRead==0)
+        if(noticeInfo.isRead==0)
             noticeViewHolder.textView_NoticeTitle.setTextColor(context.getResources().getColor(R.color.colorAccent));
+        else
+            noticeViewHolder.textView_NoticeTitle.setTextColor(context.getResources().getColor(R.color.textPrimary));
 
+        noticeViewHolder.setBackground(isSeleted(i));
     }
 
     @Override
@@ -356,6 +147,13 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeView
             itemView.setOnClickListener(this);
             itemView.setOnTouchListener(this);
             itemView.setOnLongClickListener(this);
+        }
+
+        public void setBackground(boolean isSelected){
+            if(isSelected)
+                itemView.setBackgroundColor(context.getResources().getColor(R.color.colorAccentTransperent));
+            else
+                itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
 
         @Override

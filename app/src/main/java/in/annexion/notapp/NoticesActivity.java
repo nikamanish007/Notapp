@@ -326,8 +326,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         if (actionMode != null) {
             myToggleSelection(position);
 
-            if(firstFlag)
-            {
+            if(firstFlag) {
                 view.setBackgroundColor(getResources().getColor(R.color.colorAccentTransperent));
                 firstFlag = false;
             }
@@ -380,7 +379,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         longPressed=true;
         firstFlag = true;
         if (actionMode != null) {
-            Log.e("NoticesActivity", "actionMode not null returnedhttp://cpn.canon-europe.com/content/education/infobank/firmware/camera_operating_system.do");
+            Log.e("NoticesActivity", "actionMode not null returned");
             return;
         }
         if(Integer.parseInt(((TextView)view.findViewById(R.id.textView_isFav)).getText().toString())!=0)
@@ -435,6 +434,8 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             if (file.exists())
                 file.delete();
         }
+        noticeList.remove(pos);
+        adapter.notifyItemRemoved(pos);
         adapter.notifyItemRangeChanged(pos, noticeList.size());
     }
 
@@ -444,8 +445,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         int nID = item.n_id;
         db.execSQL("update notices set isFav=1 where n_id=" + nID);
         Log.e("NoticesActivity",""+nID + "added to favorites");
-        adapter.notifyItemChanged(pos);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -453,6 +452,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         NoticeInfo item = noticeList.get(pos);
         int nID = item.n_id;
         db.execSQL("update notices set isFav=0 where n_id=" + nID);
+        adapter.notifyItemChanged(pos);
         adapter.notifyDataSetChanged();
     }
 
@@ -513,16 +513,12 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     noticeInfo.link = cursor.getString(6);
                     noticeInfo.md5 = cursor.getString(7);
                     noticeInfo.isFav = Integer.parseInt(cursor.getString(8));
+                    noticeInfo.isRead= Integer.parseInt(cursor.getString(9));
 
                     Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.exp + "  " + noticeInfo.link + "  ");
                     noticeList.add(noticeInfo);
-                    //cursor.moveToNext();
-
                 } while (cursor.moveToNext());
-
-                Log.e("manish", "no error11");
-
-                Log.e("manish", "no error");
+                Log.e("NoticesActivity", "fetchFromDB - no Error");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -540,15 +536,14 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         // by doing this, the activity will be notified each time a new message arrives
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
-        adapter.notifyDataSetChanged();
-        db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+
+        Log.e("NoticesActivity","in onresume");
     }
 
     @Override
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
-        db.close();
     }
 
 
@@ -587,17 +582,25 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                 for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
                     delete(selectedItemPositions.get(i));
                 }
+                break;
             case R.id.menu_favorite:
                 selectedItemPositions = adapter.getSelectedItems();
                 for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
                     addToFav(selectedItemPositions.get(i));
                 }
+                refresh();
+                break;
             case R.id.menu_deFavorite:
                 selectedItemPositions = adapter.getSelectedItems();
                 for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
                     removeFromFav(selectedItemPositions.get(i));
                 }
+                refresh();
+                break;
         }
+        adapter.clearSelections();
+        includesFav=false;
+        longPressed=false;
         actionMode.finish();
         return true;
     }
@@ -607,8 +610,5 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     @Override
     public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
         this.actionMode = null;
-        adapter.clearSelections();
-        includesFav=false;
-        longPressed=false;
     }
 }

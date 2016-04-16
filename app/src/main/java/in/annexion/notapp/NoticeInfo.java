@@ -15,6 +15,7 @@ public class NoticeInfo
     public String md5;
     public String message="";
     public int isFav;
+    public int isRead;
 
     public NoticeInfo()
     {
@@ -27,5 +28,6 @@ public class NoticeInfo
         this.noticeBoard="";
         this.md5="";
         this.isFav=0;
+        this.isRead=0;
     }
 }
