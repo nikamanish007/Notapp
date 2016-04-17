@@ -71,7 +71,6 @@ public class MainNoticeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_notice);
 
-        textView_Message=(TextView)findViewById(R.id.textView_Message);
         textView_Title=(TextView)findViewById(R.id.textView_Title);
         roboto_Thin = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Bold.ttf");
         roboto_CondensedLight = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
@@ -107,16 +106,7 @@ public class MainNoticeActivity extends AppCompatActivity
 
         if(link.charAt(0)=='#')
         {
-
-            ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
-            stub.setLayoutResource(R.layout.content_main_notice);
-            View inflated = stub.inflate();
-
-            textView_Title=(TextView)inflated.findViewById(R.id.textView_Title);
-            textView_Title.setText(title);
-            textView_Title.setTypeface(roboto_CondensedLight);
-
-            textView_Message=(TextView)inflated.findViewById(R.id.textView_Message);
+            textView_Message=(TextView)findViewById(R.id.textView_Message);
             textView_Message.setText(link.substring(1,link.length()));
             //textView_Message.setTypeface(roboto_CondensedLight);
 
