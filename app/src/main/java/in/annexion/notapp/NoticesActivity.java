@@ -251,12 +251,12 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     String title;
     SQLiteDatabase db;
     Toolbar toolbar;
-    boolean includesFav,longPressed;
+    boolean includesFav,longPressed,firstFlag;
+    static boolean cameFromBack;
     AppBarLayout appBarLayout;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     CollapsingToolbarLayout collapsingToolbarLayout;
     private Context context;
-    Boolean firstFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -537,7 +537,11 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
 
-        Log.e("NoticesActivity","in onresume");
+        Log.e("NoticesActivity","cameFromBack- "+cameFromBack);
+        if(cameFromBack) {
+            cameFromBack=false;
+            refresh();
+        }
     }
 
     @Override

@@ -59,6 +59,13 @@ public class MainNoticeActivity extends AppCompatActivity
     private Cursor cursor;
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("MainNoticeActivity","in onDestroy");
+        NoticesActivity.cameFromBack=true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
