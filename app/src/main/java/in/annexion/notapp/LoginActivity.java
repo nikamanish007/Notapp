@@ -157,7 +157,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         private JSONObject jObj;
         private int consent;
         boolean result,isConnectingToInternet,hasActiveConnection;
-        String fname, lname , email , phone , dob ,dprefs;
+        String fname, lname , email , phone , dob ,dprefs , c_name , d_name;
         Context context;
         SharedPreferences sharedPreferences;
 
@@ -269,6 +269,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         phone = j.getString("phone");
                         dob = j.getString("dob");
                         dprefs=j.getString("dprefs");
+                        c_name=j.getString("c_name");
+                        d_name=j.getString("d_name");
                         /*if(dprefs.length()!=0)
                             dprefs=dprefs.substring(0,dprefs.length()-1);
                         else
@@ -299,6 +301,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.putString("email", email);
                         editor.putString("phone", phone);
                         editor.putString("dob", dob);
+                        editor.putString("c_name", c_name);
+                        editor.putString("d_name", d_name);
                         editor.putStringSet("prefs",set);
                         editor.commit();
                         result = true;
