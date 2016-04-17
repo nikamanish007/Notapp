@@ -614,5 +614,11 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     @Override
     public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
         this.actionMode = null;
+        if(longPressed==true) {
+            adapter.clearSelections();
+            includesFav=false;
+            longPressed=false;
+            refresh();
+        }
     }
 }
