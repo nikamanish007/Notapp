@@ -40,7 +40,7 @@ import java.util.Set;
 /**
  * Created by fanatic on 28/3/16.
  */
-public class Sync implements Runnable
+public class Sync extends AsyncTask
 {
     static boolean updateClass,updateBranch,updateDprefs,updateFname,updateLname,updateEmail,updateNumber,updateDOB,updatePassword;
     static SharedPreferences sharedPreferences;
@@ -54,9 +54,10 @@ public class Sync implements Runnable
     private android.database.sqlite.SQLiteDatabase db;
     Cursor cursor;
 
-    public Sync(Context context)
-    {
-        this.context=context;
+    @Override
+    protected Object doInBackground(Object[] params) {
+
+        this.context=(Context) params[0];
         sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
         intentArray=context.getResources().getStringArray(R.array.intent);
         _class=sharedPreferences.getString("c_name", "b1");
@@ -358,24 +359,27 @@ public class Sync implements Runnable
                 "isRead integer default 0 ," +      //9
                 "isDone integer default 0)");
 
-    }
-
-    @Override
-    public void run() {
-
         if(new ConnectionDetector(context).isConnectingToInternet()) {
             sync();
             Log.e("Sync", "synced" + MainActivity.synced);
-            for (int i = 0, v = 0; i < selections.size(); i++) {
+            for (int i = 0, v; i < selections.size(); i++) {
                 v = Integer.parseInt(selections.get(i));
-                Log.e("Sync", "v=" + v);
-                new NoticesPuller(intentArray[v - 1]).execute();
+                Log.e("Sync a", "v=" + (v-1));
+                publishProgress(v-1);
             }
             MainActivity.synced=true;
             Log.e("Sync","synced="+MainActivity.synced);
         }
+        return null;
     }
 
+    @Override
+    protected void onProgressUpdate(Object[] values) {
+        super.onProgressUpdate(values);
+        Integer v=(Integer)values[0];
+        Log.e("Sync b","v="+v);
+        new NoticesPuller(intentArray[v]).execute();
+    }
 
     public class NoticesPuller extends AsyncTask<Void, Void, Void>
     {

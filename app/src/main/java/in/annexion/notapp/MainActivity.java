@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     CircleImageView avatar;
     NavigationView navigationView;
     DrawerLayout drawer;
-    Thread thread;
     SharedPreferences sharedPreferences;
     Context context;
 
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             context = getBaseContext();
             if(!synced) {
                 Log.e("MainActivity", "Sync Called");
-                new Thread(new Sync(context)).start();
+                new Sync().execute(context);
             }
 
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
