@@ -85,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case R.id.editText_Password:
                 onFocusPassword(hasFocus);
                 break;
-            case R.id.editText_ConfirmPassword:
+            case R.id.editText_PasswordConfirm:
                 onFocusConfirmPassword(hasFocus);
                 break;
         }
