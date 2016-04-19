@@ -29,14 +29,13 @@ public class ConnectionDetector {
         boolean res=false;
         ConnectivityManager cm = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+        if (netInfo != null && netInfo.isConnectedOrConnecting()&&hasActiveInternetConnection()) {
             res=true;
         }
         return res;
     }
 
     public boolean hasActiveInternetConnection() {
-        if (isConnectingToInternet()) {
             try {
                 HttpURLConnection urlc = (HttpURLConnection) (new URL("http://clients3.google.com/generate_204").openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
@@ -47,7 +46,7 @@ public class ConnectionDetector {
                 return (urlc.getResponseCode() == 204 || urlc.getResponseCode()==200);
             } catch (IOException e) {
                 Log.e("ConnectionD", "Error checking internet connection", e);
-            }        }
+            }
         return false;
     }
 
@@ -74,5 +73,7 @@ public class ConnectionDetector {
         protected void onPostExecute(Boolean toPostExecute) {
             result =toPostExecute;
         }
+
     }
+
 }

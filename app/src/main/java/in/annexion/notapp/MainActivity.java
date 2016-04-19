@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -31,29 +30,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -71,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawer;
     SharedPreferences sharedPreferences;
     Context context;
+    SharedPreferences.Editor editor;
 
     int [] ids= new int[30];
     int [] unreads=new int[30];
@@ -99,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         }
         else {
-
+            editor = sharedPreferences.edit();
             mRegistrationBroadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -424,23 +413,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else if (id == R.id.logout)
         {
-            new AlertDialog.Builder(this)
-                    .setTitle("Logout")
-                    .setMessage("Are you sure you want to log out?")
-                    .setIcon(R.drawable.ic_logout)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            Toast.makeText(MainActivity.this, "LoggedOut", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(MainActivity.this,LoginActivity.class));
-                            finish();
-                            SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                            SharedPreferences.Editor editor=sharedPreferences.edit();
-                            editor.putBoolean("isLoggedIn",false);
-                            editor.commit();
-                        }})
-                    .setNegativeButton(android.R.string.no, null).show();
-
+            new Logout().execute(MainActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
@@ -452,7 +425,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onClick(View v)
     {
         Intent intent;
-        SharedPreferences.Editor editor=sharedPreferences.edit();
         int i=v.getId();
         switch (i)
         {
@@ -715,12 +687,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     try {
                         final Uri imageUri = imageReturnedIntent.getData();
                         String path = imageUri.getPath();
-                        Toast.makeText(context,""+path,Toast.LENGTH_LONG).show();
+                        //Toast.makeText(context,""+path,Toast.LENGTH_LONG).show();
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                         avatar.setImageBitmap(selectedImage);
 
-                        SharedPreferences.Editor editor=sharedPreferences.edit();
                         editor.putString("avatarPath",path);
                         editor.commit();
 
