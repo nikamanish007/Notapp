@@ -350,7 +350,6 @@ public class MainNoticeActivity extends AppCompatActivity
 
 
             if (isDone == 0) {
-
                 AlertDialogManager alert = new AlertDialogManager();
                 alert.showAlertDialog(context, "Downloading Notice..", "Please Wait.", true);
                 Log.e("MainNoticeActivity", "isDone=0 Still Downloading.");
@@ -362,7 +361,6 @@ public class MainNoticeActivity extends AppCompatActivity
             }
             db.close();
             cursor.close();
-
         }
 
     }
@@ -411,78 +409,69 @@ public class MainNoticeActivity extends AppCompatActivity
         long sum = 0;
         int file_size = 0;
         ProgressDialog progressDialog;
+        boolean isConnected;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            boolean isConnected=new ConnectionDetector(getBaseContext()).isConnectingToInternet();
-            if(!isConnected) {
-                Toast.makeText(context, "You are Offline !!", Toast.LENGTH_LONG).show();
-                new android.support.v7.app.AlertDialog.Builder(context)
-                        .setTitle("Notice File Corrupted")
-                        .setMessage("Connect to donwload again.")
-                        .setIcon(android.R.drawable.ic_popup_sync)
-                        .setPositiveButton("Back", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                            }
-                        }).show();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setTitle("Please Wait");
+            progressDialog.setMessage("Downloading ");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
 
-            }
-            else {
-                progressDialog = new ProgressDialog(context);
-                progressDialog.setTitle("Please Wait");
-                progressDialog.setMessage("Downloading ");
-                progressDialog.setCanceledOnTouchOutside(false);
-                progressDialog.show();
-            }
         }
 
         @Override
         protected File doInBackground(Void... params) {
+            isConnected=new ConnectionDetector(getBaseContext()).isConnectingToInternet();
+            if(isConnected)
+            {
+                int count;
+                byte [] data;
+                Log.e("MainNoticeActivity","Redownloading");
+                try {
+                    URL url = new URL("http://notapp.wce.ac.in/notices/" +noticeBoard+ "/" + link + ".pdf");
 
-            int count;
+                    Log.e("n_downloader url ", url.toString());
+                    URLConnection connection = url.openConnection();
+                    connection.setConnectTimeout(2000);
+                    connection.connect();
+                    file_size = connection.getContentLength();
 
-            byte [] data;
-            File file = new File("");
+                    // download the file
+                    file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp");
+                    if (!file.exists()) {
+                        file.mkdirs();
+                    }
+                    file = new File(Environment.getExternalStorageDirectory().toString() + "/Notapp/" + link + ".pdf");
 
-            try {
-                URL url = new URL("http://notapp.wce.ac.in/notices/" +noticeBoard+ "/" + link + ".pdf");
+                    InputStream input = new BufferedInputStream(url.openStream(), 8192);
+                    FileOutputStream fos = new FileOutputStream(file);
 
-                Log.e("n_downloader url ", url.toString());
-                URLConnection connection = url.openConnection();
-                connection.setConnectTimeout(2000);
-                connection.connect();
-                file_size = connection.getContentLength();
+                    data = new byte[file_size];
 
-                // download the file
-                file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp");
-                if (!file.exists()) {
-                    file.mkdirs();
-                }
-                file = new File(Environment.getExternalStorageDirectory().toString() + "/Notapp/" + link + ".pdf");
-
-                InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                FileOutputStream fos = new FileOutputStream(file);
-
-                data = new byte[file_size];
-
-                publishProgress();
-
-
-                while ((count = input.read(data)) != -1) {
-                    sum += count;
-                    //progressDialog.setMessage("Downloading " + (int)((sum*100)/file_size)+ "/100%");
                     publishProgress();
-                    fos.write(data, 0, count);
-                }
-                fos.flush();
-                input.close();
-                fos.close();
-            } catch (ConnectTimeoutException e ) {
-                Log.e("n_downloader Error: ", e.getMessage());
-                e.printStackTrace();
-            } catch (IOException e) {
 
+
+                    while ((count = input.read(data)) != -1) {
+                        sum += count;
+                        //progressDialog.setMessage("Downloading " + (int)((sum*100)/file_size)+ "/100%");
+                        publishProgress();
+                        fos.write(data, 0, count);
+                    }
+                    fos.flush();
+                    input.close();
+                    fos.close();
+                } catch (ConnectTimeoutException e ) {
+                    Log.e("n_downloader Error: ", e.getMessage());
+                    e.printStackTrace();
+                } catch (IOException e) {
+
+                }
+            }
+            else {
+                publishProgress();
             }
             return file;
         }
@@ -490,34 +479,52 @@ public class MainNoticeActivity extends AppCompatActivity
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            progressDialog.setMessage("Please Wait .. ");
-            progressDialog.setTitle("Downloading : " + (int) ((sum * 100) / file_size+1)+"%");
+            progressDialog.dismiss();
         }
 
         @Override
         protected void onPostExecute(File file) {
             super.onPostExecute(file);
-            try {
-                progressDialog.dismiss();
-            }
-            catch (Exception e){}
-
-            db=SQLiteDatabase.openDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-            db.execSQL("update notices set isDone=1 where n_id="+n_id);
-            db.close();
-
-            Log.e("MainNoticeActivity", "isDone updated");
-
-            try {
-                pdfView_Notice = (PDFView) findViewById(R.id.pdfView_Notice);
-                pdfView_Notice.fromFile(file).defaultPage(1).showMinimap(true).enableSwipe(true).onLoad(onLoadCompleteListener).onPageChange(onPageChangeListener).load();
-            }catch (RuntimeException e) {
-                Snackbar.make(findViewById(R.id.frameLayout_parentView),"File Corrupted!!" , Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-            catch (Exception e)
+            if(isConnected)
             {
-                Log.e("file error",e.toString());
+                Log.e("MainNoticeActivity","Redownloaded");
+                try {
+                    progressDialog.dismiss();
+                }
+                catch (Exception e){}
+
+                db=SQLiteDatabase.openDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+                db.execSQL("update notices set isDone=1 where n_id="+n_id);
+                db.close();
+
+                Log.e("MainNoticeActivity", "isDone updated");
+
+                try {
+                    pdfView_Notice = (PDFView) findViewById(R.id.pdfView_Notice);
+                    pdfView_Notice.fromFile(file).defaultPage(1).showMinimap(true).enableSwipe(true).onLoad(onLoadCompleteListener).onPageChange(onPageChangeListener).load();
+                }catch (RuntimeException e) {
+                    Snackbar.make(findViewById(R.id.frameLayout_parentView),"File Corrupted!!" , Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+                catch (Exception e)
+                {
+                    Log.e("file error",e.toString());
+                }
             }
+            else
+            {
+                new android.support.v7.app.AlertDialog.Builder(context)
+                        .setTitle("Notice File Corrupted")
+                        .setMessage("Connect to download again.")
+                        .setIcon(android.R.drawable.ic_popup_sync)
+                        .setPositiveButton("Back", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                NavUtils.navigateUpFromSameTask(MainNoticeActivity.this);
+                            }
+                        })
+                        .show();
+            }
+            db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+            db.execSQL("update notices set isDone=1 where n_id="+n_id);
         }
     }
 }
