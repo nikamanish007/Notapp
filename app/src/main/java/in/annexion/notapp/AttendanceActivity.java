@@ -424,7 +424,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         public  boolean hasActiveConnection() {
             Boolean toPostExecute=false;
             try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://10.10.5.140").openConnection());
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://112.133.242.241/moodle/notapp").openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(5000);
@@ -432,7 +432,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
                 toPostExecute = (urlc.getResponseCode() == 204 || urlc.getResponseCode()==200);
                 Log.e("CD", "ResponseCode: " + urlc.getResponseCode() + "  " + toPostExecute);
             } catch (IOException e) {
-                Log.e("ConnectionD", "Error checking internet connection", e);
+                Log.e("ConnectionD", "Error checking internet connecchttp://10.10.5.146/new/json/attd.php", e);
             }
             return toPostExecute;
         }
@@ -453,10 +453,10 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
                 try {
                     db = SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
                     JsonParser jParser = new JsonParser();
-                    JSONObject json = jParser.getJSONFromUrl("http://10.10.5.140/n/moodle/attendance.php?prn=" + params[0]);
+                    JSONObject json = jParser.getJSONFromUrl("http://112.133.242.241/moodle/notapp/attendance.php?prn="+params[0]);
                     Log.e("AttendanceActivity", "after jParser.getJSONFromUrl");
                     dataJsonArr = json.getJSONArray("result");
-                    Log.e("AttendanceActivity", "after jParser.getJSONArray");
+                    Log.e("AttendanceActivity", "after jParser.getJSONArray" + json);
                     int length = dataJsonArr.length();
 
                     Log.e("AttendanceActivity", "Length json: " + length + " " + dataJsonArr.length());
@@ -496,6 +496,4 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
             swipeRefreshLayout.setRefreshing(false);
         }
     }
-
-
 }
