@@ -9,6 +9,15 @@
     tools:context="in.annexion.notapp.FavouritesActivity"
     tools:showIn="@layout/activity_favourites">
 
+    <ImageView
+        android:id="@+id/placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView_Favorites"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

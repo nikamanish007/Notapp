@@ -302,7 +302,7 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
                         placeholder.getLayoutParams().height = (p.y);
                         placeholder.requestLayout();
                         placeholder.setVisibility(View.VISIBLE);
-                        placeholder.setImageResource(R.drawable.placeholder);
+                        placeholder.setImageResource(R.drawable.placeholder3);
                         ((View) findViewById(R.id.recyclerView_Notices)).setVisibility(View.GONE);
                     }
                 });
@@ -319,11 +319,10 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
                     noticeInfo.title = cursor.getString(1);
                     noticeInfo.uploadedBy = cursor.getString(2);
                     noticeInfo.uploadDate = cursor.getString(3);
-                    noticeInfo.exp = cursor.getString(4);
-                    noticeInfo.noticeBoard = cursor.getString(5);
-                    noticeInfo.link = cursor.getString(6);
+                    noticeInfo.noticeBoard = cursor.getString(4);
+                    noticeInfo.link = cursor.getString(5);
 
-                    Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.exp + "  " + noticeInfo.link + "  ");
+                    Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.link + "  ");
 
                     favoriteList.add(noticeInfo);
                     //cursor.moveToNext();
@@ -351,6 +350,7 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
         String title,link,md5,noticeBoard;
         title=item.title;
         link=item.link;
+        md5=item.md5;
 
         Log.e("intent na", title + "  " + link);
 
@@ -358,6 +358,7 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
         intent.putExtra("title",title);
         intent.putExtra("nb","");
         intent.putExtra("link", link);
+        intent.putExtra("md5", md5);
         startActivity(intent);
         finish();
     }
