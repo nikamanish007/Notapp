@@ -18,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -53,6 +54,17 @@ public class Sync extends AsyncTask
     List<String> selections;
     private android.database.sqlite.SQLiteDatabase db;
     Cursor cursor;
+    boolean isConnected;
+
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        MainActivity.swipeRefreshLayout_main.setRefreshing(false);
+        if(isConnected)
+            Toast.makeText(context,"You are up to date!",Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(context,"You are Offline",Toast.LENGTH_LONG).show();
+    }
 
     @Override
     protected Object doInBackground(Object[] params) {
@@ -338,12 +350,12 @@ public class Sync extends AsyncTask
                 return null;
             }
         };
-        File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
+        File file = new File(Environment.getExternalStorageDirectory().toString()+ "/.Notapp/DB");
         if (!file.exists()) {
             file.mkdirs();
         }
         // db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-        db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, null);
+        db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/.Notapp/DB/notapp.db", null, null);
         db.enableWriteAheadLogging();
 
         db.execSQL("create table if not exists notices" +
@@ -358,7 +370,8 @@ public class Sync extends AsyncTask
                 "isRead integer default 0 ," +      //8
                 "isDone integer default 0)");
 
-        if(new ConnectionDetector(context).isConnectingToInternet()) {
+        isConnected=new ConnectionDetector(context).isConnectingToInternet();
+        if(isConnected) {
             sync();
             Log.e("Sync", "synced" + MainActivity.synced);
             for (int i = 0, v; i < selections.size(); i++) {
@@ -366,9 +379,9 @@ public class Sync extends AsyncTask
                 Log.e("Sync a", "v=" + (v-1));
                 publishProgress(v-1);
             }
-            MainActivity.synced=true;
             Log.e("Sync","synced="+MainActivity.synced);
         }
+
         return null;
     }
 

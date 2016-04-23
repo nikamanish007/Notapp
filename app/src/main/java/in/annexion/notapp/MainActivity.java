@@ -20,6 +20,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -62,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences sharedPreferences;
     Context context;
     SharedPreferences.Editor editor;
+    static SwipeRefreshLayout swipeRefreshLayout_main;
+
 
     int [] ids= new int[30];
     int [] unreads=new int[30];
@@ -78,21 +81,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-        setProgressBarIndeterminateVisibility(true);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(!sharedPreferences.getBoolean("isLoggedIn",false)){
-            setProgressBarIndeterminateVisibility(false);
             Log.e("MainActivity","isLoggedIn: "+sharedPreferences.getBoolean("isLoggedIn", false));
             startActivity(new Intent(this,LoginActivity.class));
             finish();
         }
         else {
-            setProgressBarIndeterminateVisibility(false);
             setContentView(R.layout.activity_main);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
+            swipeRefreshLayout_main=(SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout_main);
 
             editor = sharedPreferences.edit();
             mRegistrationBroadcastReceiver = new BroadcastReceiver() {
@@ -108,11 +108,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             };
 
             context = getBaseContext();
-            if(!synced) {
+
+            swipeRefreshLayout_main.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    new Sync().execute(context);
+                }
+            });
+            /*if(!synced) {
                 Log.e("MainActivity", "Sync Called");
                 new Sync().execute(context);
-            }
-
+            }*/
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
