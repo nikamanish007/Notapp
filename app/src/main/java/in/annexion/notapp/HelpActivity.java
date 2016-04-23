@@ -18,6 +18,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -184,11 +185,6 @@ public class HelpActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this,MainActivity.class));
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         sharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
@@ -196,6 +192,9 @@ public class HelpActivity extends AppCompatActivity {
         if(sharedPreferences.getBoolean("isFirstTime",false)){
             editor.putBoolean("isFirstTime",false);
             editor.commit();
+            startActivity(new Intent(HelpActivity.this,MainActivity.class));
+            finish();
+            Toast.makeText(getBaseContext(),"------WELCOME------",Toast.LENGTH_SHORT);
         }
     }
 }

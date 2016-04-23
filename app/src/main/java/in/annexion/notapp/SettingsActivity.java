@@ -80,10 +80,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        else
-        {
-            Toast.makeText(getBaseContext(), "ACTION BAR is null", Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
@@ -99,11 +95,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         Intent intent;
         if(isEditProf) {
             if (sharedPreferences.getBoolean("isFirstTime", false)) {
+                Toast.makeText(getApplicationContext(),"Please Wait....",Toast.LENGTH_SHORT).show();
                 intent = new Intent(this, SettingsActivity.class);
                 intent.putExtra("optionSelected", "settings");
                 startActivity(intent);
@@ -116,6 +113,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         }
         else {
             if (sharedPreferences.getBoolean("isFirstTime", false)) {
+                Toast.makeText(getApplicationContext(),"Press Back to Skip the tour",Toast.LENGTH_SHORT).show();
                 intent=new Intent(this, HelpActivity.class);
                 startActivity(intent);
                 finish();
@@ -365,6 +363,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getActivity());
             SharedPreferences.Editor editor=sharedPreferences.edit();
             editor.putString("dob",""+year+"-"+""+(monthOfYear+1)+"-"+""+dayOfMonth);
+            editor.putBoolean("updateDOB",true);
             editor.commit();
         }
 

@@ -55,23 +55,19 @@ public class MainNoticeActivity extends AppCompatActivity
     Context context = this;
     Typeface roboto_Thin,roboto_CondensedLight;
     SQLiteDatabase db;
+    ProgressDialog progressDialog;
     int n_id;
     private Cursor cursor;
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e("MainNoticeActivity","in onDestroy");
-        NoticesActivity.cameFromBack=true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_notice);
-
+        NoticesActivity.cameFromBack=true;
         textView_Title=(TextView)findViewById(R.id.textView_Title);
+        textView_Message=(TextView)findViewById(R.id.textView_Message);
+        progressDialog=new ProgressDialog(context);
         roboto_Thin = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Bold.ttf");
         roboto_CondensedLight = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
 
@@ -106,13 +102,13 @@ public class MainNoticeActivity extends AppCompatActivity
 
         if(link.charAt(0)=='#')
         {
-            textView_Message=(TextView)findViewById(R.id.textView_Message);
-            textView_Message.setText(link.substring(1,link.length()));
+            textView_Message.setText("     "+link.substring(1,link.length()));
             //textView_Message.setTypeface(roboto_CondensedLight);
 
         }
         else if(file.exists()&&md5.equals(getMD5EncryptedString(file))||noticeBoard.equals(""))
         {
+            textView_Message.setVisibility(View.GONE);
             try
             {
                 pdfView_Notice = (PDFView) findViewById(R.id.pdfView_Notice);
@@ -343,15 +339,14 @@ public class MainNoticeActivity extends AppCompatActivity
 
             Log.e("MainNoticeActivity", "Cursor: " + cursor);
 
-
             int isDone = cursor.getInt(0);
 
             Log.e("MainNoticeActivity", "isDone:" + isDone);
 
-
             if (isDone == 0) {
-                AlertDialogManager alert = new AlertDialogManager();
-                alert.showAlertDialog(context, "Downloading Notice..", "Please Wait.", true);
+                progressDialog.setMessage("Please Wait");
+                progressDialog.setTitle("Downloading Notice");
+                progressDialog.show();
                 Log.e("MainNoticeActivity", "isDone=0 Still Downloading.");
             } else {
                 db.execSQL("update notices set isDone=0 where n_id=" + n_id);
@@ -362,7 +357,13 @@ public class MainNoticeActivity extends AppCompatActivity
             db.close();
             cursor.close();
         }
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(progressDialog!=null)
+            progressDialog.dismiss();
     }
 
     public String getMD5EncryptedString(File file) {
@@ -408,17 +409,17 @@ public class MainNoticeActivity extends AppCompatActivity
     {
         long sum = 0;
         int file_size = 0;
-        ProgressDialog progressDialog;
+        ProgressDialog progressDialog2;
         boolean isConnected;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setTitle("Please Wait");
-            progressDialog.setMessage("Downloading ");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
+            progressDialog2 = new ProgressDialog(context);
+            progressDialog2.setTitle("Please Wait");
+            progressDialog2.setMessage("Downloading ");
+            progressDialog2.setCanceledOnTouchOutside(false);
+            progressDialog2.show();
 
         }
 
@@ -479,7 +480,7 @@ public class MainNoticeActivity extends AppCompatActivity
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            progressDialog.dismiss();
+            progressDialog2.dismiss();
         }
 
         @Override
@@ -489,7 +490,7 @@ public class MainNoticeActivity extends AppCompatActivity
             {
                 Log.e("MainNoticeActivity","Redownloaded");
                 try {
-                    progressDialog.dismiss();
+                    progressDialog2.dismiss();
                 }
                 catch (Exception e){}
 
@@ -513,7 +514,7 @@ public class MainNoticeActivity extends AppCompatActivity
             else
             {
                 new android.support.v7.app.AlertDialog.Builder(context)
-                        .setTitle("Notice File Corrupted")
+                        .setTitle("Offline or Weak Connection")
                         .setMessage("Connect to download again.")
                         .setIcon(android.R.drawable.ic_popup_sync)
                         .setPositiveButton("Back", new DialogInterface.OnClickListener() {

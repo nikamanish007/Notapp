@@ -40,7 +40,6 @@ public class MyGcmPushReceiver extends GcmListenerService {
         String uploadDate = bundle.getString("uploadDate");
         String uploadedBy = bundle.getString("name");
         String n_id = bundle.getString("n_id");
-        String exp = bundle.getString("exp");
         String noticeBoard =""+ (Integer.parseInt(bundle.getString("dept")) - 1);
         String link = bundle.getString("link");
         String md5= bundle.getString("md5");
@@ -49,6 +48,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
         SharedPreferences.Editor editor=sharedPreferences.edit();
         editor.putBoolean(""+noticeBoard,true);
         editor.commit();
+
 
         Log.e(TAG, "From: " + from);
         Log.e(TAG, "Title: " + title);
@@ -66,7 +66,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
         showNotificationMessage(getApplicationContext(), title, uploadDate, uploadedBy, resultIntent);
 
         NoticeDownloader noticeDownloader = new NoticeDownloader();
-        noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, exp, noticeBoard, link, md5);
+        noticeDownloader.insertIntoDB(getApplicationContext(), title, uploadDate, uploadedBy, n_id, noticeBoard, link, md5);
         if(!(link.charAt(0)=='#'))
             noticeDownloader.downloadFile(link);
     }

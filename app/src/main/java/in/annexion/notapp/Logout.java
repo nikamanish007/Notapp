@@ -8,11 +8,19 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,41 +32,54 @@ public class Logout extends AsyncTask {
     Context context;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    File file;
     @Override
     protected Object doInBackground(Object[] params) {
         context=(Context) params[0];
         sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
         editor=sharedPreferences.edit();
         if(isConnectingToInternet()) {
+            try{
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet("http://notapp.wce.ac.in/json/logout.php?PRN=" + params[1]);
+                HttpResponse httpResponse = null;
+                httpResponse = httpClient.execute(httpGet);
+                HttpEntity httpEntity = httpResponse.getEntity();
+                Log.e("Logout","Logged Out");
+            }
+            catch (Exception e){
+                Log.e("Logout","io");
+            }
             return true;
         }
         else {
+            Log.e("Logout","Logged Out");
             return false;
         }
     }
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        if((Boolean) o) {
-            new AlertDialog.Builder(context)
-                    .setTitle("Logout")
-                    .setMessage("Are you sure you want to log out?")
-                    .setIcon(R.drawable.ic_logout)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            Toast.makeText(context, "LoggedOut", Toast.LENGTH_SHORT).show();
-                            context.startActivity(new Intent(context, LoginActivity.class));
-                            ((Activity)context).finish();
-                            editor.putBoolean("isLoggedIn", false);
-                            editor.commit();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, null).show();
-        }
-        else{
+        if(!(Boolean)o){
             new AlertDialogManager().showAlertDialog(context, "Offline or Weak Connection!", "Please stay connected to Logout.", false);
+            Log.e("Logout","Offline");
         }
+        else {
+            context.startActivity(new Intent(context,MainActivity.class));
+            ((Activity)context).finish();
+            Toast.makeText(context,"Successfully Logged Out!",Toast.LENGTH_LONG).show();
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+            editor.clear().commit();
+            file=new File(""+ Environment.getExternalStorageDirectory()+"/Notapp");
+            deleteRecursive(file);
+        }
+    }
+
+    void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+        fileOrDirectory.delete();
     }
 
     public boolean isConnectingToInternet(){

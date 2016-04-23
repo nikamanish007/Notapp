@@ -9,7 +9,7 @@
     </style>
 
     <style name="AppTheme.Main" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/notapp</item>
+        <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
     <style name="Theme.Custom.Light" parent="Theme.AppCompat.Light.NoActionBar">

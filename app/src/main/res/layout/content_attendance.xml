@@ -19,14 +19,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:showDividers="end"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:elevation="10dp">
        <com.github.lzyzsd.circleprogress.ArcProgress
             android:id="@+id/arc_progress"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="10dp"
             android:layout_gravity="center_vertical|center_horizontal"
-            app:arc_progress="75"
+            app:arc_progress="0"
             app:arc_bottom_text_size="20sp"
             app:arc_suffix_text_size="20sp"
             app:arc_text_color="@color/white"
@@ -34,12 +35,12 @@
             app:arc_finished_color="@color/colorAccent"
             app:arc_unfinished_color="@color/white"
             />
-        <TextView
+       <TextView
             android:id="@+id/textView_CourseTitleShowing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="3CS316"
+            android:text="_ _ _ _ _"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white"
             android:gravity="center"
@@ -51,7 +52,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="4dp"
         android:background="@color/grayLight"/>
 
     <android.support.v4.widget.SwipeRefreshLayout

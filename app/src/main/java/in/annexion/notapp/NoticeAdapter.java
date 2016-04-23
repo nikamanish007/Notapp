@@ -1,20 +1,10 @@
 package in.annexion.notapp;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.CharArrayBuffer;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.database.DataSetObserver;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;

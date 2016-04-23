@@ -42,7 +42,8 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:clearTaskOnLaunch="true">
+            android:clearTaskOnLaunch="true"
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.annexion.notapp.MainActivity" />
@@ -70,7 +71,8 @@
         <activity
             android:name=".MainNoticeActivity"
             android:exported="true"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:clearTaskOnLaunch="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.annexion.notapp.NoticesActivity" />
@@ -117,7 +119,8 @@
         <activity
             android:name=".RegisterActivity"
             android:exported="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.annexion.notapp.LoginActivity" />

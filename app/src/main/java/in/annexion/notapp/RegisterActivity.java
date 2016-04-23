@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,13 +40,15 @@ import java.net.URLEncoder;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener , View.OnTouchListener , View.OnFocusChangeListener
 {
-    AppCompatButton button_register,button_go;
-    TextView textView_Login;
+    AppCompatButton button_register;
+    TextView textView_Login,textView_NotAMember;
     EditText editText_PRN,editText_Password,editText_PasswordConfirm;
+    TextInputLayout textInput_PRN,textInput_Password,textInput_PasswordConfirm;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     Context context;
     AlertDialogManager alert;
+    LinearLayout linearLayout_login_parentView;
     boolean done;
 
     @Override
@@ -56,10 +60,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         alert=new AlertDialogManager();
 
+        linearLayout_login_parentView=(LinearLayout)findViewById(R.id.login_parentView);
         textView_Login=(TextView)findViewById(R.id.textView_Login);
+        textView_NotAMember=(TextView)findViewById(R.id.textView_NotAMember);
         editText_PRN=(EditText)findViewById(R.id.editText_PRN);
         editText_Password=(EditText)findViewById(R.id.editText_Password);
         editText_PasswordConfirm=(EditText)findViewById(R.id.editText_PasswordConfirm);
+        textInput_PRN=(TextInputLayout)findViewById(R.id.textInput_PRN);
+        textInput_Password=(TextInputLayout)findViewById(R.id.textInput_Password);
+        textInput_PasswordConfirm=(TextInputLayout)findViewById(R.id.textInput_PasswordConfirm);
 
         textView_Login.setOnClickListener(this);
         editText_PRN.setOnFocusChangeListener(this);
@@ -67,11 +76,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         editText_PasswordConfirm.setOnFocusChangeListener(this);
 
         button_register=(AppCompatButton)findViewById(R.id.button_Register);
-        button_go=(AppCompatButton)findViewById(R.id.button_Go);
         button_register.setOnClickListener(this);
-        button_go.setOnClickListener(this);
         button_register.setOnTouchListener(this);
-        button_go.setOnClickListener(this);
     }
 
     @Override
@@ -289,14 +295,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         editor.putBoolean("isFirstTime", true);
         editor.commit();
 
-        editText_PRN.setEnabled(false);
-        editText_PRN.setVisibility(View.INVISIBLE);
-        editText_Password.setEnabled(false);
-        editText_Password.setVisibility(View.INVISIBLE);
-        editText_PasswordConfirm.setEnabled(false);
-        editText_PasswordConfirm.setVisibility(View.INVISIBLE);
-        textView_Login.setVisibility(View.INVISIBLE);
-        button_go.setVisibility(View.VISIBLE);
+        Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
+        intent.putExtra("optionSelected", "editProfile");
+        intent.putExtra("isFirst", true);
+        startActivity(intent);
+        finish();
         Log.e("Sync", "done=" + done);
     }
 
@@ -329,12 +332,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 startActivity(new Intent(getBaseContext(), LoginActivity.class));
                 finish();
                 break;
-            case R.id.button_Go:
-                Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
-                intent.putExtra("optionSelected", "editProfile");
-                intent.putExtra("isFirst", true);
-                startActivity(intent);
-                finish();
         }
     }
 

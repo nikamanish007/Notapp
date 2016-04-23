@@ -251,12 +251,14 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     String title;
     SQLiteDatabase db;
     Toolbar toolbar;
-    boolean includesFav,longPressed,firstFlag;
+    boolean longPressed,firstFlag;
     static boolean cameFromBack;
     AppBarLayout appBarLayout;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     CollapsingToolbarLayout collapsingToolbarLayout;
     private Context context;
+    private boolean isNewActionMode;
+    int favs,nonFavs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -329,6 +331,8 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             if(firstFlag) {
                 view.setBackgroundColor(getResources().getColor(R.color.colorAccentTransperent));
                 firstFlag = false;
+                nonFavs=0;
+                favs=0;
             }
 
 
@@ -336,17 +340,38 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             if (adapter.isSeleted(position)) {
                 view.setBackgroundColor(getResources().getColor(R.color.colorAccentTransperent));
                 Log.e("NoticesActivity", "selected");
+
+                if (Integer.parseInt(((TextView)view.findViewById(R.id.textView_isFav)).getText().toString())==0) {
+                    nonFavs++;
+                    if(nonFavs==1) {
+                        isNewActionMode=true;
+                        actionMode = startSupportActionMode(this);
+                        Log.e("NoticesActivity", "actionMode reStarted");
+                    }
+                }
+                else
+                    favs++;
             }
             else {
                 view.setBackgroundColor(getResources().getColor(R.color.white));
                 Log.e("NoticesActivity", "deselected");
-            }
+                if (Integer.parseInt(((TextView)view.findViewById(R.id.textView_isFav)).getText().toString())==0) {
+                    nonFavs--;
+                    if(nonFavs==0) {
+                        isNewActionMode=true;
+                        actionMode = startSupportActionMode(this);
+                        Log.e("NoticesActivity", "actionMode reStarted");
+                    }
+                }
+                else {
+                    favs--;
+                    if(favs==1&&nonFavs==0) {
+                        isNewActionMode=true;
+                        actionMode = startSupportActionMode(this);
+                        Log.e("NoticesActivity", "actionMode reStarted");
+                    }
+                }
 
-            //first favorite so far
-            if (Integer.parseInt(((TextView)view.findViewById(R.id.textView_isFav)).getText().toString())==0&&includesFav) {
-                includesFav=false;
-                actionMode = startSupportActionMode(this);
-                Log.e("NoticesActivity", "actionMode reStarted");
             }
             return;
         }
@@ -382,8 +407,8 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             Log.e("NoticesActivity", "actionMode not null returned");
             return;
         }
-        if(Integer.parseInt(((TextView)view.findViewById(R.id.textView_isFav)).getText().toString())!=0)
-            includesFav=true;
+        /*if(Integer.parseInt(((TextView)view.findViewById(R.id.textView_isFav)).getText().toString())!=0)
+            favs++;*/
         Log.e("NoticesActivity", "actionMode created");
         actionMode = startSupportActionMode(this);
 
@@ -424,7 +449,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         Log.e("Delete", "select link from notices where nid=" + nID);
         cursor2.moveToFirst();
         if(cursor2.getCount()!=0) {
-            String gibberish = cursor2.getString(6);
+            String gibberish = cursor2.getString(5);
             Log.e("Delete", "fh " + nID);
             db.execSQL("delete from notices where n_id=" + nID);
             Log.e("Delete", "delete * from notices where n_id=" + nID);
@@ -434,7 +459,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             if (file.exists())
                 file.delete();
         }
-        noticeList.remove(pos);
         adapter.notifyItemRemoved(pos);
         adapter.notifyItemRangeChanged(pos, noticeList.size());
     }
@@ -508,14 +532,13 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                     noticeInfo.title = cursor.getString(1);
                     noticeInfo.uploadedBy = cursor.getString(2);
                     noticeInfo.uploadDate = cursor.getString(3);
-                    noticeInfo.exp = cursor.getString(4);
-                    noticeInfo.noticeBoard = cursor.getString(5);
-                    noticeInfo.link = cursor.getString(6);
-                    noticeInfo.md5 = cursor.getString(7);
-                    noticeInfo.isFav = Integer.parseInt(cursor.getString(8));
-                    noticeInfo.isRead= Integer.parseInt(cursor.getString(9));
+                    noticeInfo.noticeBoard = cursor.getString(4);
+                    noticeInfo.link = cursor.getString(5);
+                    noticeInfo.md5 = cursor.getString(6);
+                    noticeInfo.isFav = Integer.parseInt(cursor.getString(7));
+                    noticeInfo.isRead= Integer.parseInt(cursor.getString(8));
 
-                    Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.exp + "  " + noticeInfo.link + "  ");
+                    Log.e("notices_db", cursor.getPosition() + "  " + noticeInfo.n_id + "  " + noticeInfo.noticeBoard + "  " + noticeInfo.uploadedBy + "  " + noticeInfo.title + "  " + noticeInfo.uploadDate + "  " + noticeInfo.link + "  ");
                     noticeList.add(noticeInfo);
                 } while (cursor.moveToNext());
                 Log.e("NoticesActivity", "fetchFromDB - no Error");
@@ -565,10 +588,10 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         longPressed=true;
 
         MenuInflater inflater = mode.getMenuInflater();
-        if(includesFav)
-            inflater.inflate(R.menu.menu_notices_2, menu);
+        if(nonFavs>0)
+            inflater.inflate(R.menu.menu_notices_1, menu);
         else
-            inflater.inflate(R.menu.menu_notices_1,menu);
+            inflater.inflate(R.menu.menu_notices_2,menu);
         return true;
     }
 
@@ -603,7 +626,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                 break;
         }
         adapter.clearSelections();
-        includesFav=false;
         longPressed=false;
         actionMode.finish();
         return true;
@@ -615,10 +637,13 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
     public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
         this.actionMode = null;
         if(longPressed==true) {
-            adapter.clearSelections();
-            includesFav=false;
+            Log.e("NoticesActivity","onDestroy in if");
+            if(!isNewActionMode) {
+                Log.e("NoticesActivity","isNewActionModeFalse");
+                adapter.clearSelections();
+            }
+            isNewActionMode=false;
             longPressed=false;
-            refresh();
         }
     }
 }

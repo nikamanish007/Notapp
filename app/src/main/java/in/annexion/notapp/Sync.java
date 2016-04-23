@@ -351,12 +351,11 @@ public class Sync extends AsyncTask
                 "title varchar(50), " +             //1
                 "uploadedBy varchar(30) , " +       //2
                 "uploadDate varchar(15) , " +       //3
-                "exp varchar(15) , " +              //4
-                "noticeBoard varchar(15) , " +      //5
-                "link varchar(500) , " +            //6
-                "md5 varchar(50) , " +              //7
-                "isFav integer default 0 , " +      //8
-                "isRead integer default 0 ," +      //9
+                "noticeBoard varchar(15) , " +      //4
+                "link varchar(500) , " +            //5
+                "md5 varchar(50) , " +              //6
+                "isFav integer default 0 , " +      //7
+                "isRead integer default 0 ," +      //8
                 "isDone integer default 0)");
 
         if(new ConnectionDetector(context).isConnectingToInternet()) {
@@ -460,7 +459,7 @@ public class Sync extends AsyncTask
 
                     notificationUtils = new NotificationUtils(context);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    notificationUtils.showNotificationMessage(title[i], uploadDate[i], uploadedBy[i], intent);
+                    notificationUtils.showNotificationMessage(""+title[i]+"$", uploadDate[i], uploadedBy[i], intent);
 
                     SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor editor=sharedPreferences.edit();
@@ -471,7 +470,7 @@ public class Sync extends AsyncTask
 
                     Log.e("notices", "" + n_id[i] + "  " + title[i] + "  " + uploadDate[i] + "  " + exp[i] + "  " + link[i] + "  ");
                     NoticeDownloader noticeDownloader = new NoticeDownloader();
-                    noticeDownloader.insertIntoDB(context, title[i], uploadDate[i], uploadedBy[i], ""+n_id[i], exp[i], noticeBoard[i], link[i], md5[i]);
+                    noticeDownloader.insertIntoDB(context, title[i], uploadDate[i], uploadedBy[i], ""+n_id[i], noticeBoard[i], link[i], md5[i]);
                     if(!(link[i].charAt(0)=='#'))
                         noticeDownloader.downloadFile(link[i]);
                 }
@@ -514,9 +513,11 @@ public class Sync extends AsyncTask
     static public void updateDPrefs()
     {
         Set<String> dprefs= sharedPreferences.getStringSet("prefs", new HashSet<>(Arrays.asList(new String[]{})));
-        String _dprefs="";
+        String _dprefs="21,22,23";
         Iterator iterator=dprefs.iterator();
         for (int i=0;i<dprefs.size();i++) {
+            if(i==0)
+                _dprefs="";
             _dprefs+=""+iterator.next();
             _dprefs+=",";
         }

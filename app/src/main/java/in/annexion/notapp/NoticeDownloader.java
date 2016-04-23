@@ -1,9 +1,11 @@
 package in.annexion.notapp;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.apache.http.conn.ConnectTimeoutException;
@@ -25,6 +27,8 @@ public class NoticeDownloader {
     String title, uploadDate, uploadedBy, exp , noticeBoard , link, n_id, md5;
     SQLiteDatabase db;
     Context context;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     public NoticeDownloader()
     {
@@ -37,13 +41,12 @@ public class NoticeDownloader {
         new DownloadFile().execute();
     }
 
-    public void insertIntoDB(Context context, String title, String uploadDate, String uploadedBy, String n_id, String exp, String noticeBoard, String link, String md5)
+    public void insertIntoDB(Context context, String title, String uploadDate, String uploadedBy, String n_id, String noticeBoard, String link, String md5)
     {
         this.title=title;
         this.uploadDate=uploadDate;
         this.uploadedBy=uploadedBy;
         this.n_id=n_id;
-        this.exp=exp;
         this.noticeBoard=noticeBoard;
         this.link = link;
         this.md5=md5;
@@ -62,13 +65,12 @@ public class NoticeDownloader {
                     "title varchar(50), " +             //1
                     "uploadedBy varchar(30) , " +       //2
                     "uploadDate varchar(15) , " +       //3
-                    "exp varchar(15) , " +              //4
-                    "noticeBoard varchar(15) , " +      //5
-                    "link varchar(500) , " +            //6
-                    "md5 varchar(50) , " +              //7
-                    "isFav integer default 0 , " +      //8
-                    "isRead integer default 0 ," +      //9
-                    "isDone integer default 0)");       //10
+                    "noticeBoard varchar(15) , " +      //4
+                    "link varchar(500) , " +            //5
+                    "md5 varchar(50) , " +              //6
+                    "isFav integer default 0 , " +      //7
+                    "isRead integer default 0 ," +      //8
+                    "isDone integer default 0)");       //19
 
         Log.e("NoticeDownloader", "" + n_id + "  " + title + "  " + uploadDate + "  " + exp + "  " + link + "  ");
         //noticeList.add(noticeInfo);
@@ -79,7 +81,6 @@ public class NoticeDownloader {
                     + title + "','"
                     + uploadedBy+"','"
                     + uploadDate + "','"
-                    + exp + "','"
                     + nb + "','"
                     + link + "','"
                     + md5 + "','"
@@ -90,6 +91,12 @@ public class NoticeDownloader {
         Log.e("sql", sql);
         db.execSQL(sql);
         db.close();
+
+        sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
+        editor=sharedPreferences.edit();
+        editor.putBoolean(""+noticeBoard,true);
+        editor.commit();
+
     }
 
     class DownloadFile extends AsyncTask<Void,Void,Void>

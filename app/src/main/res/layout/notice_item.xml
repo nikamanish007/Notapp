@@ -1,106 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <!--<android.support.v7.widget.CardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingTop="2dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:weightSum="20"
+        android:layout_gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingBottom="2dp"
+        >
+
+        <TextView
+            android:id="@+id/textView_NoticeTitle"
+            android:text="DBE Externals Time Table"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            card_view:cardCornerRadius="4dp"
-            android:background="@color/colorPrimaryLight"
-            >  -->
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:paddingTop="2dp"
-            android:layout_width="match_parent"
+            android:layout_weight="19"
+            android:paddingBottom="3dp"
+            android:maxLines="1"
+        />
+
+        <TextView
+            android:id="@+id/textView_nID"
+            android:text="40"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            >
+            android:visibility="invisible"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:weightSum="20"
-                android:layout_gravity="right"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="8dp"
-                android:paddingBottom="2dp"
-                >
-
-                <TextView
-                    android:id="@+id/textView_NoticeTitle"
-                    android:text="DBE Externals Time Table"
-                    android:textStyle="bold"
-                    android:textColor="@color/textPrimary"
-                    android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="19"
-                    android:paddingBottom="3dp"
-                />
-
-                <TextView
-                    android:id="@+id/textView_nID"
-                    android:text="40"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible"/>
-
-                <TextView
-                    android:id="@+id/textView_isFav"
-                    android:text="0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible"/>
+        <TextView
+            android:id="@+id/textView_isFav"
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"/>
 
 
-                <ImageView
-                    android:id="@+id/imageView_fav"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
+        <ImageView
+            android:id="@+id/imageView_fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            />
 
-            </LinearLayout>
+    </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="2dp"
-                android:paddingBottom="8dp"
-                android:gravity="end">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="8dp"
+        android:gravity="end">
 
-                <TextView
-                    android:id="@+id/textView_UploadedBy"
-                    android:text="Dr. S.H. Bhandari"
-                    android:textStyle="normal"
-                    android:textColor="@color/textSecondary"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="9dp"
-                    android:layout_weight="1"
-                    />
+        <TextView
+            android:id="@+id/textView_UploadedBy"
+            android:text="Dr. S.H. Bhandari"
+            android:textStyle="normal"
+            android:textColor="@color/textSecondary"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="9dp"
+            android:layout_weight="1"
+            />
 
 
-                <TextView
-                    android:id="@+id/textView_Date"
-                    android:text="28th April"
-                    android:textStyle="normal"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/textSecondary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingRight="2dp"
-                    android:gravity="end"
-                    />
+        <TextView
+            android:id="@+id/textView_Date"
+            android:text="28th April"
+            android:textStyle="normal"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/textSecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="2dp"
+            android:gravity="end"
+            />
 
-            </LinearLayout>
+    </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorDivider"/>
-        </LinearLayout>
-
-<!--</android.support.v7.widget.CardView>  -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorDivider"/>
+</LinearLayout>

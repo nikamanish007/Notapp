@@ -26,7 +26,8 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory>
+    <PreferenceCategory
+        android:title="Contact Information">
 
         <EditTextPreference
             android:key="email"
@@ -36,12 +37,6 @@
             android:dialogTitle="Enter email"
             />
 
-        <Preference
-            android:key="pword"
-            android:title="Password"
-            android:enabled="true"
-            android:summary="Change Password"
-            />
 
         <EditTextPreference
             android:key="phone"
@@ -60,6 +55,13 @@
             android:key="dob"
             android:title="DOB"
             android:summary="Change DOB"
+            />
+
+        <Preference
+            android:key="pword"
+            android:title="Password"
+            android:enabled="true"
+            android:summary="Change Password"
             />
     </PreferenceCategory>
 

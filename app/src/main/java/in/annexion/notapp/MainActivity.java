@@ -1,5 +1,6 @@
 package in.annexion.notapp;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,6 +23,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -29,8 +31,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,8 +51,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener, View.OnTouchListener{
     View navHeader;
@@ -76,18 +78,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        setProgressBarIndeterminateVisibility(true);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(!sharedPreferences.getBoolean("isLoggedIn",false)){
+            setProgressBarIndeterminateVisibility(false);
             Log.e("MainActivity","isLoggedIn: "+sharedPreferences.getBoolean("isLoggedIn", false));
             startActivity(new Intent(this,LoginActivity.class));
             finish();
         }
         else {
+            setProgressBarIndeterminateVisibility(false);
+            setContentView(R.layout.activity_main);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
             editor = sharedPreferences.edit();
             mRegistrationBroadcastReceiver = new BroadcastReceiver() {
                 @Override
@@ -124,12 +130,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             avatar.setOnTouchListener(this);
 
             setListeners();
+            iconsUpdate();
 
-            if (updateIcons)
-                iconsUpdate();
-
-            if (updateNav)
-                navUpdate();
+            navUpdate();
 
             if (checkPlayServices()) {
                 registerGCM();
@@ -238,12 +241,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
              Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
              avatar.setImageBitmap(myBitmap);
         }
+        updateNav=true;
     }
 
     private void iconsUpdate()
     {
         int setCount=0;
         LinearLayout linearLayout;
+        boolean read;
         Set<String> set = sharedPreferences.getStringSet("prefs", new Set<String>() {
             @Override
             public boolean add(String object) {
@@ -312,9 +317,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         selections=new ArrayList<>(set);
+        CardView cardView_basicSciences=(CardView)findViewById(R.id.cardView_basicSciences);
+        CardView cardView_misc=(CardView)findViewById(R.id.cardView_misc);
+        CardView cardView_dclubs=(CardView)findViewById(R.id.cardView_dclubs);
+        CardView cardView_ndclubs=(CardView)findViewById(R.id.cardView_ndclubs);
+
         for(int i=1;i<=30;i++)
         {
-            boolean read=sharedPreferences.getBoolean(""+(i-1),false);
+            read=sharedPreferences.getBoolean(""+(i-1),false);
             if(!read)
                 imageButtons[i-1].setBackgroundResource(reads[i-1]);
             else
@@ -336,9 +346,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 imageButtons[i-1].setEnabled(true);
             }
         }
+        if (!selections.contains("7")&&!selections.contains("8")&&!selections.contains("9")&&!selections.contains("10")) {
+            cardView_basicSciences.setVisibility(View.GONE);
+        }
+        else {
+            cardView_basicSciences.setVisibility(View.VISIBLE);
+        }
+        if (!selections.contains("25")&&!selections.contains("26")&&!selections.contains("27")&&!selections.contains("28")&&!selections.contains("29")&&!selections.contains("30")) {
+            cardView_misc.setVisibility(View.GONE);
+        }
+        else {
+            cardView_misc.setVisibility(View.VISIBLE);
+        }
+        if (!selections.contains("7")&&!selections.contains("8")&&!selections.contains("9")&&!selections.contains("10")&&!selections.contains("11")&&!selections.contains("12")) {
+            cardView_dclubs.setVisibility(View.GONE);
+        }
+        else {
+            cardView_dclubs.setVisibility(View.VISIBLE);
+        }
+
+        if (!selections.contains("13")&&!selections.contains("14")&&!selections.contains("15")&&!selections.contains("16")&&!selections.contains("17")) {
+            cardView_ndclubs.setVisibility(View.GONE);
+        }
+        else {
+            cardView_ndclubs.setVisibility(View.VISIBLE);
+        }
+
         if(setCount==0)
             Snackbar.make(this.findViewById(R.id.coordinatorLayout_parentViewMA), "You have no Notice boards selected!\nGo to Settings to change your preferences." , Snackbar.LENGTH_LONG).setAction("Action", null).show();
-        updateIcons=true;
     }
 
     @Override
@@ -413,10 +448,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else if (id == R.id.logout)
         {
-            new Logout().execute(MainActivity.this);
-        }
+            new AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to log out?\nAll your data would be deleted.")
+                    .setIcon(R.drawable.ic_logout)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            new Logout().execute(MainActivity.this,sharedPreferences.getString("PRN",""));
+                            Log.e("MainActivity","Logout Called");
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null).show();
+        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -687,18 +731,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     try {
                         final Uri imageUri = imageReturnedIntent.getData();
                         String path = imageUri.getPath();
-                        //Toast.makeText(context,""+path,Toast.LENGTH_LONG).show();
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                         avatar.setImageBitmap(selectedImage);
-
+                        Log.e("MainActivity","path fetched"+path);
+                        updateNav=true;
                         editor.putString("avatarPath",path);
                         editor.commit();
-
                     } catch (FileNotFoundException e) {
+                        Toast.makeText(context,"File Not Found",Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
+                    } catch (OutOfMemoryError e) {
+                        Toast.makeText(context,"File Too Large.",Toast.LENGTH_SHORT).show();
                     }
-
                 }
         }
 
@@ -732,7 +777,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     imageButton.setImageResource(R.color.transperent);
                 }
         }
-
         return false;
      }
 }

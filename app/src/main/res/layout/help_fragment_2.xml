@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:fillViewport="true"
     android:foregroundGravity="center_horizontal"
-    android:background="@drawable/help_attendance"
     >
 
     <LinearLayout
