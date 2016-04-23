@@ -350,12 +350,12 @@ public class Sync extends AsyncTask
                 return null;
             }
         };
-        File file = new File(Environment.getExternalStorageDirectory().toString()+ "/.Notapp/DB");
+        File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
         if (!file.exists()) {
             file.mkdirs();
         }
         // db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-        db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/.Notapp/DB/notapp.db", null, null);
+        db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, null);
         db.enableWriteAheadLogging();
 
         db.execSQL("create table if not exists notices" +
