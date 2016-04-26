@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+
+import in.co.rubberduck.notapp.R;
 
 
 /**
@@ -153,7 +155,7 @@ public class NoticeDownloader {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
-            db.execSQL("update notices set isDone=1 where n_id="+n_id);
+            db.execSQL("update notices set isDone=1 where n_id="+n_id);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         }
     }
 

@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import in.co.rubberduck.notapp.R;
 
 public class FavouritesActivity extends AppCompatActivity implements FavoritesAdapter.ClickListener
 {

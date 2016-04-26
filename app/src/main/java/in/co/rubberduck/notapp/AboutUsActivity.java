@@ -1,9 +1,11 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import in.co.rubberduck.notapp.R;
 
 public class AboutUsActivity extends AppCompatActivity {
 

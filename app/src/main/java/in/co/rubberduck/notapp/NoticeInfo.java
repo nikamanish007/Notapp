@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 /**
  * Created by sarang on 1/1/16.

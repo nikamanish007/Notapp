@@ -11,7 +11,7 @@
     android:layout_gravity="fill_vertical"
     android:background="@color/grayLight"
     tools:showIn="@layout/activity_notices"
-    tools:context="in.annexion.notapp.NoticesActivity"
+    tools:context="in.co.rubberduck.notapp.NoticesActivity"
     >
 
     <LinearLayout

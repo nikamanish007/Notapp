@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 /**
  * Created by fanatic on 16/2/16.
@@ -20,6 +20,8 @@ import android.text.TextUtils;
 
 import java.util.List;
 import java.util.Random;
+
+import in.co.rubberduck.notapp.R;
 
 public class NotificationUtils {
 

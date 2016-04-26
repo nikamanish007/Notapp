@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#44e29a5f"
-    tools:context="in.annexion.notapp.MainNoticeActivity"
+    tools:context="in.co.rubberduck.notapp.MainNoticeActivity"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -60,6 +60,7 @@
                     android:id="@+id/textView_Message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textIsSelectable="true"
                     android:textSize="15sp"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="10dp"

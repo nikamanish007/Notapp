@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 /**
  * Created by fanatic on 16/2/16.
@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -17,6 +16,8 @@ import com.google.android.gms.iid.InstanceID;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+
+import in.co.rubberduck.notapp.R;
 
 public class GcmIntentService extends IntentService {
 

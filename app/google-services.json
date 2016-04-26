@@ -8,10 +8,10 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:605389289580:android:1b530ec27bfdca6f",
-        "client_id": "android:in.annexion.notapp",
+        "client_id": "android:in.co.rubberduck.notapp",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "in.annexion.notapp"
+          "package_name": "in.co.rubberduck.notapp"
         }
       },
       "oauth_client": [],

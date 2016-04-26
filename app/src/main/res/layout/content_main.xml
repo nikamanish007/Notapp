@@ -14,7 +14,7 @@
         android:fillViewport="true"
         android:fitsSystemWindows="true"
         tools:showIn="@layout/app_bar_main"
-        tools:context="in.annexion.notapp.MainActivity">
+        tools:context="in.co.rubberduck.notapp.MainActivity">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -198,20 +198,20 @@
                         >
 
                         <ImageButton
-                            android:id="@+id/imageButton_acses"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/acses"
-                            android:layout_margin="5dp"
-                            android:src="@color/foreground"
-                            />
-                        <ImageButton
                             android:id="@+id/imageButton_sait"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_weight="1"
                             android:background="@drawable/sait"
+                            android:layout_margin="5dp"
+                            android:src="@color/foreground"
+                            />
+                        <ImageButton
+                            android:id="@+id/imageButton_acses"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/acses"
                             android:layout_margin="5dp"
                             android:src="@color/foreground"
                             />

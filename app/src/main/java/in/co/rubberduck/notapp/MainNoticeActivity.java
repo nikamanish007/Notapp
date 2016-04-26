@@ -1,6 +1,5 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -17,14 +16,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewStub;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.joanzapata.pdfview.PDFView;
 import com.joanzapata.pdfview.listener.OnLoadCompleteListener;
@@ -42,6 +37,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
+
+import in.co.rubberduck.notapp.R;
 
 public class MainNoticeActivity extends AppCompatActivity
 {
@@ -102,9 +99,7 @@ public class MainNoticeActivity extends AppCompatActivity
 
         if(link.charAt(0)=='#')
         {
-            textView_Message.setText("     "+link.substring(1,link.length()));
-            //textView_Message.setTypeface(roboto_CondensedLight);
-
+            textView_Message.setText(link.substring(1,link.length()));
         }
         else if(file.exists()&&md5.equals(getMD5EncryptedString(file))||noticeBoard.equals(""))
         {
@@ -346,6 +341,12 @@ public class MainNoticeActivity extends AppCompatActivity
             if (isDone == 0) {
                 progressDialog.setMessage("Please Wait");
                 progressDialog.setTitle("Downloading Notice");
+                progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        finish();
+                    }
+                });
                 progressDialog.show();
                 Log.e("MainNoticeActivity", "isDone=0 Still Downloading.");
             } else {
@@ -364,6 +365,7 @@ public class MainNoticeActivity extends AppCompatActivity
         super.onDestroy();
         if(progressDialog!=null)
             progressDialog.dismiss();
+        finish();
     }
 
     public String getMD5EncryptedString(File file) {
@@ -417,7 +419,7 @@ public class MainNoticeActivity extends AppCompatActivity
             super.onPreExecute();
             progressDialog2 = new ProgressDialog(context);
             progressDialog2.setTitle("Please Wait");
-            progressDialog2.setMessage("Downloading ");
+            progressDialog2.setMessage("Downloading File Again");
             progressDialog2.setCanceledOnTouchOutside(false);
             progressDialog2.show();
 
@@ -514,12 +516,12 @@ public class MainNoticeActivity extends AppCompatActivity
             else
             {
                 new android.support.v7.app.AlertDialog.Builder(context)
-                        .setTitle("Offline or Weak Connection")
+                        .setTitle("Notice was not downloaded")
                         .setMessage("Connect to download again.")
                         .setIcon(android.R.drawable.ic_popup_sync)
                         .setPositiveButton("Back", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                NavUtils.navigateUpFromSameTask(MainNoticeActivity.this);
+                                finish();
                             }
                         })
                         .show();

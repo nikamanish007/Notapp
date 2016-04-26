@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,8 +20,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gcm.GCMRegistrar;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -39,6 +37,8 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import in.co.rubberduck.notapp.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
     AppCompatButton button_login;

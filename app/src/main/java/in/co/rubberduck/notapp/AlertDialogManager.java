@@ -1,10 +1,12 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 /**
  * Created by sarang on 27/1/16.
  */
 import android.content.Context;
 import android.content.DialogInterface;
+
+import in.co.rubberduck.notapp.R;
 
 public class AlertDialogManager {
     /**
@@ -23,7 +25,7 @@ public class AlertDialogManager {
         if(status)
             iconId=android.R.drawable.ic_popup_sync;
         else
-            iconId=R.drawable.ic_signal_wifi_off;
+            iconId= R.drawable.ic_signal_wifi_off;
 
         if(title.equals("Offline or Weak Connection!"))
             isForLogin=true;

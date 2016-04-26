@@ -3,12 +3,12 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="in.annexion.notapp.SettingsActivity$AppPreferenceFragment"
+        android:fragment="in.co.rubberduck.notapp.SettingsActivity$AppPreferenceFragment"
         android:title="@string/pref_header_general"
         android:icon="@drawable/ic_info_black_24dp" />
 
     <header
-        android:fragment="in.annexion.notapp.SettingsActivity$EditProfilePreferenceFragment"
+        android:fragment="in.co.rubberduck.notapp.SettingsActivity$EditProfilePreferenceFragment"
         android:title="@string/pref_header_data_sync"
         android:icon="@drawable/ic_sync_black_24dp" />
 

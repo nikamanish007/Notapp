@@ -1,6 +1,5 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,12 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -32,10 +33,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +51,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import in.co.rubberduck.notapp.R;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener, View.OnTouchListener{
     View navHeader;
@@ -76,12 +76,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static String name;
 
     static List<String> selections;
-    static boolean updateNav=true, updateIcons=true , synced=false;
+    static boolean synced=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(!sharedPreferences.getBoolean("isLoggedIn",false)){
             Log.e("MainActivity","isLoggedIn: "+sharedPreferences.getBoolean("isLoggedIn", false));
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         }
         else {
-            setContentView(R.layout.activity_main);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             swipeRefreshLayout_main=(SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout_main);
@@ -109,17 +109,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             context = getBaseContext();
 
+            if(!synced)
+                new SyncPrefs().execute(context);
+
             swipeRefreshLayout_main.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                    new Sync().execute(context);
+                    new SyncNotices().execute(context);
                 }
             });
-            /*if(!synced) {
-                Log.e("MainActivity", "Sync Called");
-                new Sync().execute(context);
-            }*/
+
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -138,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             setListeners();
             iconsUpdate();
-
             navUpdate();
 
             if (checkPlayServices()) {
@@ -151,9 +150,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-
     }
 
     private void refresh() {
@@ -189,7 +185,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         iconsUpdate();
-
+        if(!synced)
+            new SyncPrefs().execute(context);
         // register GCM registration complete receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.REGISTRATION_COMPLETE));
@@ -197,6 +194,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // by doing this, the activity will be notified each time a new message arrives
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
+        NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+
+        drawer.closeDrawer(GravityCompat.START);
     }
 
     @Override
@@ -243,12 +244,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         textView.setText(s);
 
         File imgFile=new File(sharedPreferences.getString("avatarPath",""));
+        Log.e("MainActivity"," imgFile "+imgFile);
 
         if(imgFile.exists()){
-             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-             avatar.setImageBitmap(myBitmap);
+             try {
+                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                 avatar.setImageBitmap(myBitmap);
+                 Log.e("MainActivity"," avatar Image set.");
+             }
+             catch (OutOfMemoryError e) {
+                 Toast.makeText(context,"Avatar Image too large.",Toast.LENGTH_SHORT).show();
+                 Log.e("MainActivity"," myBitmap null");
+             }
+            Log.e("MainActivity"," avatar Image set.");
         }
-        updateNav=true;
     }
 
     private void iconsUpdate()
@@ -332,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for(int i=1;i<=30;i++)
         {
             read=sharedPreferences.getBoolean(""+(i-1),false);
-            if(!read)
+            if (!read)
                 imageButtons[i-1].setBackgroundResource(reads[i-1]);
             else
                 imageButtons[i-1].setBackgroundResource(unreads[i-1]);
@@ -353,30 +362,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 imageButtons[i-1].setEnabled(true);
             }
         }
+
+        //basicSciences
         if (!selections.contains("7")&&!selections.contains("8")&&!selections.contains("9")&&!selections.contains("10")) {
             cardView_basicSciences.setVisibility(View.GONE);
+            Log.e("MainActivity","gone basicSciences");
         }
         else {
             cardView_basicSciences.setVisibility(View.VISIBLE);
+            Log.e("MainActivity","visible basicSciences");
         }
-        if (!selections.contains("25")&&!selections.contains("26")&&!selections.contains("27")&&!selections.contains("28")&&!selections.contains("29")&&!selections.contains("30")) {
-            cardView_misc.setVisibility(View.GONE);
-        }
-        else {
-            cardView_misc.setVisibility(View.VISIBLE);
-        }
+        //dclubs
         if (!selections.contains("7")&&!selections.contains("8")&&!selections.contains("9")&&!selections.contains("10")&&!selections.contains("11")&&!selections.contains("12")) {
             cardView_dclubs.setVisibility(View.GONE);
+            Log.e("MainActivity","gone dclubs");
         }
         else {
             cardView_dclubs.setVisibility(View.VISIBLE);
+            Log.e("MainActivity","visible dclubs");
         }
-
+        //ndclubs
         if (!selections.contains("13")&&!selections.contains("14")&&!selections.contains("15")&&!selections.contains("16")&&!selections.contains("17")) {
             cardView_ndclubs.setVisibility(View.GONE);
+            Log.e("MainActivity","gone ndclubs");
         }
         else {
             cardView_ndclubs.setVisibility(View.VISIBLE);
+            Log.e("MainActivity","visible ndclubs");
+        }
+        //misc
+        if (!selections.contains("25")&&!selections.contains("26")&&!selections.contains("27")&&!selections.contains("28")&&!selections.contains("29")&&!selections.contains("30")) {
+            cardView_misc.setVisibility(View.GONE);
+            Log.e("MainActivity","gone misc");
+        }
+        else {
+            cardView_misc.setVisibility(View.VISIBLE);
+            Log.e("MainActivity","visible misc");
         }
 
         if(setCount==0)
@@ -386,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed()
     {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout_parentView);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -737,12 +758,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(resultCode == RESULT_OK){
                     try {
                         final Uri imageUri = imageReturnedIntent.getData();
-                        String path = imageUri.getPath();
+                        String path = getPath(imageUri);
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                         avatar.setImageBitmap(selectedImage);
                         Log.e("MainActivity","path fetched"+path);
-                        updateNav=true;
                         editor.putString("avatarPath",path);
                         editor.commit();
                     } catch (FileNotFoundException e) {
@@ -754,6 +774,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
         }
 
+    }
+
+    public String getPath(Uri uri)
+    {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor =getContentResolver().query(uri, projection, null, null, null);
+        if (cursor == null)
+            return null;
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String s=cursor.getString(column_index);
+        cursor.close();
+        return s;
     }
 
     @Override

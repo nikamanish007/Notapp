@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="depts">
-        <item>IT</item>
-        <item>CSE</item>
-        <item>ELN</item>
-        <item>ELE</item>
-        <item>CIV</item>
-        <item>MECH</item>
-        <item>Physics</item>
-        <item>Chemistry</item>
-        <item>Math</item>
-        <item>Biology</item>
-        <item>ACSES</item>
-        <item>SAIT</item>
-        <item>ELESA</item>
-        <item>EESA</item>
-        <item>CESA</item>
-        <item>MESA</item>
-        <item>WLUG</item>
-        <item>PACE</item>
-        <item>Rotaract</item>
-        <item>SOFTA</item>
-        <item>Art Circle</item>
-        <item>Admin</item>
-        <item>Exam</item>
-        <item>TPO</item>
-        <item>Sports</item>
-        <item>Scholarship</item>
-        <item>Rector</item>
-        <item>Lost and Found</item>
-        <item>Vision</item>
-        <item>Library</item>
+        <item>IT</item>             //1
+        <item>CSE</item>            //2
+        <item>ELN</item>            //3
+        <item>ELE</item>            //4
+        <item>CIV</item>            //5
+        <item>MECH</item>           //6
+        <item>Physics</item>        //7
+        <item>Chemistry</item>      //8
+        <item>Math</item>           //9
+        <item>Biology</item>        //10
+        <item>SAIT</item>           //11
+        <item>ACSES</item>          //12
+        <item>ELESA</item>          //13
+        <item>EESA</item>           //14
+        <item>CESA</item>           //15
+        <item>MESA</item>           //16
+        <item>WLUG</item>           //17
+        <item>PACE</item>           //18
+        <item>Rotaract</item>       //19
+        <item>SOFTA</item>          //20
+        <item>Art Circle</item>     //21
+        <item>Admin</item>          //22
+        <item>Exam</item>           //23
+        <item>TPO</item>            //24
+        <item>Sports</item>         //25
+        <item>Scholarship</item>    //26
+        <item>Rector</item>         //27
+        <item>Lost and Found</item> //28
+        <item>Vision</item>         //29
+        <item>Library</item>        //30
     </string-array>
 
     <string-array name="deptValues">
@@ -102,6 +102,6 @@
         <item>mech</item>
     </string-array>
 
-    <string-array name="empty_array"/>
+    <string-array name="empty_array"></string-array>>
 
 </resources>

@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.animation.ObjectAnimator;
 import android.content.ContentResolver;
@@ -35,21 +35,16 @@ import android.widget.Toast;
 
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+
+import in.co.rubberduck.notapp.R;
 
 public class AttendanceActivity extends AppCompatActivity implements CourseAdapter.ClickListener
 {
@@ -432,7 +427,8 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
                 toPostExecute = (urlc.getResponseCode() == 204 || urlc.getResponseCode()==200);
                 Log.e("CD", "ResponseCode: " + urlc.getResponseCode() + "  " + toPostExecute);
             } catch (IOException e) {
-                Log.e("ConnectionD", "Error checking internet connecchttp://10.10.5.146/new/json/attd.php", e);
+                Snackbar.make(findViewById(R.id.linearLayout_parentView), "Server Not Found!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Log.e("ConnectionD", "Error checking internet connect", e);
             }
             return toPostExecute;
         }
@@ -446,10 +442,12 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
             {
                 hasActiveConnection = hasActiveConnection();
             }
-            if(!hasActiveConnection) {
+            else
+            {
                 Snackbar.make(findViewById(R.id.linearLayout_parentView), "No Internet Connection!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
-            else {
+            if(hasActiveConnection)
+            {
                 try {
                     db = SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
                     JsonParser jParser = new JsonParser();

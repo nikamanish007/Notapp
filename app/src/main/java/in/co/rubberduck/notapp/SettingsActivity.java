@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
@@ -27,6 +27,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+
+import in.co.rubberduck.notapp.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -181,7 +183,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
                 if(preference.getKey().equals("f_name")||preference.getKey().equals("l_name")||preference.getKey().equals("email"))
                 {
-                    MainActivity.updateNav=true;
+
                 }
 
                 if (preference.getKey().equals("f_name"))
@@ -242,6 +244,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                     Log.e("Settings Activity", "We're Done!");
                 }
             }
+            MainActivity.synced=false;
             return true;
         }
     };

@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -33,6 +33,8 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import in.co.rubberduck.notapp.R;
 
 public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.ClickListener, android.support.v7.view.ActionMode.Callback {
     ArrayList<NoticeInfo> noticeList;
@@ -509,15 +511,25 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ImageView placeholder = (ImageView) findViewById(R.id.placeholder);
-                        Point p = new Point();
-                        getWindowManager().getDefaultDisplay().getSize(p);
-                        placeholder.getLayoutParams().width = (p.x);
-                        placeholder.getLayoutParams().height = (p.y);
-                        placeholder.requestLayout();
-                        placeholder.setVisibility(View.VISIBLE);
-                        placeholder.setImageResource(R.drawable.placeholder);
-                        ((View) findViewById(R.id.recyclerView_Notices)).setVisibility(View.GONE);
+                        try
+                        {
+                            ImageView placeholder = (ImageView) findViewById(R.id.placeholder);
+                            Point p = new Point();
+                            getWindowManager().getDefaultDisplay().getSize(p);
+                            placeholder.getLayoutParams().width = (p.x);
+                            placeholder.getLayoutParams().height = (p.y);
+                            placeholder.requestLayout();
+                            placeholder.setVisibility(View.VISIBLE);
+                            placeholder.setImageResource(R.drawable.placeholder);
+                            ((View) findViewById(R.id.recyclerView_Notices)).setVisibility(View.GONE);
+
+                        }
+                        catch (Error e) {
+                            refresh();
+                        }
+                        catch (Exception e) {
+                            refresh();
+                        }
                     }
                 });
             } else {

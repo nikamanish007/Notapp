@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -37,6 +37,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import in.co.rubberduck.notapp.R;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener , View.OnTouchListener , View.OnFocusChangeListener
 {
@@ -300,7 +302,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         intent.putExtra("isFirst", true);
         startActivity(intent);
         finish();
-        Log.e("Sync", "done=" + done);
+        Log.e("SyncNotices", "done=" + done);
     }
 
     @Override

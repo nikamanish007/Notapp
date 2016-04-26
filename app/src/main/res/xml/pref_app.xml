@@ -28,9 +28,10 @@
         <MultiSelectListPreference
             android:entries="@array/depts"
             android:entryValues="@array/deptValues"
+            android:defaultValue="@array/empty_array"
             android:key="prefs"
             android:persistent="true"
-            android:title="Departments"
+            android:title="Subscriptions"
             android:summary="Select Departments to get notices from"
             />
 

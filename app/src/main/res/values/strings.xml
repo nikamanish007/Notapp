@@ -94,6 +94,21 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="about">
+        RubberDuck is a group of Tech enthusiasts who enjoy solving realtime problem by Rubberducking and in Aesthetically sound manner.
+        \n\n
+        P.S. - We are beginners.
+
+    </string>
+
+    <string
+        name="what_is_notapp">
+        Notapp is an Android app developed by group of tech enthusiasts \'RubberDuck Labs\' of Walchand College of Engg, Sangli.
+        \n\n
+        It ensures the delivery of all the college notices from departments you are subscribed to in right onto your Android phone.
+        So can, download and save notices to view them later, favorite important notices, get prompted about deadlines.
+        \n\n
+        Also you can check your attendance on Notapp with just a swipe</string>
     <string name="title_activity_scrolling">Notices</string>
     <string name="title_activity_attendance">Attendance</string>
     <string name="title_activity_settings">Settings</string>
@@ -123,7 +138,7 @@
         <item>-1</item>
     </string-array>
 
-    <!-- Example activity_settings for Data & Sync -->
+    <!-- Example activity_settings for Data & SyncNotices -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
@@ -163,7 +178,7 @@
     <string name="fragment_2"><u>  Attendance  </u></string>
     <string name="fragment_3"><u>  Subscriptions  </u></string>
     <string name="blank"></string>
-    <string name="privacy_policy"><a href="http://wce.ac.in/notapp/aboutus.php">Privacy Policy</a></string>
+    <string name="privacy_policy"><a href="http://wce.ac.in/notapp/privacypolicy.html">Privacy Policy</a></string>
     <string name="title_activity_register">Register</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
@@ -178,8 +193,8 @@
         <item>chem</item>
         <item>math</item>
         <item>bio</item>
-        <item>acses</item>
         <item>sait</item>
+        <item>acses</item>
         <item>elesa</item>
         <item>eesa</item>
         <item>cesa</item>
@@ -211,8 +226,8 @@
         <item>chemu</item>
         <item>mathu</item>
         <item>biou</item>
-        <item>acsesu</item>
         <item>saitu</item>
+        <item>acsesu</item>
         <item>elesau</item>
         <item>eesau</item>
         <item>cesau</item>
@@ -244,8 +259,8 @@
         <item>chem</item>
         <item>math</item>
         <item>bio</item>
-        <item>acses</item>
         <item>sait</item>
+        <item>acses</item>
         <item>elesa</item>
         <item>eesa</item>
         <item>cesa</item>
@@ -277,8 +292,8 @@
         <item>imageButton_chem</item>
         <item>imageButton_math</item>
         <item>imageButton_bio</item>
-        <item>imageButton_acses</item>
         <item>imageButton_sait</item>
+        <item>imageButton_acses</item>
         <item>imageButton_elesa</item>
         <item>imageButton_eesa</item>
         <item>imageButton_cesa</item>
@@ -310,8 +325,8 @@
         <item>Chemistry</item>
         <item>Math</item>
         <item>Biology</item>
-        <item>ACSES</item>
         <item>SAIT</item>
+        <item>ACSES</item>
         <item>ELESA</item>
         <item>EESA</item>
         <item>CESA</item>
@@ -354,5 +369,6 @@
     <string name="title_activity_help">Help</string>
     <string name="title_activity_about_us">AboutUs</string>
     <string name="title_activity_favourites">FavouritesActivity</string>
+    <string name="devs"><![CDATA[<developers/>]]></string>
 
 </resources>

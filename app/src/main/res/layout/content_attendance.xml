@@ -11,7 +11,7 @@
     android:background="@color/colorPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_attendance"
-    tools:context="in.annexion.notapp.AttendanceActivity">
+    tools:context="in.co.rubberduck.notapp.AttendanceActivity">
 
 
     <LinearLayout

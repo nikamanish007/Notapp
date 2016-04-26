@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import in.co.rubberduck.notapp.R;
 
 /**
  * Created by sarang on 1/1/16.

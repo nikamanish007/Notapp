@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:background="@color/colorPrimary"
-    tools:context=".LoginActivity">
+    tools:context="in.co.rubberduck.notapp.LoginActivity">
 
     <LinearLayout
         android:id="@+id/login_parentView"
@@ -52,6 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="PRN"
+                android:textAllCaps="true"
                 android:maxLength="10"
                 android:inputType="textCapCharacters"
                 android:textColor="@color/white"

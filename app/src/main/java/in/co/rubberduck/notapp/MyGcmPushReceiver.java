@@ -1,4 +1,4 @@
-package in.annexion.notapp;
+package in.co.rubberduck.notapp;
 
 /**
  * Created by fanatic on 16/2/16.
@@ -12,6 +12,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+
+import in.co.rubberduck.notapp.R;
 
 public class MyGcmPushReceiver extends GcmListenerService {
 
