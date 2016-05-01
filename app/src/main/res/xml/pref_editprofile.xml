@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+    android:key="edit_profile_preference_screen">
 
     <PreferenceCategory
         android:title="Name"
@@ -46,13 +46,10 @@
 
     </PreferenceCategory>
 
-    <!-- https://github.com/bostonandroid/DatePreference  -->
-    <!-- http://stackoverflow.com/questions/12127408/android-pick-an-image-from-gallery-in-preferencescreen -->
     <PreferenceCategory>
         <Preference
             android:key="dob"
             android:title="DOB"
-            android:summary="Change DOB"
             />
 
         <Preference
@@ -62,7 +59,5 @@
             android:summary="Change Password"
             />
     </PreferenceCategory>
-
-
 
 </PreferenceScreen>

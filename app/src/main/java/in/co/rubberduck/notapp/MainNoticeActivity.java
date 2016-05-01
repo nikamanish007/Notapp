@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.joanzapata.pdfview.PDFView;
 import com.joanzapata.pdfview.listener.OnLoadCompleteListener;
@@ -122,7 +124,17 @@ public class MainNoticeActivity extends AppCompatActivity
             }
         }
         else {
-            db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+
+            try{
+                db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+            }
+            catch(Exception e) {
+                if(Build.VERSION.SDK_INT>=23) {
+                    Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+                }
+                finish();
+            }
+
             cursor = new Cursor() {
                 @Override
                 public int getCount() {
@@ -496,7 +508,6 @@ public class MainNoticeActivity extends AppCompatActivity
                 }
                 catch (Exception e){}
 
-                db=SQLiteDatabase.openDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
                 db.execSQL("update notices set isDone=1 where n_id="+n_id);
                 db.close();
 
@@ -526,7 +537,6 @@ public class MainNoticeActivity extends AppCompatActivity
                         })
                         .show();
             }
-            db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
             db.execSQL("update notices set isDone=1 where n_id="+n_id);
         }
     }

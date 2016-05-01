@@ -9,6 +9,7 @@ import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -254,8 +256,15 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
             file.mkdirs();
         }
 
-        db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-
+        try{
+            db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+        }
+        catch(Exception e) {
+            if(Build.VERSION.SDK_INT>=23) {
+                Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+            }
+            finish();
+        }
         favoriteList=new ArrayList<NoticeInfo>();
 
         adapter=new FavoritesAdapter(favoriteList,getBaseContext(),this);

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="250dp"
+    android:background="@color/transperent"
+    android:paddingTop="50dp"
+    android:layout_gravity="center_horizontal"
+    >
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/linearLayout_InitialPrompt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/shape"
+        android:paddingTop="50dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="28dp"
+        android:elevation="5dp">
+
+        <TextView
+            android:id="@+id/textView_InitialPrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:textSize="17sp"
+             />
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_person"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        />
+</RelativeLayout>

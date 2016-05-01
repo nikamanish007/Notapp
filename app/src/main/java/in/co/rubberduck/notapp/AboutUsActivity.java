@@ -1,13 +1,14 @@
 package in.co.rubberduck.notapp;
 
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import in.co.rubberduck.notapp.R;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
 
 public class AboutUsActivity extends AppCompatActivity {
+
+    TextView textView_website;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,12 +16,9 @@ public class AboutUsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about_us);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
-    @Override
-    public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
+        textView_website=(TextView)findViewById(R.id.textView_website);
+        textView_website.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

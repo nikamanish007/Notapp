@@ -179,6 +179,7 @@
     <string name="fragment_3"><u>  Subscriptions  </u></string>
     <string name="blank"></string>
     <string name="privacy_policy"><a href="http://wce.ac.in/notapp/privacypolicy.html">Privacy Policy</a></string>
+    <string name="website"><a href="http://www.rubberduck.co.in">www.rubberduck.co.in</a></string>
     <string name="title_activity_register">Register</string>
     <string name="section_format">Hello World from section: %1$d</string>
 

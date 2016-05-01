@@ -11,6 +11,7 @@ import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -38,7 +39,6 @@ import in.co.rubberduck.notapp.R;
  */
 public class SyncNotices extends AsyncTask
 {
-    static boolean updateClass,updateBranch,updateDprefs,updateFname,updateLname,updateEmail,updateNumber,updateDOB,updatePassword;
     static SharedPreferences sharedPreferences;
     static  NotificationUtils notificationUtils;
     static Intent intent;
@@ -49,22 +49,54 @@ public class SyncNotices extends AsyncTask
     List<String> selections;
     private android.database.sqlite.SQLiteDatabase db;
     Cursor cursor;
-    boolean isConnected;
+    boolean isConnected,abort;
+
+    SyncNotices(Context context)
+    {
+        this.context=context;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        try{
+
+            File file = new File(Environment.getExternalStorageDirectory().toString()+ "/Notapp/DB");
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, null);
+            db.enableWriteAheadLogging();
+        }
+        catch(Exception e) {
+            if(Build.VERSION.SDK_INT>=23) {
+                Toast.makeText(context,"Please revoke Storage Permission for Notapp to work.\n\nSettings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+            this.cancel(true);
+            abort=true;
+            MainActivity.swipeRefreshLayout_main.setRefreshing(false);
+            }
+        }
+    }
 
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
         MainActivity.swipeRefreshLayout_main.setRefreshing(false);
-        if(isConnected)
-            Toast.makeText(context,"You are up to date!",Toast.LENGTH_LONG).show();
-        else
-            Toast.makeText(context,"You are Offline",Toast.LENGTH_LONG).show();
+        if(!this.isCancelled()) {
+            if (isConnected)
+                Toast.makeText(context, "You are up to date!", Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(context, "You are Offline", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     protected Object doInBackground(Object[] params) {
 
-        this.context=(Context) params[0];
+        if(this.isCancelled())
+            return  null;
+
         sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
         intentArray=context.getResources().getStringArray(R.array.intent);
         _class=sharedPreferences.getString("c_name", "b1");
@@ -348,8 +380,6 @@ public class SyncNotices extends AsyncTask
             file.mkdirs();
         }
         // db= SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-        db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, null);
-        db.enableWriteAheadLogging();
 
         db.execSQL("create table if not exists notices" +
                 "(n_id int(11), " +                 //0

@@ -10,9 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
-import in.co.rubberduck.notapp.R;
-
 /**
  * Created by sarang on 1/1/16.
  */
@@ -86,6 +83,5 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     public interface ClickListener
     {
         void itemClicked(View view,int position);
-        void itemTouched(View view,MotionEvent event);
     }
 }

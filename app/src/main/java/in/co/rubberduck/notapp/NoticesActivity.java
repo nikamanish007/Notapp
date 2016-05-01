@@ -12,11 +12,14 @@ import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -299,8 +303,15 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             file.mkdirs();
         }
 
-        db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-
+        try{
+            db = SQLiteDatabase.openDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/notapp.db", null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
+        }
+        catch(Exception e) {
+            if(Build.VERSION.SDK_INT>=23) {
+                Toast.makeText(context,"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+            }
+            finish();
+        }
         noticeList = new ArrayList<>();
 
         fetchFromDB();
@@ -373,7 +384,6 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
                         Log.e("NoticesActivity", "actionMode reStarted");
                     }
                 }
-
             }
             return;
         }

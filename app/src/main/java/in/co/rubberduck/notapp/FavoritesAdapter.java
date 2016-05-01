@@ -73,8 +73,9 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Noti
             textView_nID=(TextView)itemView.findViewById(R.id.textView_nID);
 
             Typeface roboto_light = Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
+            Typeface roboto_bold = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Bold.ttf");
 
-            textView_NoticeTitle.setTypeface(roboto_light);
+            textView_NoticeTitle.setTypeface(roboto_bold);
             textView_UploadedBy.setTypeface(roboto_light);
             textView_Date.setTypeface(roboto_light);
             textView_nID.setTypeface(roboto_light);

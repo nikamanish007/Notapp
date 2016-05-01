@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.conn.ConnectTimeoutException;
 
@@ -59,7 +61,17 @@ public class NoticeDownloader {
             file.mkdirs();
         }
 
-        db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+
+        try{
+            db=SQLiteDatabase.openOrCreateDatabase(""+Environment.getExternalStorageDirectory()+"/Notapp/DB/notapp.db",null,null);
+        }
+        catch(Exception e) {
+            if(Build.VERSION.SDK_INT>=23) {
+                Toast.makeText(context,"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
+
         db.enableWriteAheadLogging();
 
         db.execSQL("create table if not exists notices" +

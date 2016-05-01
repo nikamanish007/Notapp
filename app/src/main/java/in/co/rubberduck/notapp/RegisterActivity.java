@@ -297,10 +297,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         editor.putBoolean("isFirstTime", true);
         editor.commit();
 
-        Intent intent=new Intent(getBaseContext(),SettingsActivity.class);
-        intent.putExtra("optionSelected", "editProfile");
-        intent.putExtra("isFirst", true);
-        startActivity(intent);
+        startActivity(new Intent(getBaseContext(),MainActivity.class));
         finish();
         Log.e("SyncNotices", "done=" + done);
     }

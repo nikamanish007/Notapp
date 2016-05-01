@@ -68,11 +68,17 @@ public class Logout extends AsyncTask {
             SharedPreferences.Editor editor=sharedPreferences.edit();
             editor.clear().commit();
             file=new File(""+ Environment.getExternalStorageDirectory()+"/Notapp");
-            deleteRecursive(file);
+            if(file.exists()) {
+                try {
+                    deleteRecursive(file);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    void deleteRecursive(File fileOrDirectory) {
+    void deleteRecursive(File fileOrDirectory) throws Exception {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
                 deleteRecursive(child);

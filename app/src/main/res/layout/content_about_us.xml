@@ -49,14 +49,14 @@
             />
 
         <TextView
+            android:id="@+id/textView_website"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="www.rubberduck.co.in"
+            android:text="@string/website"
             android:textSize="17sp"
             android:textColor="@color/white"
             android:gravity="center_horizontal"
             android:fontFamily="sans-serif-thin"
-            android:clickable="true"
             />
 
         <TextView

@@ -1,5 +1,6 @@
 package in.co.rubberduck.notapp;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -51,7 +52,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import in.co.rubberduck.notapp.R;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener, View.OnTouchListener{
     View navHeader;
@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     static List<String> selections;
     static boolean synced=false;
+
+    static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -108,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             };
 
             context = getBaseContext();
+            activity=MainActivity.this;
+            if(sharedPreferences.getBoolean("isFirstTime",false))
+                InitialBusiness.doBusiness(activity);
 
             if(!synced)
                 new SyncPrefs().execute(context);
@@ -116,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onRefresh() {
                     sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                    new SyncNotices().execute(context);
+                    new SyncNotices(context).execute();
                 }
             });
 
@@ -185,6 +190,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         iconsUpdate();
+
+
+        if(sharedPreferences.getBoolean("isFirstTime",false))
+            InitialBusiness.doBusiness(activity);
+
         if(!synced)
             new SyncPrefs().execute(context);
         // register GCM registration complete receiver
@@ -586,7 +596,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.putExtra("title",titleArray[9]);
                 startActivity(intent);
                 break;
-            case R.id.imageButton_acses:
+            case R.id.imageButton_sait:
                 editor.putBoolean(""+10,false);
                 editor.commit();
                 intent= new Intent(context,NoticesActivity.class);
@@ -594,7 +604,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.putExtra("title",titleArray[10]);
                 startActivity(intent);
                 break;
-            case R.id.imageButton_sait:
+            case R.id.imageButton_acses:
                 editor.putBoolean(""+11,false);
                 editor.commit();
                 intent= new Intent(context,NoticesActivity.class);

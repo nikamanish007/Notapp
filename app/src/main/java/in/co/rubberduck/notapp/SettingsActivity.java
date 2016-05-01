@@ -3,7 +3,6 @@ package in.co.rubberduck.notapp;
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,21 +13,21 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import in.co.rubberduck.notapp.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -47,6 +46,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     static SharedPreferences.Editor editor;
     static int cunt;
     static boolean isEditProf;
+    static FloatingActionButton fab;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -57,8 +58,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         cunt=0;
         isEditProf=false;
 
+        fab=(FloatingActionButton)findViewById(R.id.fab);
+
         sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         editor=sharedPreferences.edit();
+
+
 
         if(((getIntent()).getStringExtra("optionSelected")).equals("settings"))
             getFragmentManager().beginTransaction().replace(android.R.id.content, new AppPreferenceFragment()).commit();
@@ -68,7 +73,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             if(getSupportActionBar()!=null)
                 getSupportActionBar().setTitle("Edit Profile");
         }
-
     }
 
     /**
@@ -94,38 +98,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             return true;
         }
        return super.onMenuItemSelected(featureId, item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Intent intent;
-        if(isEditProf) {
-            if (sharedPreferences.getBoolean("isFirstTime", false)) {
-                Toast.makeText(getApplicationContext(),"Please Wait....",Toast.LENGTH_SHORT).show();
-                intent = new Intent(this, SettingsActivity.class);
-                intent.putExtra("optionSelected", "settings");
-                startActivity(intent);
-                finish();
-            } else {
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }
-        else {
-            if (sharedPreferences.getBoolean("isFirstTime", false)) {
-                Toast.makeText(getApplicationContext(),"Press Back to Skip the tour",Toast.LENGTH_SHORT).show();
-                intent=new Intent(this, HelpActivity.class);
-                startActivity(intent);
-                finish();
-            }
-            else{
-                intent=new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }
     }
 
     /**
@@ -223,6 +195,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                     editor.commit();
                 }
             }
+            else
+            {
+                if(preference.getKey().equals("dob")) {
+                    editor.putBoolean("updateDOB",true);
+                    editor.commit();
+                }
+            }
 
             if(isEditProf) {
                 if (cunt < 4) {
@@ -288,16 +267,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class AppPreferenceFragment extends PreferenceFragment
-    {
+    public static class AppPreferenceFragment extends PreferenceFragment{
         @Override
         public void onCreate(Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_app);
             setHasOptionsMenu(true);
-
-            SharedPreferences.Editor editor=sharedPreferences.edit();
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
@@ -325,9 +301,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     public static class EditProfilePreferenceFragment extends PreferenceFragment implements DatePickerDialog.OnDateSetListener , Preference.OnPreferenceClickListener ,  View.OnClickListener
     {
         EditText editText_CurrentPassword,editText_NewPassword,editText_ConfirmNewPassword;
-        AppCompatButton button_Done;
+        Button button_Done;
         Dialog dialog;
-        Preference pword;
+        Preference pword,dob;
         @Override
         public void onCreate(Bundle savedInstanceState)
         {
@@ -336,8 +312,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             setHasOptionsMenu(true);
 
             isEditProf=true;
-            pword=(Preference)findPreference("pword");
+            pword=findPreference("pword");
             pword.setOnPreferenceClickListener(this);
+            dob=findPreference("dob");
+            dob.setSummary(sharedPreferences.getString("dob",""));
+
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
@@ -391,7 +370,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                 dialog.setContentView(R.layout.dialog_change_password);
                 dialog.setTitle("Edit Password");
                 dialog.show();
-                button_Done=(AppCompatButton)dialog.findViewById(R.id.button_Done);
+                button_Done=(Button)dialog.findViewById(R.id.button_Done);
                 editText_CurrentPassword=(EditText)dialog.findViewById(R.id.editText_CurrentPassword);
                 editText_NewPassword=(EditText)dialog.findViewById(R.id.editText_NewPassword);
                 editText_ConfirmNewPassword=(EditText)dialog.findViewById(R.id.editText_ConfirmNewPassword);
@@ -428,5 +407,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                 dialog.dismiss();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
