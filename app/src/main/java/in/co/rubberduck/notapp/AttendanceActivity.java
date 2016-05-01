@@ -15,6 +15,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -58,7 +59,6 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
     RecyclerView.LayoutManager layoutManager;
     SQLiteDatabase db;
     SharedPreferences sharedPreferences;
-    int lastSelection=0;
     Cursor cursor = new Cursor() {
         @Override
         public int getCount() {
@@ -299,7 +299,17 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         adapter= new CourseAdapter(courseList,getBaseContext(),this);
         recyclerView_Courses.setAdapter(adapter);
 
-        fetchFromDB();
+        try
+        {
+            fetchFromDB();
+        }
+        catch(Exception e)
+        {
+            if(Build.VERSION.SDK_INT>=23) {
+                Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+            }
+            finish();
+        }
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -314,7 +324,18 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
 
     private void fetchFromDB()
     {
-        db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
+        try{
+            db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
+
+
+        }
+        catch(Exception e) {
+            if(Build.VERSION.SDK_INT>=23) {
+                Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+            }
+            finish();
+        }
+
         try {
             cursor = db.rawQuery("select * from attendance", null);
         }
@@ -326,7 +347,7 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         int ctr=0;
 
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0) {
-            Toast.makeText(getBaseContext(),"No Data!",Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(),"Swipe Down to Refresh!",Toast.LENGTH_LONG).show();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -386,19 +407,6 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
         progressAnimator.setDuration(i*10);
         progressAnimator.setInterpolator(new LinearInterpolator());
         progressAnimator.start();
-
-        lastSelection=position;
-
-        arcProgress.clearAnimation();
-
-    }
-
-    @Override
-    public void itemTouched(View view, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN)
-            view.setBackgroundColor(getResources().getColor(R.color.grayForeground));
-        else
-            view.setBackgroundColor(getResources().getColor(R.color.white));
     }
 
     private class SyncAttendance extends AsyncTask<String,Void,Void> {
@@ -449,7 +457,20 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
             if(hasActiveConnection)
             {
                 try {
-                    db = SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
+
+
+                    try{
+                        db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
+                        db.execSQL("drop table if exists attendance");
+                        db.execSQL("create table attendance(courseCode varchar(10) , courseTitle varchar(50) , percentage varchar(10))");
+
+                    }
+                    catch(Exception e) {
+                        if(Build.VERSION.SDK_INT>=23) {
+                            Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+                        }
+                        finish();
+                    }
                     JsonParser jParser = new JsonParser();
                     JSONObject json = jParser.getJSONFromUrl("http://112.133.242.241/moodle/notapp/attendance.php?prn="+params[0]);
                     Log.e("AttendanceActivity", "after jParser.getJSONFromUrl");
@@ -458,10 +479,6 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
                     int length = dataJsonArr.length();
 
                     Log.e("AttendanceActivity", "Length json: " + length + " " + dataJsonArr.length());
-
-                    db.execSQL("drop table if exists attendance");
-                    db.execSQL("create table attendance(courseCode varchar(10) , courseTitle varchar(50) , percentage varchar(10))");
-
                     Log.e("AttendanceActivity", "Database ");
 
                     for (int i = 0; i < length; i++) {
@@ -476,7 +493,17 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
                     Log.e("AttendanceActivity", "JSON: " + e);
                     e.printStackTrace();
                 }
-                db.close();
+               /* try
+                {
+                    db.close();
+                }
+                catch(Exception e)
+                {
+                    if(Build.VERSION.SDK_INT>=23) {
+                        Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+                    }
+                    finish();
+                }*/
             }
             Log.e("AttendanceActivity","hasActiveConn:"+hasActiveConnection);
             return null;

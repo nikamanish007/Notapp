@@ -2,6 +2,7 @@ package in.co.rubberduck.notapp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -119,6 +120,8 @@ public class HelpActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.help_fragment_1, container, false);
+            TextView textView_VersionNumber=(TextView)rootView.findViewById(R.id.textView_VersionNumber);
+            textView_VersionNumber.setText("Version "+BuildConfig.VERSION_NAME);
             Log.e("HelpActivity", "Second");
             return rootView;
         }
