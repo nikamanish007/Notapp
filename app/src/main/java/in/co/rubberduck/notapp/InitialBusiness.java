@@ -50,7 +50,7 @@ public class InitialBusiness
 
         if(!editProfileCalled)
         {
-            textView_InitialPrompt.setText("Edit Your Profile now.");
+            textView_InitialPrompt.setText("Add your profile details");
             fab.setImageResource(R.drawable.ic_person);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -66,7 +66,7 @@ public class InitialBusiness
         }
         else if(!settingsCalled)
         {
-            textView_InitialPrompt.setText("Set Your Class, Branch & Subscriptions");
+            textView_InitialPrompt.setText("Set your class, branch & subscriptions");
             fab.setImageResource(R.drawable.ic_setting_dark);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
