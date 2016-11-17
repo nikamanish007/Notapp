@@ -272,7 +272,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
         setContentView(R.layout.activity_notices);
 
         intent = getIntent();
-        nbClicked = intent.getStringExtra("nb");
+        nbClicked = intent.getStringExtra("nb1");
         title = intent.getStringExtra("title");
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
