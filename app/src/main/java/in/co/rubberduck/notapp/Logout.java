@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.commons.io.FileUtils;
+
 /**
  * Created by fanatic on 18/4/16.
  */
@@ -79,11 +81,10 @@ public class Logout extends AsyncTask {
     }
 
     void deleteRecursive(File fileOrDirectory) throws Exception {
-        if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles())
-                deleteRecursive(child);
-        fileOrDirectory.delete();
+        FileUtils.deleteDirectory(new File(fileOrDirectory));
     }
+
+
 
     public boolean isConnectingToInternet(){
         boolean res=false;
