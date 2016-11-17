@@ -170,7 +170,7 @@ public class SyncPrefs extends AsyncTask
     }
     static private void upload(String key,String value)
     {
-        String URL="http://notapp.wce.ac.in/sync.php?prn="+sharedPreferences.getString("PRN","")+"&key="+key+"&value="+value+"";
+        String URL="http://wce.ac.in/notapp/sync.php?prn="+sharedPreferences.getString("PRN","")+"&key="+key+"&value="+value+"";
         new Send().execute(URL);
     }
     static class Send extends AsyncTask<String,Void,Void>
