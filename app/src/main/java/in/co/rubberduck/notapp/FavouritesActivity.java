@@ -263,6 +263,10 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
             if(Build.VERSION.SDK_INT>=23) {
                 Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
             }
+            else
+            {
+                Toast.makeText(getBaseContext(),"Success",Toast.LENGTH_LONG).show();    
+            }
             finish();
         }
         favoriteList=new ArrayList<NoticeInfo>();
@@ -299,7 +303,7 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
             Log.e("ffdb", "move to first: "+cursor.moveToFirst());
             Log.e("ffdb", "cursor.getCount: " + cursor.getCount());
 
-            if (!(cursor.moveToFirst()) || cursor.getCount() ==0) {
+            if (!(cursor.moveToFirst()) || cursor.getCount() == 0) {
 
                 Log.e("ffdb", "cursor null"  );
 
@@ -314,7 +318,7 @@ public class FavouritesActivity extends AppCompatActivity implements FavoritesAd
                         placeholder.requestLayout();
                         placeholder.setVisibility(View.VISIBLE);
                         placeholder.setImageResource(R.drawable.placeholder3);
-                        ((View) findViewById(R.id.recyclerView_Notices)).setVisibility(View.GONE);
+                        ((View) findViewById(R.id.recyclerView_Notices)).setVisibility(View.INVISIBLE);
                     }
                 });
             } else {
