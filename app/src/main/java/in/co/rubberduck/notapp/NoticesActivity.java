@@ -280,7 +280,7 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             public void onReceive(Context context, Intent intent) {
                 // checking for type intent filter
                 if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-                    Log.e("MainActivity", "Refreshed no Broadcast.");
+                    Log.e("MainActivity", "Refreshed no Broadcast. notifyItemChanged");
                     refresh();
                 }
             }
