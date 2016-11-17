@@ -308,6 +308,10 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
             if(Build.VERSION.SDK_INT>=23) {
                 Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
             }
+            else
+            {
+                Toast.makeText(getBaseContext(),"Success",Toast.LENGTH_LONG).show();    
+            }
             finish();
         }
 
@@ -326,12 +330,14 @@ public class AttendanceActivity extends AppCompatActivity implements CourseAdapt
     {
         try{
             db=SQLiteDatabase.openOrCreateDatabase("" + Environment.getExternalStorageDirectory() + "/Notapp/DB/attendance.db", null, null);
-
-
         }
         catch(Exception e) {
             if(Build.VERSION.SDK_INT>=23) {
                 Toast.makeText(getBaseContext(),"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                Toast.makeText(getBaseContext(),"Success",Toast.LENGTH_LONG).show();    
             }
             finish();
         }

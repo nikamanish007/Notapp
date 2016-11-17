@@ -310,6 +310,10 @@ public class NoticesActivity extends AppCompatActivity implements NoticeAdapter.
             if(Build.VERSION.SDK_INT>=23) {
                 Toast.makeText(context,"Please revoke Storage Permission for Notapp to work.\n Settings --> Apps --> Notapp --> Permissions --> Storage",Toast.LENGTH_LONG).show();
             }
+            else
+            {
+                Toast.makeText(getBaseContext(),"Success",Toast.LENGTH_LONG).show();    
+            }
             finish();
         }
         noticeList = new ArrayList<>();
