@@ -232,9 +232,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             {
                 try {
                     DefaultHttpClient httpClient = new DefaultHttpClient();
-                    HttpGet httpGet = new HttpGet("http://notapp.wce.ac.in/json/login.php?PRN=" + params[0] + "&password=" + params[1] + "");
-                    HttpResponse httpResponse = null;
-                    httpResponse = httpClient.execute(httpGet);
+                    HttpPost httppost = new HttpPost("http://notapp.wce.ac.in/json/login.php");
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                    nameValuePairs.add(new BasicNameValuePair("PRN", params[0]));
+                    nameValuePairs.add(new BasicNameValuePair("password", params[1]));
+                    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));                
+                    HttpResponse response = httpclient.execute(httppost);
+
                     HttpEntity httpEntity = httpResponse.getEntity();
                     is = httpEntity.getContent();
                 } catch (IOException ioe) {
